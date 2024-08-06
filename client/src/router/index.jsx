@@ -4,7 +4,7 @@ import Login from "../views/Login";
 import Home from "../views/Home";
 import Dashboard from "../views/Dashboard";
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
@@ -20,6 +20,12 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: <Dashboard />,
       },
+      {
+        path: "/profile",
+        element: <div>ini profil</div>,
+      },
     ],
   },
 ]);
+
+export default router;

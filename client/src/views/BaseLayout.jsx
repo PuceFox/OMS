@@ -4,8 +4,12 @@ import SideBar from "../components/SideBar";
 export default function BaseLayout() {
   return (
     <>
-      <SideBar />
-      <Outlet />
+      <div className="flex">
+        <SideBar />
+        <div className="flex-1 p-10">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }
