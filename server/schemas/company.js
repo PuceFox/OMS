@@ -4,6 +4,7 @@ const {
   comparePassword,
 } = require("../helpers/helpers");
 const { findCompanyByEmail } = require("../models/company");
+const { authUrl } = require("../utils/oauthClient");
 
 const typeDefs = `#graphql
 
@@ -48,7 +49,7 @@ const resolvers = {
 
       return {
         token: token,
-        oauthUrl: "www",
+        oauthUrl: authUrl,
       };
     },
   },
