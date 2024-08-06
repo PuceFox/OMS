@@ -15,7 +15,7 @@ function createError(message, code) {
   });
 }
 
-//Hash Password
+//Hash Password dan Compare Hashed Password
 const hashPassword = (pass) => {
   const salt = bcrypt.genSaltSync(10);
   return bcrypt.hashSync(pass, salt);
