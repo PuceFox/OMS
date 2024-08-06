@@ -5,21 +5,24 @@ if (process.env.NODE_ENV !== "production") {
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { mongoConnect } = require("./config/mongoConnection");
+const { companyResolvers, companyTypeDefs } = require("./schemas/company");
 
 const server = new ApolloServer({
+  typeDefs: [companyTypeDefs],
+  resolvers: [companyResolvers],
   introspection: true,
 });
 
 (async () => {
   try {
-    await mongoConnect()
+    await mongoConnect();
     const { url } = await startStandaloneServer(server, {
-      context: async ({req, res}) => {
+      context: async ({ req, res }) => {
         return {
           authentication: async () => {
-            return await authentication(req)
-          }
-        }
+            return await authentication(req);
+          },
+        };
       },
       listen: {
         port: process.env.PORT || 4000,
@@ -29,6 +32,5 @@ const server = new ApolloServer({
     console.log(`🚀  Server ready at: ${url}`);
   } catch (error) {
     console.log(error);
-    
   }
 })();
