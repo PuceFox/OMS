@@ -2,7 +2,7 @@ const typeDefs = `#graphql
 
     type Company {
         email: String,
-        password: String
+        password: String,
     }
 
     type LoginResponse {
@@ -10,10 +10,8 @@ const typeDefs = `#graphql
         oauthUrl: string
     }
 
-
     type Mutation {
         login(email: String, password: String) : LoginResponse
-    
     }
 
 `;
