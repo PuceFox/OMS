@@ -5,8 +5,11 @@ import Home from "../views/Home";
 import Dashboard from "../views/Dashboard";
 import Form from "../views/Form";
 
+
 const url = "http://localhost:3000";
-export const router = createBrowserRouter([
+
+const router = createBrowserRouter([
+
   {
     path: "/",
     element: <Home />,
@@ -26,6 +29,12 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: <Dashboard />,
       },
+      {
+        path: "/profile",
+        element: <div>ini profil</div>,
+      },
     ],
   },
 ]);
+
+export default router;
