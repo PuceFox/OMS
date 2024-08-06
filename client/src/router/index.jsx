@@ -4,12 +4,11 @@ import Login from "../views/Login";
 import Home from "../views/Home";
 import Dashboard from "../views/Dashboard";
 import Form from "../views/Form";
-
+import Profile from "../views/Profile";
 
 const url = "http://localhost:3000";
 
 const router = createBrowserRouter([
-
   {
     path: "/",
     element: <Home />,
@@ -31,7 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <div>ini profil</div>,
+        element: <Profile />,
       },
     ],
   },
