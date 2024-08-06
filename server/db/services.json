@@ -1,0 +1,97 @@
+[
+  {
+    "type": "VIP",
+    "assets": [
+      {
+        "name": "Challenger 650",
+        "speed": 425,
+        "pricePerHour": 6500,
+        "seatCapacity": 11
+      },
+      {
+        "name": "Gulfstream G150",
+        "speed": 430,
+        "pricePerHour": 5500,
+        "seatCapacity": 6
+      },
+      {
+        "name": "Legacy 600",
+        "speed": 420,
+        "pricePerHour": 6000,
+        "seatCapacity": 13
+      },
+      {
+        "name": "Hawker 900",
+        "speed": 400,
+        "pricePerHour": 5000,
+        "seatCapacity": 7
+      },
+      {
+        "name": "King Air 350",
+        "speed": 230,
+        "pricePerHour": 3400,
+        "seatCapacity": 9
+      }
+    ]
+  },
+  {
+    "type": "Medevac",
+    "assets": [
+      {
+        "name": "Hawker 900",
+        "speed": 400,
+        "pricePerHour": 4700,
+        "seatCapacity": 3
+      },
+      {
+        "name": "Hawker 400",
+        "speed": 410,
+        "pricePerHour": 4000,
+        "seatCapacity": 2
+      },
+      {
+        "name": "Learjet 45",
+        "speed": 415,
+        "pricePerHour": 4500,
+        "seatCapacity": 2
+      },
+      {
+        "name": "King Air 350",
+        "speed": 230,
+        "pricePerHour": 3500,
+        "seatCapacity": 3
+      },
+      {
+        "name": "Bell 206",
+        "speed": 110,
+        "pricePerHour": 2800,
+        "seatCapacity": 1
+      }
+    ]
+  },
+  {
+    "type": "City-tour",
+    "assets": [
+      {
+        "name": "Hawker 400",
+        "speed": 410,
+        "pricePerHour": 4000
+      },
+      {
+        "name": "Learjet 45",
+        "speed": 415,
+        "pricePerHour": 4500
+      },
+      {
+        "name": "King Air 350",
+        "speed": 230,
+        "pricePerHour": 3500
+      },
+      {
+        "name": "Bell 206",
+        "speed": 110,
+        "pricePerHour": 2800
+      }
+    ]
+  }
+]
