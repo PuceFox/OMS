@@ -7,6 +7,7 @@ const { ApolloServer } = require("apollo-server-express");
 
 const { mongoConnect } = require("./config/mongoConnection");
 const { companyResolvers, companyTypeDefs } = require("./schemas/company");
+const { oauth2Client } = require("./utils/oauthClient");
 
 const server = new ApolloServer({
   typeDefs: [companyTypeDefs],
@@ -23,8 +24,10 @@ const server = new ApolloServer({
 
   app.get("/oauth2callback", async (req, res) => {
     const { code } = req.query;
+    const { tokens } = await oauth2Client.getToken(code);
 
-    console.log(code);
+    oauth2Client.setCredentials(tokens);
+
     res.redirect("http://localhost:4000/graphql");
   });
 
