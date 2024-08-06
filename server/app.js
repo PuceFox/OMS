@@ -1,5 +1,6 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+require("dotenv").config();
 
 const server = new ApolloServer({
   introspection: true,
