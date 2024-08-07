@@ -73,24 +73,22 @@
     "type": "City-tour",
     "assets": [
       {
-        "name": "Hawker 400",
-        "speed": 410,
-        "pricePerHour": 4000
-      },
-      {
-        "name": "Learjet 45",
-        "speed": 415,
-        "pricePerHour": 4500
-      },
-      {
-        "name": "King Air 350",
-        "speed": 230,
-        "pricePerHour": 3500
-      },
-      {
         "name": "Bell 206",
         "speed": 110,
-        "pricePerHour": 2800
+        "pricePerHour": 3000,
+        "seatCapacity": 4
+      },
+      {
+        "name": "Eurocopter EC 145",
+        "speed": 130,
+        "pricePerHour": 4500,
+        "seatCapacity": 8
+      },
+      {
+        "name": "Bell 429",
+        "speed": 130,
+        "pricePerHour": 5000,
+        "seatCapacity": 5
       }
     ]
   }
