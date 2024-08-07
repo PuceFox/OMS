@@ -6,8 +6,6 @@ import Dashboard from "../views/Dashboard";
 import Form from "../views/Form";
 import Profile from "../views/Profile";
 
-const url = "http://localhost:3000";
-
 const router = createBrowserRouter([
   {
     path: "/",
