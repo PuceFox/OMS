@@ -5,6 +5,7 @@ const {
 } = require("../helpers/helpers");
 const { findCompanyByEmail } = require("../models/company");
 const { authUrl } = require("../utils/oauthClient");
+const nodemailer = require("nodemailer");
 
 const typeDefs = `#graphql
 
