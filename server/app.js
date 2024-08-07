@@ -9,6 +9,7 @@ const { mongoConnect } = require("./config/mongoConnection");
 const { companyResolvers, companyTypeDefs } = require("./schemas/company");
 const { formTypeDefs, formResolvers } = require("./schemas/form");
 const { oauth2Client } = require("./utils/oauthClient");
+const { google } = require("googleapis");
 
 const server = new ApolloServer({
   typeDefs: [companyTypeDefs, formTypeDefs],
@@ -23,13 +24,25 @@ const server = new ApolloServer({
   const app = express();
   server.applyMiddleware({ app });
 
-  app.get("/oauth2callback", async (req, res) => {
+  app.get("/googlelogin", async (req, res) => {
     const { code } = req.query;
+    console.log(req.query, "QUERY OBJ");
+    console.log(code, "CODE GOOGLE");
     const { tokens } = await oauth2Client.getToken(code);
 
     oauth2Client.setCredentials(tokens);
+    let oauth2 = google.oauth2({
+      auth: oauth2Client,
+      version: "v2",
+    });
 
-    res.redirect("http://localhost:4000/graphql");
+    const { data } = await oauth2.userinfo.get();
+    console.log(data);
+
+    res.status(200).json({
+      message: "SUCCESS LOGIN COEG",
+      data: data,
+    });
   });
 
   app.listen({ port: 4000 }, () =>

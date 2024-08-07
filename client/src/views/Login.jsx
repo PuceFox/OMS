@@ -1,14 +1,26 @@
-export default function Login(url) {
+import axios from "axios";
+import { EXPRESS_API_URL } from "../constant/constant";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+
+export default function Login() {
+  const [searchParams] = useSearchParams();
+  console.log(searchParams.code);
+
+  async function loginLogic() {
+    console.log(searchParams.code, "params");
+    const response = await axios(
+      `${EXPRESS_API_URL}/googlelogin?code=${searchParams.code}`
+    );
+    console.log(response, "response");
+  }
+
+  useEffect(() => {
+    loginLogic();
+  }, []);
+
   async function loginUser() {
     try {
-      const { data } = await axios({
-        method: "POST",
-        url: `${url}/login`,
-        data: {
-          email,
-          password,
-        },
-      });
       localStorage.setItem("access_token", data.access_token);
       navigate("/");
 
@@ -152,7 +164,7 @@ export default function Login(url) {
                       Password
                     </label>
                   </div>
-                  <a href="https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar&response_type=code&client_id=482313783920-8t9kier8uttcgccbigu5vhnpdtbvqvvt.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2F">
+                  <a href="https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=482313783920-8t9kier8uttcgccbigu5vhnpdtbvqvvt.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flogin">
                     <button>Login With Google</button>
                   </a>
 
