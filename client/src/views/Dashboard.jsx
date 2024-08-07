@@ -1,6 +1,17 @@
 import { Card, Typography, Button } from "@material-tailwind/react";
 
-const TABLE_HEAD = ["Fullname", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Status", "Action"];
+const TABLE_HEAD = [
+  "Fullname",
+  "Email",
+  "Phone Number",
+  "Origin",
+  "Destination",
+  "Services",
+  "Total Pax",
+  "Total Price",
+  "Status",
+  "Action",
+];
 
 const TABLE_ROWS = [
   {
@@ -36,8 +47,15 @@ export default function Dashboard() {
             <thead>
               <tr>
                 {TABLE_HEAD.map((head) => (
-                  <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                    <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                  <th
+                    key={head}
+                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
                       {head}
                     </Typography>
                   </th>
@@ -45,65 +63,136 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map(({ fullname, email, phonenumber, origin, destination, services, total_pax, total_price, status }, index) => {
-                const isLast = index === TABLE_ROWS.length - 1;
-                const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+              {TABLE_ROWS.map(
+                (
+                  {
+                    fullname,
+                    email,
+                    phonenumber,
+                    origin,
+                    destination,
+                    services,
+                    total_pax,
+                    total_price,
+                    status,
+                  },
+                  index
+                ) => {
+                  const isLast = index === TABLE_ROWS.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={fullname}>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
-                        {fullname}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
-                        {email}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
-                        {phonenumber}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {origin}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {destination}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {services}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {total_pax}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {total_price}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        {status}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Button as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                        test
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={fullname}>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {fullname}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {email}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {phonenumber}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {origin}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {destination}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {services}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {total_pax}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {total_price}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          {status}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Button
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium"
+                        >
+                          test
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
             </tbody>
           </table>
         </Card>
