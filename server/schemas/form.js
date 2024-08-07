@@ -1,4 +1,4 @@
-const { createOrder, updateOrder, updateOrder, findAllOrder, findOrderById, findAllService, findAllAirports, findServiceById } = require("../model/form");
+const { createOrder, updateOrder, findAllOrder, findOrderById, findAllService, findAllAirports, findServiceById, findServiceTypeByQuery, findAirportByQuery } = require("../model/form");
 
 const typeDefs = `#graphql
   type Order {
@@ -9,15 +9,16 @@ const typeDefs = `#graphql
     origin: String
     destination: String
     service: String
-    pax: Number
+    pax: Int
     status: String
     createdAt: String
     updatedAt: String
   }
 
   type Airport {
-    iataCode: String
     city: String
+    airport: String
+    iataCode: String
   }
 
   type Service {
@@ -27,32 +28,34 @@ const typeDefs = `#graphql
 
   type Asset {
     name: String
-    speed: Number
-    price: Number
-    seatCapacity: Number 
+    speed: Int
+    pricePerHour: Int
+    seatCapacity: Int
   }
 
   input CreateOrderInput {
-    fullname: String
-    email: String    
-    phoneNumber: String
-    origin: String
-    destination: String
-    service: String
-    pax: Number
+    fullname: String!
+    email: String!    
+    phoneNumber: String!
+    origin: String!
+    destination: String!
+    service: String!
+    pax: Int!
   }
 
   type Query {
-    getAirport: [Airport]       
+    getAirport: [Airport]
+    getAirportByQuery(query: String): [Airport]       
     getService: [Service]
     getServiceById(id: ID): Service
+    getServiceTypeByQuery(query: String): [Service]
     getOrder: [Order]
     getOrderById(id: ID): Order
   }
 
   type Mutation {
     addOrder(input: CreateOrderInput): Order
-    updateStatusOrder({id: ID, status: String}): Order
+    updateStatusOrder(id: ID, status: String): Order
   }
 `;
 
@@ -82,10 +85,24 @@ const resolvers = {
       const service = await findServiceById(id)
       return service
     },
+    
+    getServiceTypeByQuery: async (_parent, args) => {
+      const { query } = args
+      const service = await findServiceTypeByQuery(query)
+      return service
+    },
+
     // Function untuk mendapatkan List semua Airport
     getAirport: async () => {
       const airports = await findAllAirports()
       return airports
+    },
+
+    getAirportByQuery: async (_parent, args) => {
+      const { query } = args
+      const airport = await findAirportByQuery(query)
+
+      return airport
     }
   },
 
@@ -106,16 +123,23 @@ const resolvers = {
         createdAt: new Date(),
         updatedAt: new Date()
       })
-
+      
       return orderData
     },
     
     // Function Update Status Order
     updateStatusOrder: async (_parent, args) => {
       const { id, status } = args
+      console.log(status, id);
+      
       const orderData = await updateOrder(id, status)
 
       return orderData
     }
   }
 }
+
+module.exports = {
+  formTypeDefs: typeDefs,
+  formResolvers: resolvers,
+};
