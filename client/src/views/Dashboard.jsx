@@ -18,7 +18,6 @@ export default function Dashboard() {
       totalPax: 1,
       status: "Pending",
     },
-    // Tambahkan data pengguna lainnya sesuai kebutuhan
   ];
   return (
     <>

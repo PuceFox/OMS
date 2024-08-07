@@ -14,6 +14,34 @@ export default function Form() {
     error: serviceError,
   } = useQuery(GET_SERVICES);
 
+  const [form, setForm] = useState({
+    fullname: "",
+    email: "",
+    phoneNumber: "",
+    origin: "",
+    destination: "",
+    service: "",
+    pax: "",
+  });
+
+  const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
+    onCompleted: () => {
+      setForm({
+        fullname: "",
+        email: "",
+        phoneNumber: "",
+        origin: "",
+        destination: "",
+        service: "",
+        pax: "",
+      });
+    },
+    onError: (error) => {
+      // Handle error appropriately
+      console.error("Mutation Error:", error);
+    },
+  });
+
   if (airportLoading || serviceLoading) return <p>Loading...</p>;
   if (airportError || serviceError)
     return <p>Error! {airportError?.message || serviceError?.message}</p>;
@@ -38,35 +66,11 @@ export default function Form() {
     ));
   };
 
-  const [form, setForm] = useState({
-    fullname: "",
-    email: "",
-    phoneNumber: "",
-    origin: "",
-    destination: "",
-    service: "",
-    pax: 0,
-  });
-
-  const [addOrder, {}] = useMutation(MUTATION_ADD_ORDER, {
-    onCompleted: (res) => {
-      setForm({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        origin: "",
-        destination: "",
-        service: "",
-        pax: 0,
-      });
-    },
-  });
-
   const onChangeForm = (key, value) => {
-    setForm({
-      ...form,
+    setForm((prevForm) => ({
+      ...prevForm,
       [key]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -81,12 +85,12 @@ export default function Form() {
             origin: form.origin,
             destination: form.destination,
             service: form.service,
-            pax: form.pax,
+            pax: parseInt(form.pax, 10), // Ensure pax is a number
           },
         },
       });
     } catch (error) {
-      console.log(error);
+      console.error("Submit Error:", error);
     }
   };
 
@@ -104,119 +108,73 @@ export default function Form() {
           className="mx-auto mt-8 max-w-xl space-y-6"
         >
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="full-name"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
-                Full Name
-              </label>
-              <div className="mt-3">
-                <input
-                  type="text"
-                  name="fullname"
-                  value={form.fullname}
-                  autoComplete="name"
-                  onChange={(e) => onChangeForm("fullname", e.target.value)}
-                  className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="email"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
-                Email
-              </label>
-              <div className="mt-3">
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={(e) => onChangeForm("email", e.target.value)}
-                  autoComplete="email"
-                  className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="phone-number"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
-                Phone Number
-              </label>
-              <div className="mt-3">
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={form.phoneNumber}
-                  onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
-                  autoComplete="tel"
-                  className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                />
-              </div>
-            </div>
-            <div className="flex gap-x-8 sm:col-span-2">
-              <div className="flex-1">
+            {["fullname", "email", "phoneNumber"].map((field) => (
+              <div key={field} className="sm:col-span-2">
                 <label
-                  htmlFor="origin"
+                  htmlFor={field}
                   className="block text-lg font-semibold leading-6 text-black"
                 >
-                  Origin
+                  {field.charAt(0).toUpperCase() +
+                    field.slice(1).replace(/([A-Z])/g, " $1")}
                 </label>
-                <div className="relative mt-3">
-                  <select
-                    id="origin"
-                    name="origin"
-                    value={form.origin}
-                    onChange={(e) => onChangeForm("origin", e.target.value)}
-                    className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                  >
-                    <option value="">Select Origin</option>
-                    {renderAirportOptions(airports)}
-                  </select>
-                </div>
-              </div>
-              <div className="flex-1">
-                <label
-                  htmlFor="destination"
-                  className="block text-lg font-semibold leading-6 text-black"
-                >
-                  Destination
-                </label>
-                <div className="relative mt-3">
-                  <select
-                    id="destination"
-                    name="destination"
-                    value={form.destination}
-                    onChange={(e) =>
-                      onChangeForm("destination", e.target.value)
+                <div className="mt-3">
+                  <input
+                    type={
+                      field === "email"
+                        ? "email"
+                        : field === "phoneNumber"
+                        ? "tel"
+                        : "text"
                     }
-                    autoComplete="tel"
-                    className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                  >
-                    <option value="">Select Destination</option>
-                    {renderAirportOptions(airports)}
-                  </select>
+                    name={field}
+                    value={form[field]}
+                    onChange={(e) => onChangeForm(field, e.target.value)}
+                    autoComplete={field}
+                    className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
+                  />
                 </div>
               </div>
+            ))}
+            <div className="flex gap-x-8 sm:col-span-2">
+              {["origin", "destination"].map((field) => (
+                <div key={field} className="flex-1">
+                  <label
+                    htmlFor={field}
+                    className="block text-lg font-semibold leading-6 text-black"
+                  >
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </label>
+                  <div className="relative mt-3">
+                    <select
+                      id={field}
+                      name={field}
+                      value={form[field]}
+                      onChange={(e) => onChangeForm(field, e.target.value)}
+                      className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
+                    >
+                      <option value="">
+                        Select {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </option>
+                      {renderAirportOptions(airports)}
+                    </select>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="sm:col-span-2">
               <label
-                htmlFor="company"
+                htmlFor="pax"
                 className="block text-lg font-semibold leading-6 text-black"
               >
                 Total Passengers
               </label>
               <div className="mt-3">
                 <input
-                  type="text"
+                  type="number"
                   name="pax"
                   value={form.pax}
-                  onChange={(e) => onChangeForm("pax", Number(e.target.value))}
-                  autoComplete="organization"
+                  onChange={(e) => onChangeForm("pax", e.target.value)}
+                  autoComplete="pax"
                   className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
                 />
               </div>
