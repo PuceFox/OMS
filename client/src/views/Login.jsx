@@ -152,6 +152,10 @@ export default function Login(url) {
                       Password
                     </label>
                   </div>
+                  <a href="https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar&response_type=code&client_id=482313783920-8t9kier8uttcgccbigu5vhnpdtbvqvvt.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2F">
+                    <button>Login With Google</button>
+                  </a>
+
                   <div className="relative flex justify-center">
                     <button className="bg-blue-500 text-white rounded-md px-4 py-2 text-sm font-medium shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2  focus:ring-offset-2 transition ease-in-out duration-150">
                       Submit
