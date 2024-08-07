@@ -1,0 +1,12 @@
+[
+  {
+    "fullname": "John Doe",
+    "email": "john@mail.com",
+    "phoneNumber": "081234567890",
+    "origin": "Manado",
+    "destination": "Palembang",
+    "totalPax": 10,
+    "price": 34000,
+    "status": "accepted"
+  }
+]
