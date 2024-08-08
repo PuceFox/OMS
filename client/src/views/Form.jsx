@@ -641,7 +641,7 @@ export default function Form() {
               <h3 id="modal-title" className="text-2xl font-bold text-gray-900 mb-4">
                 Submission Successful!
               </h3>
-              <p className="text-gray-700 mb-6">Your order has been received. Thank you!</p>
+              <p className="text-gray-700 mb-6">Your order has been received, please check your email for price estimation</p>
               <div className="flex justify-end">
                 <Link to={"/form"}>
                   <button className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 transition-colors" onClick={() => setShowModal(false)}>
