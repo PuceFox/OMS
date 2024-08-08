@@ -9,6 +9,7 @@ const TABLE_HEAD = [
   "Services",
   "Total Pax",
   "Total Price",
+  "Aircraft",
   "Status",
   "Action",
 ];
@@ -21,9 +22,10 @@ const TABLE_ROWS = [
     origin: "Jakarta",
     services: "Tour Package",
     destination: "Bandung",
-    status: "on risif",
+    status: "on received",
     total_pax: 4,
     total_price: 2000000,
+    aircraft: "Legacy 600",
   },
   {
     fullname: "John Doe",
@@ -32,9 +34,10 @@ const TABLE_ROWS = [
     origin: "Jakarta",
     services: "Tour Package",
     destination: "Bandung",
-    status: "on risif",
+    status: "on received",
     total_pax: 4,
     total_price: 2000000,
+    aircraft: "Hawker 900",
   },
 ];
 export default function Dashboard() {
@@ -74,6 +77,7 @@ export default function Dashboard() {
                     services,
                     total_pax,
                     total_price,
+                    aircraft,
                     status,
                   },
                   index

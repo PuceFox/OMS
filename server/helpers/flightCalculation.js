@@ -9,9 +9,9 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return earthRadiusKm * c;
   }
@@ -142,26 +142,12 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
       };
     });
 
-    console.log(flightTimes, `flight time`);
-    console.log(results, `data results`);
-
     if (!departureCity || !arrivalCity) {
       throw { name: "Wrong Airport Code" };
     }
 
-    // const flight = await Flight.create({
-    //     departureCity,
-    //     arrivalCity,
-    //     departureDate,
-    //     returnDate,
-    //     flightTime: formatTime(flightTimeInMinutes),
-    //     price
-    // });
+    return results
 
-    // res.status(201).json({
-    //     message: "Success create new flight",
-    //     flight,
-    // });
   } catch (err) {
     console.log(err);
     // next(err);
