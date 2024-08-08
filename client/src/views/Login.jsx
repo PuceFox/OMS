@@ -2,23 +2,9 @@ import axios from "axios";
 import { EXPRESS_API_URL } from "../constant/constant";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
-  const [searchParams] = useSearchParams();
-  console.log(searchParams.code);
-
-  async function loginLogic() {
-    console.log(searchParams.code, "params");
-    const response = await axios(
-      `${EXPRESS_API_URL}/googlelogin?code=${searchParams.code}`
-    );
-    console.log(response, "response");
-  }
-
-  useEffect(() => {
-    loginLogic();
-  }, []);
-
   async function loginUser() {
     try {
       localStorage.setItem("access_token", data.access_token);
@@ -41,32 +27,22 @@ export default function Login() {
       }).showToast();
     } catch (error) {
       console.log(error, "ini errornya");
-      Toastify({
-        text: "error",
-        duration: 2000,
-        newWindow: true,
-        close: true,
-        gravity: "bottom",
-        position: "right",
-        stopOnFocus: true,
-        style: {
-          background: "#EF4C54",
-          color: "#17202A",
-          boxShadow: "0 5px 10px black",
-          fontWeight: "bold",
-        },
-      }).showToast();
     }
   }
 
-  async function handleSubmit(e) {
+  async function googleLogin(googleResponse) {
     try {
-      e.preventDefault();
-      await loginUser();
+      console.log(googleResponse.credential);
+      //credential
+      const { data } = await axios(
+        `${EXPRESS_API_URL}/googlelogin?code=${googleResponse.credential}`
+      );
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
   }
+
   return (
     <>
       {/* <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
@@ -164,9 +140,10 @@ export default function Login() {
                       Password
                     </label>
                   </div>
-                  <a href="https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=482313783920-8t9kier8uttcgccbigu5vhnpdtbvqvvt.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flogin">
-                    <button>Login With Google</button>
-                  </a>
+                  <GoogleLogin
+                    onSuccess={googleLogin}
+                    onError={() => console.log("error on google oauth")}
+                  />
 
                   <div className="relative flex justify-center">
                     <button className="bg-blue-500 text-white rounded-md px-4 py-2 text-sm font-medium shadow-md hover:bg-purple-800 focus:outline-none focus:ring-2  focus:ring-offset-2 transition ease-in-out duration-150">

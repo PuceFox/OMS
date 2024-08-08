@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
+const cors = require("cors");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 
@@ -24,9 +24,11 @@ const server = new ApolloServer({
   const app = express();
   server.applyMiddleware({ app });
 
+  app.use(cors());
+
   app.get("/googlelogin", async (req, res) => {
     const { code } = req.query;
-    console.log(req.query, "QUERY OBJ");
+
     console.log(code, "CODE GOOGLE");
     const { tokens } = await oauth2Client.getToken(code);
 
@@ -38,6 +40,7 @@ const server = new ApolloServer({
 
     const { data } = await oauth2.userinfo.get();
     console.log(data);
+    console.log("-------------------------------------------------");
 
     res.status(200).json({
       message: "SUCCESS LOGIN COEG",
