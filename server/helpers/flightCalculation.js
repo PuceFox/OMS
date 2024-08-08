@@ -49,6 +49,10 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
       (service) => service.type === serviceType
     );
 
+    console.log(filteredServices, `data hasil filter`);
+    console.log(serviceType, `data tipe service`);
+
+
     //???
     const sortedAssets = filteredServices[0].assets.sort(
       (a, b) => b.seatCapacity - a.seatCapacity
@@ -68,7 +72,7 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
     const arrivalLon = arrivalAirport.longitude;
 
     let distance = 0;
-    if (departureCity !== "hlp" && arrivalCity !== "hlp") {
+    if (departureCity !== "HLP" && arrivalCity !== "HLP") {
       const distance1 = calculateDistance(
         -6.266667,
         106.891667,
@@ -88,7 +92,7 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
         106.891667
       );
       distance = distance1 + distance2 + distance3;
-    } else if (departureCity !== "hlp" && arrivalCity === "hlp") {
+    } else if (departureCity !== "HLP" && arrivalCity === "HLP") {
       const distance1 = calculateDistance(
         -6.266667,
         106.891667,
@@ -102,7 +106,9 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
         arrivalLon
       );
       distance = distance1 + distance2;
-    } else if (departureCity === "hlp" && arrivalCity !== "hlp") {
+      console.log(distance, `dari arrival hlp`);
+
+    } else if (departureCity === "HLP" && arrivalCity !== "HLP") {
       const distance1 = calculateDistance(
         departureLat,
         departureLon,
@@ -132,7 +138,12 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
       // const flightTimeInHours = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       const flightTimeInMinutes = Math.ceil(flightTime * 60);
       const priceBasic = (flightTimeInMinutes / 60) * asset.pricePerHour;
-      const price = Math.ceil(priceBasic + (priceBasic * 10) / 100);
+      let price = 0
+      if (filteredServices === "Medevac") {
+        price = Math.ceil(priceBasic + (priceBasic * 10) / 100) + 2500
+      } else {
+        price = Math.ceil(priceBasic + (priceBasic * 10) / 100);
+      }
       return {
         serviceType,
         assetName: asset.name,

@@ -145,6 +145,7 @@ const resolvers = {
         pax,
         status: "Pending",
         price: 0,
+        aircraft: "",
         createdAt: new Date(),
         updatedAt: new Date(),
       });
