@@ -4,32 +4,6 @@ import { QUERY_GET_ORDERS } from "../queries";
 
 const TABLE_HEAD = ["Fullname", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Aircraft", "Status", "Action"];
 
-const TABLE_ROWS = [
-  {
-    fullname: "John Doe",
-    phonenumber: "+628123456789",
-    email: "johndoe@example.com",
-    origin: "Jakarta",
-    services: "Tour Package",
-    destination: "Bandung",
-    status: "on received",
-    total_pax: 4,
-    total_price: 2000000,
-    aircraft: "Legacy 600",
-  },
-  {
-    fullname: "John Doe",
-    phonenumber: "+628123456789",
-    email: "johndoe@example.com",
-    origin: "Jakarta",
-    services: "Tour Package",
-    destination: "Bandung",
-    status: "on received",
-    total_pax: 4,
-    total_price: 2000000,
-    aircraft: "Hawker 900",
-  },
-];
 export default function Dashboard() {
   const { loading, error, data } = useQuery(QUERY_GET_ORDERS);
 
@@ -56,8 +30,8 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map(({ fullname, email, phonenumber, origin, destination, services, total_pax, total_price, aircraft, status }, index) => {
-              const isLast = index === TABLE_ROWS.length - 1;
+            {tableRows.map(({ fullname, email, phoneNumber, origin, destination, service, pax, price, aircraft, status }, index) => {
+              const isLast = index === tableRows.length - 1;
               const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
               return (
@@ -74,7 +48,7 @@ export default function Dashboard() {
                   </td>
                   <td className={classes}>
                     <Typography variant="small" color="blue-gray" className="font-normal">
-                      {phonenumber}
+                      {phoneNumber}
                     </Typography>
                   </td>
                   <td className={classes}>
@@ -89,17 +63,17 @@ export default function Dashboard() {
                   </td>
                   <td className={classes}>
                     <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      {services}
+                      {service}
                     </Typography>
                   </td>
                   <td className={classes}>
                     <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      {total_pax}
+                      {pax}
                     </Typography>
                   </td>
                   <td className={classes}>
                     <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      {total_price}
+                      {price}
                     </Typography>
                   </td>
                   <td className={classes}>
