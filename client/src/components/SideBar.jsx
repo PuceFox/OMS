@@ -2,11 +2,17 @@ import React from "react";
 import { IconButton, Typography, List, ListItem, ListItemPrefix, ListItemSuffix, Chip, Accordion, AccordionHeader, AccordionBody, Alert, Input, Drawer, Card } from "@material-tailwind/react";
 import { PresentationChartBarIcon, ShoppingBagIcon, UserCircleIcon, Cog6ToothIcon, InboxIcon, PowerIcon } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link as NavLink } from "react-router-dom";
+import { Link as NavLink, useNavigate } from "react-router-dom";
 export default function SideBar() {
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    localStorage.clear();
+    navigate("/login");
+  }
 
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
@@ -65,12 +71,14 @@ export default function SideBar() {
               </ListItemPrefix>
               Settings
             </ListItem>
-            <ListItem>
-              <ListItemPrefix>
-                <PowerIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              Log Out
-            </ListItem>
+            <NavLink onClick={handleLogout}>
+              <ListItem>
+                <ListItemPrefix>
+                  <PowerIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Log Out
+              </ListItem>
+            </NavLink>
           </List>
         </Card>
       </Drawer>

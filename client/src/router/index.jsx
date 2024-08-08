@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import BaseLayout from "../views/BaseLayout";
 import Login from "../views/Login";
 import Home from "../views/Home";
@@ -10,10 +10,24 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    loader: () => {
+      if (localStorage.token) {
+        // console.log("udh login bos");
+        return redirect("/dashboard");
+      }
+      return null;
+    },
   },
   {
     path: "/login",
     element: <Login />,
+    loader: () => {
+      if (localStorage.token) {
+        // console.log("udh login bos");
+        return redirect("/dashboard");
+      }
+      return null;
+    },
   },
   {
     path: "/form",
@@ -21,6 +35,13 @@ const router = createBrowserRouter([
   },
   {
     element: <BaseLayout />,
+    loader: () => {
+      if (!localStorage.token) {
+        // console.log("Must Login First");
+        return redirect("/login");
+      }
+      return null;
+    },
     children: [
       {
         path: "/dashboard",
