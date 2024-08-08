@@ -138,6 +138,7 @@ const resolvers = {
         service,
         pax,
         status: "Pending",
+        price: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       });

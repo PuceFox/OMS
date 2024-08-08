@@ -26,28 +26,6 @@ const server = new ApolloServer({
 
   app.use(cors());
 
-  app.get("/googlelogin", async (req, res) => {
-    const { code } = req.query;
-
-    console.log(code, "CODE GOOGLE");
-    const { tokens } = await oauth2Client.getToken(code);
-
-    oauth2Client.setCredentials(tokens);
-    let oauth2 = google.oauth2({
-      auth: oauth2Client,
-      version: "v2",
-    });
-
-    const { data } = await oauth2.userinfo.get();
-    console.log(data);
-    console.log("-------------------------------------------------");
-
-    res.status(200).json({
-      message: "SUCCESS LOGIN COEG",
-      data: data,
-    });
-  });
-
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
   );
