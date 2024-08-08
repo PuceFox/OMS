@@ -72,7 +72,8 @@ const typeDefs = `#graphql
 const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
-    getOrder: async () => {
+    getOrder: async (_parent, _args, contextValue) => {
+      const userLogin = await contextValue.authentication()
       const orders = await findAllOrder();
       return orders;
     },
