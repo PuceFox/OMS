@@ -1,3 +1,4 @@
+const createFlight = require("../helpers/flightCalculation");
 const {
   createOrder,
   updateOrder,
@@ -128,6 +129,10 @@ const resolvers = {
         service,
         pax,
       } = args.input;
+
+      const offerData = await createFlight(origin, destination, service, pax);
+      console.log(offerData);
+      console.log("************************");
 
       const orderData = await createOrder({
         fullname,

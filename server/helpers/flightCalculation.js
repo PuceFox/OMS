@@ -1,4 +1,6 @@
-function createFlight(req, res, next) {
+const { findAllAirports, findAllService } = require("../models/form");
+
+async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
   const earthRadiusKm = 6371;
 
   function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -23,10 +25,14 @@ function createFlight(req, res, next) {
   try {
     // let { departureCity, arrivalCity, serviceType, totalPax } = req.body;
 
-    const departureCity = "KNO"; //dari params
-    const arrivalCity = "DJB"; //dari params
-    const serviceType = "VIP"; //dari params
-    const totalPax = 12; //dari params
+    //const departureCity = "KNO"; //dari params
+    //const arrivalCity = "DJB"; //dari params
+    //const serviceType = "VIP"; //dari params
+    //const totalPax = 12; //dari params
+
+    const airportList = await findAllAirports();
+
+    const services = await findAllService();
 
     //find airport object di db
     const departureAirport = airportList.find(
@@ -37,6 +43,7 @@ function createFlight(req, res, next) {
     const arrivalAirport = airportList.find(
       (airport) => airport.iataCode === arrivalCity
     );
+
     //find service object di db
     const filteredServices = services.filter(
       (service) => service.type === serviceType
@@ -161,4 +168,4 @@ function createFlight(req, res, next) {
   }
 }
 
-createFlight();
+module.exports = createFlight;
