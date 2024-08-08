@@ -1,6 +1,6 @@
 import axios from "axios";
 import { EXPRESS_API_URL } from "../constant/constant";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ApolloError, useMutation } from "@apollo/client";
 import { MUTATION_LOGIN } from "../queries";
@@ -9,7 +9,7 @@ export default function Login() {
   const [getLoginToken, { data }] = useMutation(MUTATION_LOGIN);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
+  const navigate = useNavigate();
   function loginUser() {
     try {
       const response = getLoginToken({
@@ -19,6 +19,8 @@ export default function Login() {
         },
         onCompleted: (data) => {
           localStorage.setItem("token", `Bearer ${data.login.token}`);
+          navigate("/dashboard");
+          // console.log(localStorage.token);
         },
         onError: (error) => {
           console.log(error.graphQLErrors[0].extensions.http.status);
