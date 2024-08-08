@@ -7,11 +7,11 @@ export default function SideBar() {
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   async function handleLogout() {
     localStorage.clear();
-    navigate("/login");
+    // navigate("/login");
   }
 
   const handleOpen = (value) => {
