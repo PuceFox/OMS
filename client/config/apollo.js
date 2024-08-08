@@ -26,14 +26,28 @@
 // });
 
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from '@apollo/client/link/context';
 
 // Create the HTTP link to your GraphQL server
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql", // Replace with your GraphQL endpoint
 });
 
+const authLink = setContext((_, { headers }) => {
+  // Get the authentication token from local storage (or any other secure place)
+  const token = localStorage.getItem('token');
+
+  // Return the headers to the context so HTTP link can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `${token}` : '',
+    },
+  };
+});
+
 // Create the Apollo Client instance
 export const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
