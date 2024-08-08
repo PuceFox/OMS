@@ -463,16 +463,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Form() {
-  const {
-    data: airportData,
-    loading: airportLoading,
-    error: airportError,
-  } = useQuery(GET_AIRPORTS);
-  const {
-    data: serviceData,
-    loading: serviceLoading,
-    error: serviceError,
-  } = useQuery(GET_SERVICES);
+  const { data: airportData, loading: airportLoading, error: airportError } = useQuery(GET_AIRPORTS);
+  const { data: serviceData, loading: serviceLoading, error: serviceError } = useQuery(GET_SERVICES);
 
   const [form, setForm] = useState({
     fullname: "",
@@ -505,12 +497,10 @@ export default function Form() {
   });
 
   if (airportLoading || serviceLoading) return <p>Loading...</p>;
-  if (airportError || serviceError)
-    return <p>Error! {airportError?.message || serviceError?.message}</p>;
+  if (airportError || serviceError) return <p>Error! {airportError?.message || serviceError?.message}</p>;
 
   const airports = airportData?.getAirport || [];
-  const serviceTypes =
-    serviceData?.getService?.map((service) => service.type) || [];
+  const serviceTypes = serviceData?.getService?.map((service) => service.type) || [];
 
   const renderAirportOptions = (airports) => {
     return airports.map((airport) => (
@@ -559,35 +549,18 @@ export default function Form() {
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 min-h-screen flex items-center justify-center">
       <div className="relative z-10 mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          INPUT FORM
-        </h2>
-        <p className="mt-2 text-lg leading-8 text-gray-600">
-          Please fill in your details.
-        </p>
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-8 max-w-xl space-y-6"
-        >
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">INPUT FORM</h2>
+        <p className="mt-2 text-lg leading-8 text-gray-600">Please fill in your details.</p>
+        <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-xl space-y-6">
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
             {["fullname", "email", "phoneNumber"].map((field) => (
               <div key={field} className="sm:col-span-2">
-                <label
-                  htmlFor={field}
-                  className="block text-lg font-semibold leading-6 text-black"
-                >
-                  {field.charAt(0).toUpperCase() +
-                    field.slice(1).replace(/([A-Z])/g, " $1")}
+                <label htmlFor={field} className="block text-lg font-semibold leading-6 text-black">
+                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1")}
                 </label>
                 <div className="mt-3">
                   <input
-                    type={
-                      field === "email"
-                        ? "email"
-                        : field === "phoneNumber"
-                        ? "tel"
-                        : "text"
-                    }
+                    type={field === "email" ? "email" : field === "phoneNumber" ? "tel" : "text"}
                     name={field}
                     value={form[field]}
                     onChange={(e) => onChangeForm(field, e.target.value)}
@@ -600,10 +573,7 @@ export default function Form() {
             <div className="flex gap-x-8 sm:col-span-2">
               {["origin", "destination"].map((field) => (
                 <div key={field} className="flex-1">
-                  <label
-                    htmlFor={field}
-                    className="block text-lg font-semibold leading-6 text-black"
-                  >
+                  <label htmlFor={field} className="block text-lg font-semibold leading-6 text-black">
                     {field.charAt(0).toUpperCase() + field.slice(1)}
                   </label>
                   <div className="relative mt-3">
@@ -614,9 +584,7 @@ export default function Form() {
                       onChange={(e) => onChangeForm(field, e.target.value)}
                       className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
                     >
-                      <option value="">
-                        Select {field.charAt(0).toUpperCase() + field.slice(1)}
-                      </option>
+                      <option value="">Select {field.charAt(0).toUpperCase() + field.slice(1)}</option>
                       {renderAirportOptions(airports)}
                     </select>
                   </div>
@@ -624,10 +592,7 @@ export default function Form() {
               ))}
             </div>
             <div className="sm:col-span-2">
-              <label
-                htmlFor="pax"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
+              <label htmlFor="pax" className="block text-lg font-semibold leading-6 text-black">
                 Total Passengers
               </label>
               <div className="mt-3">
@@ -642,10 +607,7 @@ export default function Form() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <label
-                htmlFor="service"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
+              <label htmlFor="service" className="block text-lg font-semibold leading-6 text-black">
                 Service
               </label>
               <div className="relative mt-3">
@@ -674,28 +636,15 @@ export default function Form() {
 
         {/* Modal HTML */}
         {showModal && (
-          <div
-            className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity"
-            role="dialog"
-            aria-labelledby="modal-title"
-            aria-modal="true"
-          >
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity" role="dialog" aria-labelledby="modal-title" aria-modal="true">
             <div className="relative bg-white rounded-lg shadow-lg max-w-sm mx-4 sm:mx-8 p-6 overflow-hidden">
-              <h3
-                id="modal-title"
-                className="text-2xl font-bold text-gray-900 mb-4"
-              >
+              <h3 id="modal-title" className="text-2xl font-bold text-gray-900 mb-4">
                 Submission Successful!
               </h3>
-              <p className="text-gray-700 mb-6">
-                Your order has been received. Thank you!
-              </p>
+              <p className="text-gray-700 mb-6">Your order has been received. Thank you!</p>
               <div className="flex justify-end">
-                <Link to={"/dashboard"}>
-                  <button
-                    className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 transition-colors"
-                    onClick={() => setShowModal(false)}
-                  >
+                <Link to={"/form"}>
+                  <button className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 transition-colors" onClick={() => setShowModal(false)}>
                     OK
                   </button>
                 </Link>
