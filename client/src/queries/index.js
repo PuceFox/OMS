@@ -43,3 +43,23 @@ export const MUTATION_ADD_ORDER = gql`
     }
   }
 `;
+
+export const QUERY_GET_ORDERS = gql`
+query GetAirport {
+  getOrder {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    createdAt
+    updatedAt
+  }
+}
+`
+
+
