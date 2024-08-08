@@ -2,6 +2,7 @@ const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.SECRET_KEY;
 const bcrypt = require("bcryptjs");
+const { findCompanyByEmail } = require("../models/company");
 
 //Create Error
 function createError(message, code) {
@@ -31,7 +32,7 @@ const setToken = (payload) => {
 };
 
 const verifyToken = (token) => {
-  return jwt.verify(token, jwtSecret);
+  return jwt.decode(token, jwtSecret);
 };
 
 //Set Authentication
@@ -49,15 +50,15 @@ const authentication = async (req) => {
   }
 
   const decodeToken = verifyToken(token);
-  const user = await findUserById(decodeToken.id);
+  const user = await findCompanyByEmail(decodeToken.companyEmail);
 
   if (!user) {
     throw createError("Invalid User", 401);
   }
 
   return {
-    userId: user.id,
-    email: user.email,
+    companyId: user._id,
+    companyEmail: user.email,
   };
 };
 
