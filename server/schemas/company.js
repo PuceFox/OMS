@@ -40,19 +40,6 @@ const resolvers = {
       //compare password
       if (!comparePassword(password, company.password))
         throw createError("Invalid Credential", 401);
-      /*
-      try {
-        const info = await transporter.sendMail({
-          from: "<zakyabdurrahman10@gmail.com>",
-          to: "yoel.kristiadi.20@gmail.com",
-          subject: "Business Dealing",
-          text: "HAHA MAMPUS",
-          html: "<b>Hello world?</b>",
-        });
-      } catch (error) {
-        console.log(error);
-      }
-        */
 
       const payload = {
         companyId: company._id,
