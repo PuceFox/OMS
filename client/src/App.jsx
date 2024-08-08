@@ -28,8 +28,6 @@ import router from "./router";
 import { client } from "../config/apollo";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
