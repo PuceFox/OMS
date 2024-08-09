@@ -1,470 +1,20 @@
-// // import { useMutation, useQuery } from "@apollo/client";
-// // import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
-// // import { useState } from "react";
-
-// // export default function Form() {
-// //   const {
-// //     data: airportData,
-// //     loading: airportLoading,
-// //     error: airportError,
-// //   } = useQuery(GET_AIRPORTS);
-// //   const {
-// //     data: serviceData,
-// //     loading: serviceLoading,
-// //     error: serviceError,
-// //   } = useQuery(GET_SERVICES);
-
-// //   const [form, setForm] = useState({
-// //     fullname: "",
-// //     email: "",
-// //     phoneNumber: "",
-// //     origin: "",
-// //     destination: "",
-// //     service: "",
-// //     pax: "",
-// //   });
-
-// //   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
-// //     onCompleted: () => {
-// //       setForm({
-// //         fullname: "",
-// //         email: "",
-// //         phoneNumber: "",
-// //         origin: "",
-// //         destination: "",
-// //         service: "",
-// //         pax: "",
-// //       });
-// //     },
-// //     onError: (error) => {
-// //       // Handle error appropriately
-// //       console.error("Mutation Error:", error);
-// //     },
-// //   });
-
-// //   if (airportLoading || serviceLoading) return <p>Loading...</p>;
-// //   if (airportError || serviceError)
-// //     return <p>Error! {airportError?.message || serviceError?.message}</p>;
-
-// //   const airports = airportData?.getAirport || [];
-// //   const serviceTypes =
-// //     serviceData?.getService?.map((service) => service.type) || [];
-
-// //   const renderAirportOptions = (airports) => {
-// //     return airports.map((airport) => (
-// //       <option key={airport.iataCode} value={airport.iataCode}>
-// //         {airport.city} - {airport.airport} ({airport.iataCode})
-// //       </option>
-// //     ));
-// //   };
-
-// //   const renderServiceOptions = (serviceTypes) => {
-// //     return serviceTypes.map((type, index) => (
-// //       <option key={index} value={type}>
-// //         {type}
-// //       </option>
-// //     ));
-// //   };
-
-// //   const onChangeForm = (key, value) => {
-// //     setForm((prevForm) => ({
-// //       ...prevForm,
-// //       [key]: value,
-// //     }));
-// //   };
-
-// //   const handleSubmit = async (event) => {
-// //     event.preventDefault();
-// //     try {
-// //       await addOrder({
-// //         variables: {
-// //           input: {
-// //             fullname: form.fullname,
-// //             email: form.email,
-// //             phoneNumber: form.phoneNumber,
-// //             origin: form.origin,
-// //             destination: form.destination,
-// //             service: form.service,
-// //             pax: parseInt(form.pax, 10), // Ensure pax is a number
-// //           },
-// //         },
-// //       });
-// //     } catch (error) {
-// //       console.error("Submit Error:", error);
-// //     }
-// //   };
-
-// //   return (
-// //     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 min-h-screen flex items-center justify-center">
-// //       <div className="relative z-10 mx-auto max-w-2xl text-center">
-// //         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-// //           INPUT FORM
-// //         </h2>
-// //         <p className="mt-2 text-lg leading-8 text-gray-600">
-// //           Please fill in your details.
-// //         </p>
-// //         <form
-// //           onSubmit={handleSubmit}
-// //           className="mx-auto mt-8 max-w-xl space-y-6"
-// //         >
-// //           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-// //             {["fullname", "email", "phoneNumber"].map((field) => (
-// //               <div key={field} className="sm:col-span-2">
-// //                 <label
-// //                   htmlFor={field}
-// //                   className="block text-lg font-semibold leading-6 text-black"
-// //                 >
-// //                   {field.charAt(0).toUpperCase() +
-// //                     field.slice(1).replace(/([A-Z])/g, " $1")}
-// //                 </label>
-// //                 <div className="mt-3">
-// //                   <input
-// //                     type={
-// //                       field === "email"
-// //                         ? "email"
-// //                         : field === "phoneNumber"
-// //                         ? "tel"
-// //                         : "text"
-// //                     }
-// //                     name={field}
-// //                     value={form[field]}
-// //                     onChange={(e) => onChangeForm(field, e.target.value)}
-// //                     autoComplete={field}
-// //                     className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-// //                   />
-// //                 </div>
-// //               </div>
-// //             ))}
-// //             <div className="flex gap-x-8 sm:col-span-2">
-// //               {["origin", "destination"].map((field) => (
-// //                 <div key={field} className="flex-1">
-// //                   <label
-// //                     htmlFor={field}
-// //                     className="block text-lg font-semibold leading-6 text-black"
-// //                   >
-// //                     {field.charAt(0).toUpperCase() + field.slice(1)}
-// //                   </label>
-// //                   <div className="relative mt-3">
-// //                     <select
-// //                       id={field}
-// //                       name={field}
-// //                       value={form[field]}
-// //                       onChange={(e) => onChangeForm(field, e.target.value)}
-// //                       className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-// //                     >
-// //                       <option value="">
-// //                         Select {field.charAt(0).toUpperCase() + field.slice(1)}
-// //                       </option>
-// //                       {renderAirportOptions(airports)}
-// //                     </select>
-// //                   </div>
-// //                 </div>
-// //               ))}
-// //             </div>
-// //             <div className="sm:col-span-2">
-// //               <label
-// //                 htmlFor="pax"
-// //                 className="block text-lg font-semibold leading-6 text-black"
-// //               >
-// //                 Total Passengers
-// //               </label>
-// //               <div className="mt-3">
-// //                 <input
-// //                   type="number"
-// //                   name="pax"
-// //                   value={form.pax}
-// //                   onChange={(e) => onChangeForm("pax", e.target.value)}
-// //                   autoComplete="pax"
-// //                   className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-// //                 />
-// //               </div>
-// //             </div>
-// //             <div className="sm:col-span-2">
-// //               <label
-// //                 htmlFor="service"
-// //                 className="block text-lg font-semibold leading-6 text-black"
-// //               >
-// //                 Service
-// //               </label>
-// //               <div className="relative mt-3">
-// //                 <select
-// //                   id="service"
-// //                   name="service"
-// //                   value={form.service}
-// //                   onChange={(e) => onChangeForm("service", e.target.value)}
-// //                   className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-// //                 >
-// //                   <option value="">Select Service</option>
-// //                   {renderServiceOptions(serviceTypes)}
-// //                 </select>
-// //               </div>
-// //             </div>
-// //           </div>
-// //           <div className="mt-8">
-// //             <button
-// //               type="submit"
-// //               className="block w-full rounded-md bg-cyan-600 px-4 py-3 text-center text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-// //             >
-// //               Submit
-// //             </button>
-// //           </div>
-// //         </form>
-// //       </div>
-// //     </div>
-// //   );
-// // }
-
-// import { useMutation, useQuery } from "@apollo/client";
-// import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
-// import { useState } from "react";
-
-// export default function Form() {
-//   const {
-//     data: airportData,
-//     loading: airportLoading,
-//     error: airportError,
-//   } = useQuery(GET_AIRPORTS);
-//   const {
-//     data: serviceData,
-//     loading: serviceLoading,
-//     error: serviceError,
-//   } = useQuery(GET_SERVICES);
-
-//   const [form, setForm] = useState({
-//     fullname: "",
-//     email: "",
-//     phoneNumber: "",
-//     origin: "",
-//     destination: "",
-//     service: "",
-//     pax: "",
-//   });
-
-//   const [showModal, setShowModal] = useState(false);
-
-//   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
-//     onCompleted: () => {
-//       setForm({
-//         fullname: "",
-//         email: "",
-//         phoneNumber: "",
-//         origin: "",
-//         destination: "",
-//         service: "",
-//         pax: "",
-//       });
-//       setShowModal(true); // Show the modal on completion
-//     },
-//     onError: (error) => {
-//       console.error("Mutation Error:", error);
-//     },
-//   });
-
-//   if (airportLoading || serviceLoading) return <p>Loading...</p>;
-//   if (airportError || serviceError)
-//     return <p>Error! {airportError?.message || serviceError?.message}</p>;
-
-//   const airports = airportData?.getAirport || [];
-//   const serviceTypes =
-//     serviceData?.getService?.map((service) => service.type) || [];
-
-//   const renderAirportOptions = (airports) => {
-//     return airports.map((airport) => (
-//       <option key={airport.iataCode} value={airport.iataCode}>
-//         {airport.city} - {airport.airport} ({airport.iataCode})
-//       </option>
-//     ));
-//   };
-
-//   const renderServiceOptions = (serviceTypes) => {
-//     return serviceTypes.map((type, index) => (
-//       <option key={index} value={type}>
-//         {type}
-//       </option>
-//     ));
-//   };
-
-//   const onChangeForm = (key, value) => {
-//     setForm((prevForm) => ({
-//       ...prevForm,
-//       [key]: value,
-//     }));
-//   };
-
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-//     try {
-//       await addOrder({
-//         variables: {
-//           input: {
-//             fullname: form.fullname,
-//             email: form.email,
-//             phoneNumber: form.phoneNumber,
-//             origin: form.origin,
-//             destination: form.destination,
-//             service: form.service,
-//             pax: parseInt(form.pax, 10), // Ensure pax is a number
-//           },
-//         },
-//       });
-//     } catch (error) {
-//       console.error("Submit Error:", error);
-//     }
-//   };
-
-//   return (
-//     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 min-h-screen flex items-center justify-center">
-//       <div className="relative z-10 mx-auto max-w-2xl text-center">
-//         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-//           INPUT FORM
-//         </h2>
-//         <p className="mt-2 text-lg leading-8 text-gray-600">
-//           Please fill in your details.
-//         </p>
-//         <form
-//           onSubmit={handleSubmit}
-//           className="mx-auto mt-8 max-w-xl space-y-6"
-//         >
-//           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-//             {["fullname", "email", "phoneNumber"].map((field) => (
-//               <div key={field} className="sm:col-span-2">
-//                 <label
-//                   htmlFor={field}
-//                   className="block text-lg font-semibold leading-6 text-black"
-//                 >
-//                   {field.charAt(0).toUpperCase() +
-//                     field.slice(1).replace(/([A-Z])/g, " $1")}
-//                 </label>
-//                 <div className="mt-3">
-//                   <input
-//                     type={
-//                       field === "email"
-//                         ? "email"
-//                         : field === "phoneNumber"
-//                         ? "tel"
-//                         : "text"
-//                     }
-//                     name={field}
-//                     value={form[field]}
-//                     onChange={(e) => onChangeForm(field, e.target.value)}
-//                     autoComplete={field}
-//                     className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-//                   />
-//                 </div>
-//               </div>
-//             ))}
-//             <div className="flex gap-x-8 sm:col-span-2">
-//               {["origin", "destination"].map((field) => (
-//                 <div key={field} className="flex-1">
-//                   <label
-//                     htmlFor={field}
-//                     className="block text-lg font-semibold leading-6 text-black"
-//                   >
-//                     {field.charAt(0).toUpperCase() + field.slice(1)}
-//                   </label>
-//                   <div className="relative mt-3">
-//                     <select
-//                       id={field}
-//                       name={field}
-//                       value={form[field]}
-//                       onChange={(e) => onChangeForm(field, e.target.value)}
-//                       className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-//                     >
-//                       <option value="">
-//                         Select {field.charAt(0).toUpperCase() + field.slice(1)}
-//                       </option>
-//                       {renderAirportOptions(airports)}
-//                     </select>
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-//             <div className="sm:col-span-2">
-//               <label
-//                 htmlFor="pax"
-//                 className="block text-lg font-semibold leading-6 text-black"
-//               >
-//                 Total Passengers
-//               </label>
-//               <div className="mt-3">
-//                 <input
-//                   type="number"
-//                   name="pax"
-//                   value={form.pax}
-//                   onChange={(e) => onChangeForm("pax", e.target.value)}
-//                   autoComplete="pax"
-//                   className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-//                 />
-//               </div>
-//             </div>
-//             <div className="sm:col-span-2">
-//               <label
-//                 htmlFor="service"
-//                 className="block text-lg font-semibold leading-6 text-black"
-//               >
-//                 Service
-//               </label>
-//               <div className="relative mt-3">
-//                 <select
-//                   id="service"
-//                   name="service"
-//                   value={form.service}
-//                   onChange={(e) => onChangeForm("service", e.target.value)}
-//                   className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-//                 >
-//                   <option value="">Select Service</option>
-//                   {renderServiceOptions(serviceTypes)}
-//                 </select>
-//               </div>
-//             </div>
-//           </div>
-//           <div className="mt-8">
-//             <button
-//               type="submit"
-//               className="block w-full rounded-md bg-cyan-600 px-4 py-3 text-center text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-//             >
-//               Submit
-//             </button>
-//           </div>
-//         </form>
-
-//         {/* Modal HTML */}
-//         {showModal && (
-//           <div
-//             className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50"
-//             role="dialog"
-//             aria-labelledby="modal-title"
-//             aria-modal="true"
-//           >
-//             <div className="modal-box bg-white p-6 rounded shadow-lg">
-//               <h3 id="modal-title" className="text-lg font-bold">
-//                 Submission Successful!
-//               </h3>
-//               <p className="py-4">Your form has been submitted successfully.</p>
-//               <div className="modal-action flex justify-end gap-4">
-//                 <button
-//                   className="btn btn-primary"
-//                   onClick={() => setShowModal(false)}
-//                 >
-//                   OK
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
+import Select from "react-select";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Form() {
-  const { data: airportData, loading: airportLoading, error: airportError } = useQuery(GET_AIRPORTS);
-  const { data: serviceData, loading: serviceLoading, error: serviceError } = useQuery(GET_SERVICES);
+  const {
+    data: airportData,
+    loading: airportLoading,
+    error: airportError,
+  } = useQuery(GET_AIRPORTS);
+  const {
+    data: serviceData,
+    loading: serviceLoading,
+    error: serviceError,
+  } = useQuery(GET_SERVICES);
 
   const [form, setForm] = useState({
     fullname: "",
@@ -476,6 +26,8 @@ export default function Form() {
     pax: "",
   });
 
+  const [originSelect, setOriginSelect] = useState(null);
+  const [destinationSelect, setDestinationSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
@@ -489,34 +41,41 @@ export default function Form() {
         service: "",
         pax: "",
       });
-      setShowModal(true); // Show the modal on completion
+      setOriginSelect(null);
+      setDestinationSelect(null);
+      setShowModal(true);
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
     },
   });
 
-  if (airportLoading || serviceLoading) return <p>Loading...</p>;
-  if (airportError || serviceError) return <p>Error! {airportError?.message || serviceError?.message}</p>;
+  if (airportLoading || serviceLoading)
+    return (
+      <div style={styles.loadingContainer}>
+        <div style={styles.spinner}></div>
+        <p style={styles.loadingText}>Please wait, we are fetching data...</p>
+      </div>
+    );
+  if (airportError || serviceError)
+    return <p>Error! {airportError?.message || serviceError?.message}</p>;
 
   const airports = airportData?.getAirport || [];
-  const serviceTypes = serviceData?.getService?.map((service) => service.type) || [];
+  const serviceTypes =
+    serviceData?.getService?.map((service) => service.type) || [];
 
   const renderAirportOptions = (airports) => {
-    return airports.map((airport) => (
-      <option key={airport.iataCode} value={airport.iataCode}>
-        {airport.city} - {airport.airport} ({airport.iataCode})
-      </option>
-    ));
+    return airports.map((airport) => ({
+      value: airport.iataCode,
+      label: `${airport.city} - ${airport.airport} (${airport.iataCode})`,
+    }));
   };
 
-  const renderServiceOptions = (serviceTypes) => {
-    return serviceTypes.map((type, index) => (
-      <option key={index} value={type}>
-        {type}
-      </option>
-    ));
-  };
+  const serviceOptions = serviceTypes.map((type) => (
+    <option key={type} value={type}>
+      {type}
+    </option>
+  ));
 
   const onChangeForm = (key, value) => {
     setForm((prevForm) => ({
@@ -537,7 +96,7 @@ export default function Form() {
             origin: form.origin,
             destination: form.destination,
             service: form.service,
-            pax: parseInt(form.pax, 10), // Ensure pax is a number
+            pax: parseInt(form.pax, 10),
           },
         },
       });
@@ -547,112 +106,276 @@ export default function Form() {
   };
 
   return (
-    <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 min-h-screen flex items-center justify-center">
-      <div className="relative z-10 mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">INPUT FORM</h2>
-        <p className="mt-2 text-lg leading-8 text-gray-600">Please fill in your details.</p>
-        <form onSubmit={handleSubmit} className="mx-auto mt-8 max-w-xl space-y-6">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-            {["fullname", "email", "phoneNumber"].map((field) => (
-              <div key={field} className="sm:col-span-2">
-                <label htmlFor={field} className="block text-lg font-semibold leading-6 text-black">
-                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1")}
-                </label>
-                <div className="mt-3">
-                  <input
-                    type={field === "email" ? "email" : field === "phoneNumber" ? "tel" : "text"}
-                    name={field}
-                    value={form[field]}
-                    onChange={(e) => onChangeForm(field, e.target.value)}
-                    autoComplete={field}
-                    className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                  />
-                </div>
-              </div>
-            ))}
-            <div className="flex gap-x-8 sm:col-span-2">
-              {["origin", "destination"].map((field) => (
-                <div key={field} className="flex-1">
-                  <label htmlFor={field} className="block text-lg font-semibold leading-6 text-black">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <div className="relative mt-3">
-                    <select
-                      id={field}
-                      name={field}
-                      value={form[field]}
-                      onChange={(e) => onChangeForm(field, e.target.value)}
-                      className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                    >
-                      <option value="">Select {field.charAt(0).toUpperCase() + field.slice(1)}</option>
-                      {renderAirportOptions(airports)}
-                    </select>
-                  </div>
-                </div>
-              ))}
+    <>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Lora:wght@400&display=swap');
+
+          h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          h2 {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-style: italic;
+          }
+
+          .origin-0 {
+            transform-origin: 0%;
+          }
+
+          input:focus ~ .placeholder-text,
+          input:not(:placeholder-shown) ~ .placeholder-text,
+          select:focus ~ .placeholder-text,
+          select:not([value='']):valid ~ .placeholder-text {
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
+              skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+            --tw-scale-x: 0.75;
+            --tw-scale-y: 0.75;
+            --tw-translate-y: -1.5rem;
+          }
+
+          input:focus ~ .placeholder-text,
+          select:focus ~ .placeholder-text {
+            --tw-text-opacity: 1;
+            color: rgba(0, 0, 0, var(--tw-text-opacity));
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%) scale(0.75);
+            top: 0.25rem;
+          }
+
+          .form-input {
+            position: relative;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #CBD5E0;
+          }
+
+          .placeholder-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            color: #9CA3AF;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            text-align: center;
+          }
+
+          .form-input input,
+          .form-input select,
+          .react-select__control {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            background-color: transparent;
+            border: none;
+            outline: none;
+          }
+
+          .react-select__control {
+            border-bottom: 2px solid #CBD5E0;
+          }
+
+          .react-select__placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #9CA3AF;
+            font-size: 1.125rem;
+          }
+
+          .react-select__menu {
+            font-size: 1.125rem;
+          }
+
+          .react-select__value-container {
+            padding: 0.5rem;
+          }
+        `}
+      </style>
+      <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
+        <div className="mx-auto max-w-3xl px-8 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+          <h1>Input Form</h1>
+          <h2>Please fill in your details...</h2>
+          <form id="form" noValidate onSubmit={handleSubmit}>
+            <div className="form-input">
+              <input
+                type="text"
+                name="fullname"
+                placeholder=" "
+                value={form.fullname}
+                onChange={(e) => onChangeForm("fullname", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Full Name</div>
             </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="pax" className="block text-lg font-semibold leading-6 text-black">
-                Total Passengers
-              </label>
-              <div className="mt-3">
-                <input
-                  type="number"
-                  name="pax"
-                  value={form.pax}
-                  onChange={(e) => onChangeForm("pax", e.target.value)}
-                  autoComplete="pax"
-                  className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                />
-              </div>
+            <div className="form-input">
+              <input
+                type="email"
+                name="email"
+                placeholder=" "
+                value={form.email}
+                onChange={(e) => onChangeForm("email", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Email Address</div>
             </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="service" className="block text-lg font-semibold leading-6 text-black">
-                Service
-              </label>
-              <div className="relative mt-3">
-                <select
-                  id="service"
-                  name="service"
-                  value={form.service}
-                  onChange={(e) => onChangeForm("service", e.target.value)}
-                  className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                >
-                  <option value="">Select Service</option>
-                  {renderServiceOptions(serviceTypes)}
-                </select>
-              </div>
+            <div className="form-input">
+              <input
+                type="tel"
+                name="phoneNumber"
+                placeholder=" "
+                value={form.phoneNumber}
+                onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Phone Number</div>
             </div>
-          </div>
-          <div className="mt-8">
+            <div className="text-center mb-4">FROM</div>
+            <div className="form-input">
+              <Select
+                id="origin"
+                name="origin"
+                value={originSelect}
+                onChange={(option) => {
+                  onChangeForm("origin", option?.value || "");
+                  setOriginSelect(option);
+                }}
+                options={renderAirportOptions(airports)}
+                placeholder="Select Departure City"
+              />
+            </div>
+            <div className="text-center mb-4">TO</div>
+            <div className="form-input">
+              <Select
+                id="destination"
+                name="destination"
+                value={destinationSelect}
+                onChange={(option) => {
+                  onChangeForm("destination", option?.value || "");
+                  setDestinationSelect(option);
+                }}
+                options={renderAirportOptions(airports)}
+                placeholder="Select Destination Airport"
+              />
+            </div>
+            <div className="text-center mb-4">SERVICES</div>
+            <div className="form-input">
+              <select
+                id="service"
+                name="service"
+                value={form.service}
+                onChange={(e) => onChangeForm("service", e.target.value)}
+                required
+              >
+                <option value="" disabled>
+                  Select Type
+                </option>
+                {serviceOptions}
+              </select>
+            </div>
+            <div className="form-input">
+              <input
+                type="number"
+                name="pax"
+                placeholder=" "
+                value={form.pax}
+                onChange={(e) => onChangeForm("pax", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Number of Passengers</div>
+            </div>
             <button
+              id="button"
               type="submit"
-              className="block w-full rounded-md bg-cyan-600 px-4 py-3 text-center text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="w-full px-6 py-3 mt-4 text-lg text-white transition-all duration-150 ease-linear rounded-lg shadow outline-none bg-purple-800 hover:bg-blue-600 hover:shadow-lg focus:outline-none"
             >
               Submit
             </button>
-          </div>
-        </form>
-
-        {/* Modal HTML */}
-        {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity" role="dialog" aria-labelledby="modal-title" aria-modal="true">
-            <div className="relative bg-white rounded-lg shadow-lg max-w-sm mx-4 sm:mx-8 p-6 overflow-hidden">
-              <h3 id="modal-title" className="text-2xl font-bold text-gray-900 mb-4">
-                Submission Successful!
-              </h3>
-              <p className="text-gray-700 mb-6">Your order has been received, please check your email for price estimation</p>
-              <div className="flex justify-end">
+          </form>
+          {showModal && (
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-xl font-semibold">Success</h2>
+                <p className="mt-2">
+                  Your order has been received, please check your email for
+                  price estimation!
+                </p>
                 <Link to={"/form"}>
-                  <button className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 transition-colors" onClick={() => setShowModal(false)}>
-                    OK
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  >
+                    Close
                   </button>
                 </Link>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
+
+const styles = {
+  loadingContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100vh",
+    backgroundColor: "#f0f0f0",
+  },
+  spinner: {
+    border: "16px solid #f3f3f3",
+    borderRadius: "50%",
+    borderTop: "16px solid #3498db",
+    width: "120px",
+    height: "120px",
+    animation: "spin 2s linear infinite",
+  },
+  loadingText: {
+    marginTop: "20px",
+    fontSize: "1.25rem",
+    color: "#333",
+  },
+};
+
+// Add this to the <style> block in the return statement of your component:
+const spinnerStyle = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+// Add this to the <style> block in the return statement of your component:
+const spinnerAnimation = `
+  .spinner {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+  }
+`;
