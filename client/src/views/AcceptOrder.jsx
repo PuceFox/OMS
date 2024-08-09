@@ -3,12 +3,14 @@ import formatPrice from "../utils/formatDollar";
 import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useState } from "react";
 
 export function AcceptOrder({ route }) {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
+  const [offer, setOffer] = useState(0);
 
-  const aircraft = queries.get("aircraft");
+  
   const price = queries.get("price");
   const nav = useNavigate();
 
@@ -24,6 +26,8 @@ export function AcceptOrder({ route }) {
   //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
+  console.log(order);
+  
 
   async function submitOrder() {
     updateOrder({
@@ -75,7 +79,7 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Aircraft
               </h2>
-              <p className="text-gray-600">{aircraft}</p>
+              <p className="text-gray-600">{''}</p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
