@@ -90,7 +90,7 @@ const typeDefs = `#graphql
   type Mutation {
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
-    updateOrderData(id: ID, price: Int, aircraft: String, status: String) : String
+    updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : Order
   }
 `;
 
@@ -249,22 +249,26 @@ const resolvers = {
 
     // Function Update Order Data
     updateOrderData: async (_parent, args) => {
-      const { id, price, aircraft, status } = args;
-      const orders = await OrderTable();
-      await orders.updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: {
-            price,
-            aircraft,
-            status,
+      const { id, price, aircraft, status, reason } = args;
+  
+        const orders = await OrderTable();
+        await orders.updateOne(
+          {
+            _id: new ObjectId(id),
           },
-        }
-      );
-      return "Success update order data";
-    },
+          {
+            $set: {
+              price,
+              aircraft,
+              status,
+              reason
+            },
+          }
+        );
+
+        return "Success update order data";
+      }
+
   },
 };
 
