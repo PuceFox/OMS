@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { UPDATE_ORDER_DATA } from './graphql/mutations'; 
+import { UPDATE_ORDER_DATA } from '../queries/index'; 
 import Button from './components/Button'; 
 import Radio from './components/Radio'; 
 
