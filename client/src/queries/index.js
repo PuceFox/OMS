@@ -80,6 +80,13 @@ export const QUERY_ORDER_BY_ID = gql`
       aircraft
       createdAt
       updatedAt
+      offers {
+        assetName
+        flightTimeInMinutes
+        price
+        serviceType
+        speed
+      }
     }
   }
 `;

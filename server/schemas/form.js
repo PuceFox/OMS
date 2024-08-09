@@ -36,6 +36,15 @@ const typeDefs = `#graphql
     createdAt: String
     updatedAt: String
     reason: String
+    offers: [Offer]
+  }
+
+  type Offer {
+    serviceType: String
+    assetName: String
+    speed: Int
+    flightTimeInMinutes: Int
+    price: Int
   }
 
   type DataChart {
