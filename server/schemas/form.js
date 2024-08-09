@@ -10,10 +10,6 @@ const {
   findServiceTypeByQuery,
   findAirportByQuery,
 } = require("../models/form");
-const { createError } = require("../helpers/helpers");
-
-const { sendMail } = require("../helpers/mailer");
-const { aircraftCard } = require("../helpers/emailComponents");
 
 const typeDefs = `#graphql
   type Order {
@@ -138,30 +134,9 @@ const resolvers = {
       } = args.input;
 
       const offerData = await createFlight(origin, destination, service, pax);
-      /*
-      if (orderData.length === 0) {
-        throw createError("No Aircraft was found", 400);
-      }
-        */
       console.log(offerData);
       console.log("************************");
-      let cards = "";
 
-      offerData.forEach((e) => {
-        cards += aircraftCard(
-          e.serviceType,
-          e.assetName,
-          e.price,
-          e.flightTimeInMinutes
-        );
-      });
-
-      let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
-        ${cards} 
-      </div>`;
-      await sendMail(emailContent, email, "Service Offer");
-
-      console.log("email send(?)");
       const orderData = await createOrder({
         fullname,
         email,
