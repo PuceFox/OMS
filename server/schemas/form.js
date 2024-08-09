@@ -16,6 +16,7 @@ const { createError } = require("../helpers/helpers");
 const { sendMail } = require("../helpers/mailer");
 const { aircraftCard } = require("../helpers/emailComponents");
 const { ObjectId } = require("mongodb");
+const CLIENT_URL = require("../helpers/clientUrl");
 
 const typeDefs = `#graphql
   type Order {
@@ -32,6 +33,7 @@ const typeDefs = `#graphql
     aircraft: String
     createdAt: String
     updatedAt: String
+    reason: String
   }
 
   type Airport {
@@ -130,54 +132,57 @@ const resolvers = {
   Mutation: {
     // Function Add Order
     addOrder: async (_parent, args) => {
-      const {
-        fullname,
-        email,
-        phoneNumber,
-        origin,
-        destination,
-        service,
-        pax,
-      } = args.input;
+      try {
+        const {
+          fullname,
+          email,
+          phoneNumber,
+          origin,
+          destination,
+          service,
+          pax,
+        } = args.input;
 
-      const offerData = await createFlight(origin, destination, service, pax);
-      /*
-      if (orderData.length === 0) {
-        throw createError("No Aircraft was found", 400);
-      }
-        */
-      console.log(offerData);
-      console.log("************************");
+        const offerData = await createFlight(origin, destination, service, pax);
+        /*
+        if (orderData.length === 0) {
+          throw createError("No Aircraft was found", 400);
+        }
+          */
+        console.log(offerData);
+        console.log("************************");
 
-      const orderData = await createOrder({
-        fullname,
-        email,
-        phoneNumber,
-        origin,
-        destination,
-        service,
-        pax,
-        status: "Pending",
-        price: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+        const orderData = await createOrder({
+          fullname,
+          email,
+          phoneNumber,
+          origin,
+          destination,
+          service,
+          pax,
+          status: "Pending",
+          price: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          reason: "",
+        });
 
-      let cards = "";
+        let cards = "";
 
-      offerData.forEach((e) => {
-        cards += aircraftCard(
-          e.serviceType,
-          e.assetName,
-          e.price,
-          e.flightTimeInMinutes,
-          orderData._id.toString()
-        );
-      });
+        offerData.forEach((e) => {
+          cards += aircraftCard(
+            e.serviceType,
+            e.assetName,
+            e.price,
+            e.flightTimeInMinutes,
+            orderData._id.toString()
+          );
+        });
 
-      let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
-        ${cards} 
-        <button
+        let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
+          ${cards} 
+          <a href="${CLIENT_URL}/reject/${orderData._id.toString()}">
+            <button
               style="
                 background-color: #cf0808;
                 color: white;
@@ -191,11 +196,16 @@ const resolvers = {
             >
               Reject
             </button>
-      </div>`;
-      await sendMail(emailContent, email, "Service Offer");
-      console.log("email send(?)");
+          </a>
+        </div>`;
+        await sendMail(emailContent, email, "Service Offer");
+        console.log("email send(?)");
 
-      return orderData;
+        return orderData;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     },
 
     // Function Update Status Order

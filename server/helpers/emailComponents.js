@@ -7,7 +7,7 @@ function aircraftCard(serviceType, assetName, price, flightTime, orderID) {
               <p style="font-size: 18px; color: #555; margin: 10px 0;">Aircraft: ${assetName}</p>
               <p style="font-size: 18px; color: #555; margin: 10px 0;">Flight Time: ${formattedTime}</p>
               <p style="font-size: 18px; color: #555; margin: 10px 0;">Price: $${price}</p>
-              <a href="${CLIENT_URL}/accept/${orderID}"
+              <a href="${CLIENT_URL}/accept/${orderID}?aircraft=${assetName}&price=${price}"
                     ><button
                       style="
                         background-color: #007bff;
