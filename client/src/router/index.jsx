@@ -6,6 +6,7 @@ import Dashboard from "../views/Dashboard";
 import Form from "../views/Form";
 import Profile from "../views/Profile";
 import Report from "../views/Report";
+import { AcceptOrder } from "../views/AcceptOrder";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,24 @@ const router = createBrowserRouter([
   {
     path: "/form",
     element: <Form />,
+    loader: () => {
+      if (localStorage.token) {
+        // console.log("udh login bos");
+        return redirect("/dashboard");
+      }
+      return null;
+    },
+  },
+  {
+    path: "/accept/:orderId",
+    element: <AcceptOrder />,
+    loader: () => {
+      if (localStorage.token) {
+        // console.log("udh login bos");
+        return redirect("/dashboard");
+      }
+      return null;
+    },
   },
   {
     element: <BaseLayout />,

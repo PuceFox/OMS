@@ -6,7 +6,7 @@ export default function BaseLayout() {
     <>
       <div className="flex">
         <SideBar />
-        <div className="flex-1 p-10">
+        <div className="flex-1 p-14">
           <Outlet />
         </div>
       </div>

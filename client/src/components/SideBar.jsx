@@ -54,6 +54,7 @@ export default function SideBar() {
                 Report
               </ListItem>
             </NavLink>
+
             <ListItem>
               <ListItemPrefix>
                 <InboxIcon className="h-5 w-5" />
