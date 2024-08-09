@@ -9,11 +9,13 @@ const {
   findServiceById,
   findServiceTypeByQuery,
   findAirportByQuery,
+  OrderTable,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
 const { sendMail } = require("../helpers/mailer");
 const { aircraftCard } = require("../helpers/emailComponents");
+const { ObjectId } = require("mongodb");
 
 const typeDefs = `#graphql
   type Order {
@@ -73,6 +75,7 @@ const typeDefs = `#graphql
   type Mutation {
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
+    updateOrderData(id: ID, price: Int, aircraft: String, status: String) : String
   }
 `;
 
@@ -203,6 +206,24 @@ const resolvers = {
       const orderData = await updateOrder(id, status);
 
       return orderData;
+    },
+
+    updateOrderData: async (_parent, args) => {
+      const { id, price, aircraft, status } = args;
+      const orders = await OrderTable();
+      await orders.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: {
+            price,
+            aircraft,
+            status,
+          },
+        }
+      );
+      return "Success update order data";
     },
   },
 };
