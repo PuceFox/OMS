@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { UPDATE_ORDER_DATA } from '../queries/index'; 
-import Button from './components/Button'; 
-import Radio from './components/Radio'; 
-
+import { Button, Radio } from "@material-tailwind/react";
 export function RejectOrder() {
   const { orderId } = useParams();
   const [updateReject] = useMutation(UPDATE_ORDER_DATA);
