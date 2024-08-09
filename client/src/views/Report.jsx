@@ -10,7 +10,7 @@ const chartConfig = {
   type: "pie",
   width: 280,
   height: 280,
-  series: [44, 55, 13, 43, 22],
+  series: [44, 55, 13, 43, 10],
   options: {
     chart: {
       toolbar: {
