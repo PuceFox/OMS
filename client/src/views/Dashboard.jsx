@@ -11,7 +11,7 @@ export default function Dashboard() {
   if (error) return <p>Error: {error.message}</p>;
 
   const tableRows = data.getOrder;
-  console.log(tableRows);
+  // console.log(tableRows);
 
   return (
     <div>
