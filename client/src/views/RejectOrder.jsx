@@ -53,7 +53,7 @@ export function RejectOrder({ route }) {
             Tell Us Why You Decline ?
           </h1>
         </div>
-        <form>
+        <form onSubmit={submitOrder}>
           <div className="p-6">
             <div className="grid ">
               <Radio
