@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useState } from "react";
+import { formatTime } from "../utils/formatTime";
 
 export function AcceptOrder({ route }) {
   const { orderId } = useParams();
@@ -26,6 +27,7 @@ export function AcceptOrder({ route }) {
   //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
+  
   console.log(order);
   
 
@@ -79,7 +81,11 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Aircraft
               </h2>
-              <p className="text-gray-600">{''}</p>
+              <select name="" id="" value={offer} onChange={(e) => setOffer(e.target.value)}>
+                {order?.offers.map((offer, i) => {
+                  return <option value={i}>{offer.assetName}</option>
+                })}
+              </select>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -97,7 +103,13 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Price
               </h2>
-              <p className="text-gray-600">{formatPrice(price)}</p>
+              <p className="text-gray-600">{formatPrice(order?.offers[offer].price)}</p>
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                Flight Time
+              </h2>
+              <p className="text-gray-600">{formatTime(order?.offers[offer].flightTimeInMinutes)}</p>
             </div>
           </div>
         </div>
