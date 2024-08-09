@@ -1,85 +1,69 @@
-import { Button, Radio } from "@material-tailwind/react";
-import formatPrice from "../utils/formatDollar";
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { UPDATE_ORDER_DATA } from './graphql/mutations'; // Adjust the import based on your project structure
+import Button from './components/Button'; // Adjust the import based on your project structure
+import Radio from './components/Radio'; // Adjust the import based on your project structure
 
-import { redirect, useParams } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import { UPDATE_ORDER_DATA } from "../queries";
-import { useState } from "react";
-
-export function RejectOrder({ route }) {
+export function RejectOrder() {
   const { orderId } = useParams();
-  const [updateReject, {}] = useMutation(UPDATE_ORDER_DATA);
+  const [updateReject] = useMutation(UPDATE_ORDER_DATA);
   const [reason, setReason] = useState("");
 
-  async function getReason(e) {
-    setReason(e.target.value);
+  function handleRadioChange(event) {
+    setReason(event.target.value);
   }
 
-  async function submitOrder(e) {
-    e.preventDefault();
+  async function submitOrder(event) {
+    event.preventDefault(); // Prevent the default form submission
     try {
       await updateReject({
         variables: {
           updateOrderDataId: orderId,
           status: "Rejected",
-          reason,
-        },
+          reason: reason
+        }
       });
-      redirect("/")
+      // Handle success (e.g., show a message or redirect)
     } catch (error) {
-      console.log(error);
+      // Handle error
+      console.error("Error updating order:", error);
     }
   }
-  //   console.log(orderId);
-
-  //   const data = {
-  //     _id: "66b4a0aeed2e1c5f2e0b702b",
-  //     fullname: "jajang",
-  //     email: "jajang@mail.com",
-  //     phoneNumber: "12345",
-  //     origin: "DJJ",
-  //     destination: "BTJ",
-  //     service: "VIP",
-  //     aircraft: "Gulfstream G150",
-  //     price: "5000",
-  //   };
-  //   console.log(data);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-purple-800 p-6">
-          <h1 className="text-3xl font-bold text-white">
-            Tell Us Why You Decline ?
-          </h1>
+          <h1 className="text-3xl font-bold text-white">Tell Us Why You Decline ?</h1>
         </div>
         <form onSubmit={submitOrder}>
           <div className="p-6">
-            <div className="grid ">
+            <div className="grid">
               <Radio
                 name="type"
                 label="I changed my mind"
                 value="I changed my mind"
                 checked={reason === "I changed my mind"}
-                onChange={getReason}
+                onChange={handleRadioChange}
               />
               <Radio
                 name="type"
                 label="Price is too expensive"
                 value="Price is too expensive"
                 checked={reason === "Price is too expensive"}
-                onChange={getReason}
+                onChange={handleRadioChange}
               />
               <Radio
                 name="type"
                 label="Deterioration"
                 value="Deterioration"
                 checked={reason === "Deterioration"}
-                onChange={getReason}
+                onChange={handleRadioChange}
               />
             </div>
           </div>
-          <div className="p-6 m-auto  w-fit">
+          <div className="p-6 m-auto w-fit">
             <Button type="submit" className="w-full bg-green-600">
               Confirm
             </Button>
