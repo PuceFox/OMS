@@ -27,10 +27,11 @@
 
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
+import { EXPRESS_API_URL } from "../src/constant/constant";
 
 // Create the HTTP link to your GraphQL server
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql", // Replace with your GraphQL endpoint
+  uri: `${EXPRESS_API_URL}`, // Replace with your GraphQL endpoint
 });
 
 const authLink = setContext((_, { headers }) => {
