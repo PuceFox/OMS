@@ -9,17 +9,11 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return earthRadiusKm * c;
-  }
-
-  function formatTime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours} hour(s) and ${remainingMinutes} minute(s)`;
   }
 
   try {
@@ -146,8 +140,7 @@ async function createFlight(departureCity, arrivalCity, serviceType, totalPax) {
       throw { name: "Wrong Airport Code" };
     }
 
-    return results
-
+    return results;
   } catch (err) {
     console.log(err);
     // next(err);
