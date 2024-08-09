@@ -2,7 +2,6 @@ import Select from "react-select";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
 import { useState } from "react";
-// import { Link } from "react-router-dom";
 
 export default function Form() {
   const {
@@ -30,6 +29,7 @@ export default function Form() {
   const [destinationSelect, setDestinationSelect] = useState(null);
   const [serviceSelect, setServiceSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
     onCompleted: () => {
@@ -86,8 +86,27 @@ export default function Form() {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!form.fullname) newErrors.fullname = "Full name is required";
+    if (!form.email) newErrors.email = "Email address is required";
+    if (!form.phoneNumber) newErrors.phoneNumber = "Phone number is required";
+    if (!form.origin) newErrors.origin = "Origin city is required";
+    if (!form.destination)
+      newErrors.destination = "Destination city is required";
+    if (!form.service) newErrors.service = "Service type is required";
+    if (!form.pax || isNaN(form.pax) || parseInt(form.pax, 10) <= 0)
+      newErrors.pax = "Number of passengers is required";
+    return newErrors;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
     try {
       await addOrder({
         variables: {
@@ -244,6 +263,13 @@ export default function Form() {
             padding: 0.5rem;
             justify-content: center;
           }
+
+          .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            text-align: center;
+          }
         `}
       </style>
       <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
@@ -258,9 +284,11 @@ export default function Form() {
                 placeholder=" "
                 value={form.fullname}
                 onChange={(e) => onChangeForm("fullname", e.target.value)}
-                required
               />
               <div className="placeholder-text">Full Name</div>
+              {errors.fullname && (
+                <div className="error-message">{errors.fullname}</div>
+              )}
             </div>
             <div className="form-input">
               <input
@@ -269,9 +297,11 @@ export default function Form() {
                 placeholder=" "
                 value={form.email}
                 onChange={(e) => onChangeForm("email", e.target.value)}
-                required
               />
               <div className="placeholder-text">Email Address</div>
+              {errors.email && (
+                <div className="error-message">{errors.email}</div>
+              )}
             </div>
             <div className="form-input">
               <input
@@ -280,9 +310,11 @@ export default function Form() {
                 placeholder=" "
                 value={form.phoneNumber}
                 onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
-                required
               />
               <div className="placeholder-text">Phone Number</div>
+              {errors.phoneNumber && (
+                <div className="error-message">{errors.phoneNumber}</div>
+              )}
             </div>
             <div className="form-input">
               <Select
@@ -297,6 +329,9 @@ export default function Form() {
                 placeholder="Select Origin City"
                 styles={customStyles}
               />
+              {errors.origin && (
+                <div className="error-message">{errors.origin}</div>
+              )}
             </div>
             <div className="form-input">
               <Select
@@ -311,6 +346,9 @@ export default function Form() {
                 placeholder="Select Destination City"
                 styles={customStyles}
               />
+              {errors.destination && (
+                <div className="error-message">{errors.destination}</div>
+              )}
             </div>
             <div className="form-input">
               <Select
@@ -325,6 +363,9 @@ export default function Form() {
                 placeholder="Select Service"
                 styles={customStyles}
               />
+              {errors.service && (
+                <div className="error-message">{errors.service}</div>
+              )}
             </div>
             <div className="form-input">
               <input
@@ -333,9 +374,9 @@ export default function Form() {
                 placeholder=" "
                 value={form.pax}
                 onChange={(e) => onChangeForm("pax", e.target.value)}
-                required
               />
               <div className="placeholder-text">Number of Passengers</div>
+              {errors.pax && <div className="error-message">{errors.pax}</div>}
             </div>
             <button
               className="mt-4 w-full px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
