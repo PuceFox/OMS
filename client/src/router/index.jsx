@@ -5,6 +5,7 @@ import Home from "../views/Home";
 import Dashboard from "../views/Dashboard";
 import Form from "../views/Form";
 import Profile from "../views/Profile";
+import Report from "../views/Report";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/report",
+        element: <Report />,
       },
     ],
   },

@@ -56,6 +56,8 @@ query GetAirport {
     service
     pax
     status
+    price
+    aircraft
     createdAt
     updatedAt
   }

@@ -1,6 +1,6 @@
 import React from "react";
 import { IconButton, Typography, List, ListItem, ListItemPrefix, ListItemSuffix, Chip, Accordion, AccordionHeader, AccordionBody, Alert, Input, Drawer, Card } from "@material-tailwind/react";
-import { PresentationChartBarIcon, ShoppingBagIcon, UserCircleIcon, Cog6ToothIcon, InboxIcon, PowerIcon } from "@heroicons/react/24/solid";
+import { PresentationChartBarIcon, ShoppingBagIcon, UserCircleIcon, Cog6ToothIcon, InboxIcon, PowerIcon, BeakerIcon, ChartBarIcon } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link as NavLink, useNavigate } from "react-router-dom";
 export default function SideBar() {
@@ -46,6 +46,14 @@ export default function SideBar() {
               </ListItem>
             </NavLink>
 
+            <NavLink to={"/report"}>
+              <ListItem>
+                <ListItemPrefix>
+                  <ChartBarIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Report
+              </ListItem>
+            </NavLink>
             <ListItem>
               <ListItemPrefix>
                 <InboxIcon className="h-5 w-5" />
