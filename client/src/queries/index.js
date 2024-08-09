@@ -90,12 +90,14 @@ export const UPDATE_ORDER_DATA = gql`
     $price: Int
     $aircraft: String
     $status: String
+    $reason: String
   ) {
     updateOrderData(
       id: $updateOrderDataId
       price: $price
       aircraft: $aircraft
       status: $status
+      reason: $reason
     )
   }
 `;
