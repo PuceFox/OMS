@@ -8,21 +8,19 @@ const { ApolloServer } = require("apollo-server-express");
 const { mongoConnect } = require("./config/mongoConnection");
 const { companyResolvers, companyTypeDefs } = require("./schemas/company");
 const { formTypeDefs, formResolvers } = require("./schemas/form");
-const { oauth2Client } = require("./utils/oauthClient");
-const { google } = require("googleapis");
 const { authentication } = require("./helpers/helpers");
 
 const server = new ApolloServer({
   typeDefs: [companyTypeDefs, formTypeDefs],
   resolvers: [companyResolvers, formResolvers],
   introspection: true,
-  context: async ({req, res}) => {
+  context: async ({ req, res }) => {
     return {
       authentication: async () => {
-        return await authentication(req)
-      }
-    }
-  }
+        return await authentication(req);
+      },
+    };
+  },
 });
 
 (async () => {
