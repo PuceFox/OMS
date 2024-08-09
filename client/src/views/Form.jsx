@@ -1,7 +1,8 @@
+import Select from "react-select";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 export default function Form() {
   const {
@@ -25,6 +26,9 @@ export default function Form() {
     pax: "",
   });
 
+  const [originSelect, setOriginSelect] = useState(null);
+  const [destinationSelect, setDestinationSelect] = useState(null);
+  const [serviceSelect, setServiceSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
@@ -38,35 +42,41 @@ export default function Form() {
         service: "",
         pax: "",
       });
-      setShowModal(true); // Show the modal on completion
+      setOriginSelect(null);
+      setDestinationSelect(null);
+      setServiceSelect(null);
+      setShowModal(true);
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
     },
   });
 
-  if (airportLoading || serviceLoading) return <p>Loading...</p>;
+  if (airportLoading || serviceLoading)
+    return (
+      <div style={styles.loadingContainer}>
+        <div style={styles.spinner}></div>
+        <p style={styles.loadingText}>Please wait, we are fetching data...</p>
+      </div>
+    );
   if (airportError || serviceError)
     return <p>Error! {airportError?.message || serviceError?.message}</p>;
 
   const airports = airportData?.getAirport || [];
-  const serviceTypes =
-    serviceData?.getService?.map((service) => service.type) || [];
+  const services = serviceData?.getService || [];
 
   const renderAirportOptions = (airports) => {
-    return airports.map((airport) => (
-      <option key={airport.iataCode} value={airport.iataCode}>
-        {airport.city} - {airport.airport} ({airport.iataCode})
-      </option>
-    ));
+    return airports.map((airport) => ({
+      value: airport.iataCode,
+      label: `${airport.city} - ${airport.airport} (${airport.iataCode})`,
+    }));
   };
 
-  const renderServiceOptions = (serviceTypes) => {
-    return serviceTypes.map((type, index) => (
-      <option key={index} value={type}>
-        {type}
-      </option>
-    ));
+  const renderServiceOptions = (services) => {
+    return services.map((service) => ({
+      value: service.type,
+      label: service.type,
+    }));
   };
 
   const onChangeForm = (key, value) => {
@@ -88,7 +98,7 @@ export default function Form() {
             origin: form.origin,
             destination: form.destination,
             service: form.service,
-            pax: parseInt(form.pax, 10), // Ensure pax is a number
+            pax: parseInt(form.pax, 10),
           },
         },
       });
@@ -97,155 +107,286 @@ export default function Form() {
     }
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      margin: 0,
+      padding: 0,
+      textAlign: "center",
+      fontSize: "1.125rem",
+      color: "#9CA3AF",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "0.5rem",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      textAlign: "center",
+    }),
+  };
+
   return (
-    <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 min-h-screen flex items-center justify-center">
-      <div className="relative z-10 mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          INPUT FORM
-        </h2>
-        <p className="mt-2 text-lg leading-8 text-gray-600">
-          Please fill in your details.
-        </p>
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-8 max-w-xl space-y-6"
-        >
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-            {["fullname", "email", "phoneNumber"].map((field) => (
-              <div key={field} className="sm:col-span-2">
-                <label
-                  htmlFor={field}
-                  className="block text-lg font-semibold leading-6 text-black"
-                >
-                  {field.charAt(0).toUpperCase() +
-                    field.slice(1).replace(/([A-Z])/g, " $1")}
-                </label>
-                <div className="mt-3">
-                  <input
-                    type={
-                      field === "email"
-                        ? "email"
-                        : field === "phoneNumber"
-                        ? "tel"
-                        : "text"
-                    }
-                    name={field}
-                    value={form[field]}
-                    onChange={(e) => onChangeForm(field, e.target.value)}
-                    autoComplete={field}
-                    className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                  />
-                </div>
-              </div>
-            ))}
-            <div className="flex gap-x-8 sm:col-span-2">
-              {["origin", "destination"].map((field) => (
-                <div key={field} className="flex-1">
-                  <label
-                    htmlFor={field}
-                    className="block text-lg font-semibold leading-6 text-black"
-                  >
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <div className="relative mt-3">
-                    <select
-                      id={field}
-                      name={field}
-                      value={form[field]}
-                      onChange={(e) => onChangeForm(field, e.target.value)}
-                      className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                    >
-                      <option value="">
-                        Select {field.charAt(0).toUpperCase() + field.slice(1)}
-                      </option>
-                      {renderAirportOptions(airports)}
-                    </select>
-                  </div>
-                </div>
-              ))}
+    <>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Lora:wght@400&display=swap');
+
+          h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          h2 {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-style: italic;
+          }
+
+          .origin-0 {
+            transform-origin: 0%;
+          }
+
+          input:focus ~ .placeholder-text,
+          input:not(:placeholder-shown) ~ .placeholder-text,
+          .react-select__control:focus ~ .placeholder-text,
+          .react-select__control:not(:placeholder-shown) ~ .placeholder-text {
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
+              skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+            --tw-scale-x: 0.75;
+            --tw-scale-y: 0.75;
+            --tw-translate-y: -1.5rem;
+          }
+
+          input:focus ~ .placeholder-text,
+          .react-select__control:focus ~ .placeholder-text {
+            --tw-text-opacity: 1;
+            color: rgba(0, 0, 0, var(--tw-text-opacity));
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%) scale(0.75);
+            top: 0.25rem;
+          }
+
+          .form-input {
+            position: relative;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #CBD5E0;
+          }
+
+          .placeholder-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            color: #9CA3AF;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            text-align: center;
+          }
+
+          .form-input input,
+          .react-select__control {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            background-color: transparent;
+            border: none;
+            outline: none;
+          }
+
+          .react-select__control {
+            border-bottom: 2px solid #CBD5E0;
+          }
+
+          .react-select__placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #9CA3AF;
+            font-size: 1.125rem;
+          }
+
+          .react-select__menu {
+            font-size: 1.125rem;
+          }
+
+          .react-select__value-container {
+            padding: 0.5rem;
+            justify-content: center;
+          }
+        `}
+      </style>
+      <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
+        <div className="mx-auto max-w-3xl px-8 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
+          <h1>Input Form</h1>
+          <h2>Please fill in your details...</h2>
+          <form id="form" noValidate onSubmit={handleSubmit}>
+            <div className="form-input">
+              <input
+                type="text"
+                name="fullname"
+                placeholder=" "
+                value={form.fullname}
+                onChange={(e) => onChangeForm("fullname", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Full Name</div>
             </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="pax"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
-                Total Passengers
-              </label>
-              <div className="mt-3">
-                <input
-                  type="number"
-                  name="pax"
-                  value={form.pax}
-                  onChange={(e) => onChangeForm("pax", e.target.value)}
-                  autoComplete="pax"
-                  className="block w-full rounded-md border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                />
-              </div>
+            <div className="form-input">
+              <input
+                type="email"
+                name="email"
+                placeholder=" "
+                value={form.email}
+                onChange={(e) => onChangeForm("email", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Email Address</div>
             </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="service"
-                className="block text-lg font-semibold leading-6 text-black"
-              >
-                Service
-              </label>
-              <div className="relative mt-3">
-                <select
-                  id="service"
-                  name="service"
-                  value={form.service}
-                  onChange={(e) => onChangeForm("service", e.target.value)}
-                  className="block w-full rounded-md border-0 py-3 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-500 ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-400 text-lg"
-                >
-                  <option value="">Select Service</option>
-                  {renderServiceOptions(serviceTypes)}
-                </select>
-              </div>
+            <div className="form-input">
+              <input
+                type="tel"
+                name="phoneNumber"
+                placeholder=" "
+                value={form.phoneNumber}
+                onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Phone Number</div>
             </div>
-          </div>
-          <div className="mt-8">
+            <div className="form-input">
+              <Select
+                id="origin"
+                name="origin"
+                value={originSelect}
+                onChange={(option) => {
+                  onChangeForm("origin", option?.value || "");
+                  setOriginSelect(option);
+                }}
+                options={renderAirportOptions(airports)}
+                placeholder="Select Origin City"
+                styles={customStyles}
+              />
+            </div>
+            <div className="form-input">
+              <Select
+                id="destination"
+                name="destination"
+                value={destinationSelect}
+                onChange={(option) => {
+                  onChangeForm("destination", option?.value || "");
+                  setDestinationSelect(option);
+                }}
+                options={renderAirportOptions(airports)}
+                placeholder="Select Destination City"
+                styles={customStyles}
+              />
+            </div>
+            <div className="form-input">
+              <Select
+                id="service"
+                name="service"
+                value={serviceSelect}
+                onChange={(option) => {
+                  onChangeForm("service", option?.value || "");
+                  setServiceSelect(option);
+                }}
+                options={renderServiceOptions(services)}
+                placeholder="Select Service"
+                styles={customStyles}
+              />
+            </div>
+            <div className="form-input">
+              <input
+                type="number"
+                name="pax"
+                placeholder=" "
+                value={form.pax}
+                onChange={(e) => onChangeForm("pax", e.target.value)}
+                required
+              />
+              <div className="placeholder-text">Number of Passengers</div>
+            </div>
             <button
+              className="mt-4 w-full px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
               type="submit"
-              className="block w-full rounded-md bg-cyan-600 px-4 py-3 text-center text-lg font-semibold text-white shadow-sm hover:bg-cyan-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Submit
             </button>
-          </div>
-        </form>
-
-        {/* Modal HTML */}
-        {showModal && (
-          <div
-            className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 transition-opacity"
-            role="dialog"
-            aria-labelledby="modal-title"
-            aria-modal="true"
-          >
-            <div className="relative bg-white rounded-lg shadow-lg max-w-sm mx-4 sm:mx-8 p-6 overflow-hidden">
-              <h3
-                id="modal-title"
-                className="text-2xl font-bold text-gray-900 mb-4"
-              >
-                Submission Successful!
-              </h3>
-              <p className="text-gray-700 mb-6">
-                Your order has been received, please check your email for price
-                estimation
-              </p>
-              <div className="flex justify-end">
-                <Link to={"/form"}>
-                  <button
-                    className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 transition-colors"
-                    onClick={() => setShowModal(false)}
-                  >
-                    OK
-                  </button>
-                </Link>
+          </form>
+          {showModal && (
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Success!</h2>
+                <p>
+                  Your order has been received, please check your email for
+                  price estimation
+                </p>
+                <button
+                  onClick={closeModal}
+                  className="mt-4 ml-56 px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
+                >
+                  Close
+                </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
+
+const styles = {
+  loadingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    backgroundColor: "#f3f3f3",
+  },
+  spinner: {
+    border: "16px solid #f3f3f3",
+    borderRadius: "50%",
+    borderTop: "16px solid #3498db",
+    width: "120px",
+    height: "120px",
+    animation: "spin 2s linear infinite",
+  },
+  loadingText: {
+    marginLeft: "20px",
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    color: "#3498db",
+  },
+};
