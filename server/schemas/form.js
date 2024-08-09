@@ -22,6 +22,8 @@ const typeDefs = `#graphql
     service: String
     pax: Int
     status: String
+    price: Int
+    aircraft: String
     createdAt: String
     updatedAt: String
   }
@@ -74,7 +76,7 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, _args, contextValue) => {
-      const userLogin = await contextValue.authentication()
+      const userLogin = await contextValue.authentication();
       const orders = await findAllOrder();
       return orders;
     },
