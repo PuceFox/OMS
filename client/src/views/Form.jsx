@@ -2,7 +2,7 @@ import Select from "react-select";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 export default function Form() {
   const {
@@ -28,6 +28,7 @@ export default function Form() {
 
   const [originSelect, setOriginSelect] = useState(null);
   const [destinationSelect, setDestinationSelect] = useState(null);
+  const [serviceSelect, setServiceSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
@@ -43,6 +44,7 @@ export default function Form() {
       });
       setOriginSelect(null);
       setDestinationSelect(null);
+      setServiceSelect(null);
       setShowModal(true);
     },
     onError: (error) => {
@@ -61,8 +63,7 @@ export default function Form() {
     return <p>Error! {airportError?.message || serviceError?.message}</p>;
 
   const airports = airportData?.getAirport || [];
-  const serviceTypes =
-    serviceData?.getService?.map((service) => service.type) || [];
+  const services = serviceData?.getService || [];
 
   const renderAirportOptions = (airports) => {
     return airports.map((airport) => ({
@@ -71,11 +72,12 @@ export default function Form() {
     }));
   };
 
-  const serviceOptions = serviceTypes.map((type) => (
-    <option key={type} value={type}>
-      {type}
-    </option>
-  ));
+  const renderServiceOptions = (services) => {
+    return services.map((service) => ({
+      value: service.type,
+      label: service.type,
+    }));
+  };
 
   const onChangeForm = (key, value) => {
     setForm((prevForm) => ({
@@ -103,6 +105,39 @@ export default function Form() {
     } catch (error) {
       console.error("Submit Error:", error);
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      margin: 0,
+      padding: 0,
+      textAlign: "center",
+      fontSize: "1.125rem",
+      color: "#9CA3AF",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "0.5rem",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      textAlign: "center",
+    }),
   };
 
   return (
@@ -137,8 +172,8 @@ export default function Form() {
 
           input:focus ~ .placeholder-text,
           input:not(:placeholder-shown) ~ .placeholder-text,
-          select:focus ~ .placeholder-text,
-          select:not([value='']):valid ~ .placeholder-text {
+          .react-select__control:focus ~ .placeholder-text,
+          .react-select__control:not(:placeholder-shown) ~ .placeholder-text {
             --tw-translate-x: 0;
             --tw-translate-y: 0;
             --tw-rotate: 0;
@@ -152,7 +187,7 @@ export default function Form() {
           }
 
           input:focus ~ .placeholder-text,
-          select:focus ~ .placeholder-text {
+          .react-select__control:focus ~ .placeholder-text {
             --tw-text-opacity: 1;
             color: rgba(0, 0, 0, var(--tw-text-opacity));
             left: 50%;
@@ -179,7 +214,6 @@ export default function Form() {
           }
 
           .form-input input,
-          .form-input select,
           .react-select__control {
             width: 100%;
             padding: 1rem;
@@ -208,6 +242,7 @@ export default function Form() {
 
           .react-select__value-container {
             padding: 0.5rem;
+            justify-content: center;
           }
         `}
       </style>
@@ -249,7 +284,6 @@ export default function Form() {
               />
               <div className="placeholder-text">Phone Number</div>
             </div>
-            <div className="text-center mb-4">FROM</div>
             <div className="form-input">
               <Select
                 id="origin"
@@ -260,10 +294,10 @@ export default function Form() {
                   setOriginSelect(option);
                 }}
                 options={renderAirportOptions(airports)}
-                placeholder="Select Departure City"
+                placeholder="Select Origin City"
+                styles={customStyles}
               />
             </div>
-            <div className="text-center mb-4">TO</div>
             <div className="form-input">
               <Select
                 id="destination"
@@ -274,23 +308,23 @@ export default function Form() {
                   setDestinationSelect(option);
                 }}
                 options={renderAirportOptions(airports)}
-                placeholder="Select Destination Airport"
+                placeholder="Select Destination City"
+                styles={customStyles}
               />
             </div>
-            <div className="text-center mb-4">SERVICES</div>
             <div className="form-input">
-              <select
+              <Select
                 id="service"
                 name="service"
-                value={form.service}
-                onChange={(e) => onChangeForm("service", e.target.value)}
-                required
-              >
-                <option value="" disabled>
-                  Select Type
-                </option>
-                {serviceOptions}
-              </select>
+                value={serviceSelect}
+                onChange={(option) => {
+                  onChangeForm("service", option?.value || "");
+                  setServiceSelect(option);
+                }}
+                options={renderServiceOptions(services)}
+                placeholder="Select Service"
+                styles={customStyles}
+              />
             </div>
             <div className="form-input">
               <input
@@ -304,29 +338,26 @@ export default function Form() {
               <div className="placeholder-text">Number of Passengers</div>
             </div>
             <button
-              id="button"
+              className="mt-4 w-full px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
               type="submit"
-              className="w-full px-6 py-3 mt-4 text-lg text-white transition-all duration-150 ease-linear rounded-lg shadow outline-none bg-purple-800 hover:bg-blue-600 hover:shadow-lg focus:outline-none"
             >
               Submit
             </button>
           </form>
           {showModal && (
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h2 className="text-xl font-semibold">Success</h2>
-                <p className="mt-2">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Success!</h2>
+                <p>
                   Your order has been received, please check your email for
-                  price estimation!
+                  price estimation
                 </p>
-                <Link to={"/form"}>
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-                  >
-                    Close
-                  </button>
-                </Link>
+                <button
+                  onClick={closeModal}
+                  className="mt-4 ml-56 px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
+                >
+                  Close
+                </button>
               </div>
             </div>
           )}
@@ -339,11 +370,10 @@ export default function Form() {
 const styles = {
   loadingContainer: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     height: "100vh",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#f3f3f3",
   },
   spinner: {
     border: "16px solid #f3f3f3",
@@ -354,28 +384,9 @@ const styles = {
     animation: "spin 2s linear infinite",
   },
   loadingText: {
-    marginTop: "20px",
-    fontSize: "1.25rem",
-    color: "#333",
+    marginLeft: "20px",
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    color: "#3498db",
   },
 };
-
-// Add this to the <style> block in the return statement of your component:
-const spinnerStyle = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-
-// Add this to the <style> block in the return statement of your component:
-const spinnerAnimation = `
-  .spinner {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-  }
-`;
