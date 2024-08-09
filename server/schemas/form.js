@@ -160,6 +160,7 @@ const resolvers = {
           destination,
           service,
           pax,
+          offers: offerData,
           status: "Pending",
           price: 0,
           createdAt: new Date(),
@@ -179,8 +180,46 @@ const resolvers = {
           );
         });
 
-        let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
+        let emailContent = `
+         <p>
+          Dear ${fullname}, Thank you for considering Orderly for your private
+          jet charter needs. We are thrilled to offer you the luxury, comfort, and
+          flexibility that our service is known for. To ensure your experience is
+          perfectly tailored to your preferences, we provide a range of charter
+          options for ${service} flight. Please review the options below
+          and select the one that you find most suitable:
+        </p>
+        <table style="border-collapse: collapse; width: 100%">
+          <tr style="background-color: #f2f2f2">
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Aircraft
+            </th>
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Total Flight Time
+            </th>
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Price
+            </th>
+          </tr>
           ${cards} 
+          
+        </table>
+          <a href="${CLIENT_URL}/accept/${orderData._id.toString()}">
+            <button
+              style="
+                background-color: #119125;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Proceed
+            </button>
+          </a>
           <a href="${CLIENT_URL}/reject/${orderData._id.toString()}">
             <button
               style="
@@ -196,8 +235,7 @@ const resolvers = {
             >
               Reject
             </button>
-          </a>
-        </div>`;
+          </a>`;
         await sendMail(emailContent, email, "Service Offer");
         console.log("email send(?)");
 
