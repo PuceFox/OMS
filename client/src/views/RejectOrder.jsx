@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { UPDATE_ORDER_DATA } from './graphql/mutations'; // Adjust the import based on your project structure
-import Button from './components/Button'; // Adjust the import based on your project structure
-import Radio from './components/Radio'; // Adjust the import based on your project structure
+import { UPDATE_ORDER_DATA } from './graphql/mutations'; 
+import Button from './components/Button'; 
+import Radio from './components/Radio'; 
 
 export function RejectOrder() {
   const { orderId } = useParams();
   const [updateReject] = useMutation(UPDATE_ORDER_DATA);
   const [reason, setReason] = useState("");
+  console.log(orderId);
 
   function handleRadioChange(event) {
     setReason(event.target.value);
@@ -20,6 +21,8 @@ export function RejectOrder() {
       await updateReject({
         variables: {
           updateOrderDataId: orderId,
+          price: 0,
+          aircraft: "No Flights",
           status: "Rejected",
           reason: reason
         }
