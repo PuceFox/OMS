@@ -45,42 +45,57 @@ export const MUTATION_ADD_ORDER = gql`
 `;
 
 export const QUERY_GET_ORDERS = gql`
-query GetAirport {
-  getOrder {
-    _id
-    fullname
-    email
-    phoneNumber
-    origin
-    destination
-    service
-    pax
-    status
-    price
-    aircraft
-    createdAt
-    updatedAt
+  query GetAirport {
+    getOrder {
+      _id
+      fullname
+      email
+      phoneNumber
+      origin
+      destination
+      service
+      pax
+      status
+      price
+      aircraft
+      createdAt
+      updatedAt
+    }
   }
-}
-`
+`;
 
 export const QUERY_ORDER_BY_ID = gql`
-query GetAirport($getOrderByIdId: ID) {
-  getOrderById(id: $getOrderByIdId) {
-    _id
-    fullname
-    email
-    phoneNumber
-    origin
-    destination
-    service
-    pax
-    status
-    price
-    aircraft
-    createdAt
-    updatedAt
+  query GetAirport($getOrderByIdId: ID) {
+    getOrderById(id: $getOrderByIdId) {
+      _id
+      fullname
+      email
+      phoneNumber
+      origin
+      destination
+      service
+      pax
+      status
+      price
+      aircraft
+      createdAt
+      updatedAt
+    }
   }
-}`
+`;
 
-
+export const UPDATE_ORDER_DATA = gql`
+  mutation UpdateOrderData(
+    $updateOrderDataId: ID
+    $price: Int
+    $aircraft: String
+    $status: String
+  ) {
+    updateOrderData(
+      id: $updateOrderDataId
+      price: $price
+      aircraft: $aircraft
+      status: $status
+    )
+  }
+`;
