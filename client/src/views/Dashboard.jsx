@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import { QUERY_GET_ORDERS } from "../queries";
+import formatPrice from "../utils/formatDollar";
 
 const TABLE_HEAD = ["Fullname", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Aircraft", "Status", "Action"];
 
@@ -21,8 +22,8 @@ export default function Dashboard() {
           <thead>
             <tr>
               {TABLE_HEAD.map((head) => (
-                <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                  <Typography variant="small" color="blue-gray" className="font-normal leading-none opacity-70">
+                <th key={head} className="border-b border-blue-gray-100 bg-purple-300  p-4">
+                  <Typography variant="small" color="blue-gray" className="font-bold leading-none text-white">
                     {head}
                   </Typography>
                 </th>
@@ -72,14 +73,26 @@ export default function Dashboard() {
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      {price}
-                    </Typography>
+                    {price ? (
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        {formatPrice(price)}
+                      </Typography>
+                    ) : (
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        Waiting
+                      </Typography>
+                    )}
                   </td>
                   <td className={classes}>
-                    <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      {aircraft}
-                    </Typography>
+                    {aircraft ? (
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        {aircraft}
+                      </Typography>
+                    ) : (
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        Waiting
+                      </Typography>
+                    )}
                   </td>
                   <td className={classes}>
                     <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">

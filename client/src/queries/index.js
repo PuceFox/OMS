@@ -64,4 +64,23 @@ query GetAirport {
 }
 `
 
+export const QUERY_ORDER_BY_ID = gql`
+query GetAirport($getOrderByIdId: ID) {
+  getOrderById(id: $getOrderByIdId) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+  }
+}`
+
 
