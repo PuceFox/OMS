@@ -11,15 +11,12 @@ const {
   findAirportByQuery,
   OrderTable,
 } = require("../models/form");
-<<<<<<< HEAD
-=======
 const { createError } = require("../helpers/helpers");
 
 const { sendMail } = require("../helpers/mailer");
 const { aircraftCard } = require("../helpers/emailComponents");
 const { ObjectId } = require("mongodb");
 const CLIENT_URL = require("../helpers/clientUrl");
->>>>>>> zaky
 
 const typeDefs = `#graphql
   type Order {
