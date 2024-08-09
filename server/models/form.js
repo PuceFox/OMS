@@ -62,7 +62,14 @@ async function findServiceTypeByQuery(query) {
 
 // Function untuk Get Semua Data Airports
 async function findAllAirports() {
-    const airports = await (await AirportTable()).find().toArray()
+    const agg = [
+        {
+            '$sort': {
+                'city': 1
+            }
+        }
+    ];
+    const airports = await (await AirportTable()).aggregate(agg).toArray()
     return airports
 }
 
