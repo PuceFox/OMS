@@ -7,6 +7,7 @@ import Form from "../views/Form";
 import Profile from "../views/Profile";
 import Report from "../views/Report";
 import { AcceptOrder } from "../views/AcceptOrder";
+import Payment from "../views/Payment";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       }
       return null;
     },
+  },
+  {
+    path: "/payment/:orderId",
+    element: <Payment />,
   },
   {
     element: <BaseLayout />,
