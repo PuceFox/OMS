@@ -9,7 +9,17 @@ const {
   findServiceById,
   findServiceTypeByQuery,
   findAirportByQuery,
+  OrderTable,
 } = require("../models/form");
+<<<<<<< HEAD
+=======
+const { createError } = require("../helpers/helpers");
+
+const { sendMail } = require("../helpers/mailer");
+const { aircraftCard } = require("../helpers/emailComponents");
+const { ObjectId } = require("mongodb");
+const CLIENT_URL = require("../helpers/clientUrl");
+>>>>>>> zaky
 
 const typeDefs = `#graphql
   type Order {
@@ -26,6 +36,7 @@ const typeDefs = `#graphql
     aircraft: String
     createdAt: String
     updatedAt: String
+    reason: String
   }
 
   type Airport {
@@ -69,6 +80,7 @@ const typeDefs = `#graphql
   type Mutation {
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
+    updateOrderData(id: ID, price: Int, aircraft: String, status: String) : String
   }
 `;
 
@@ -123,36 +135,80 @@ const resolvers = {
   Mutation: {
     // Function Add Order
     addOrder: async (_parent, args) => {
-      const {
-        fullname,
-        email,
-        phoneNumber,
-        origin,
-        destination,
-        service,
-        pax,
-      } = args.input;
+      try {
+        const {
+          fullname,
+          email,
+          phoneNumber,
+          origin,
+          destination,
+          service,
+          pax,
+        } = args.input;
 
-      const offerData = await createFlight(origin, destination, service, pax);
-      console.log(offerData);
-      console.log("************************");
+        const offerData = await createFlight(origin, destination, service, pax);
+        /*
+        if (orderData.length === 0) {
+          throw createError("No Aircraft was found", 400);
+        }
+          */
+        console.log(offerData);
+        console.log("************************");
 
-      const orderData = await createOrder({
-        fullname,
-        email,
-        phoneNumber,
-        origin,
-        destination,
-        service,
-        pax,
-        status: "Pending",
-        price: 0,
-        aircraft: "",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+        const orderData = await createOrder({
+          fullname,
+          email,
+          phoneNumber,
+          origin,
+          destination,
+          service,
+          pax,
+          status: "Pending",
+          price: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          reason: "",
+        });
 
-      return orderData;
+        let cards = "";
+
+        offerData.forEach((e) => {
+          cards += aircraftCard(
+            e.serviceType,
+            e.assetName,
+            e.price,
+            e.flightTimeInMinutes,
+            orderData._id.toString()
+          );
+        });
+
+        let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
+          ${cards} 
+          <a href="${CLIENT_URL}/reject/${orderData._id.toString()}">
+            <button
+              style="
+                background-color: #cf0808;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Reject
+            </button>
+          </a>
+        </div>`;
+        await sendMail(emailContent, email, "Service Offer");
+        console.log("email send(?)");
+
+        return orderData;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     },
 
     // Function Update Status Order
@@ -163,6 +219,24 @@ const resolvers = {
       const orderData = await updateOrder(id, status);
 
       return orderData;
+    },
+
+    updateOrderData: async (_parent, args) => {
+      const { id, price, aircraft, status } = args;
+      const orders = await OrderTable();
+      await orders.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: {
+            price,
+            aircraft,
+            status,
+          },
+        }
+      );
+      return "Success update order data";
     },
   },
 };
