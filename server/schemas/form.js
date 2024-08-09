@@ -145,23 +145,7 @@ const resolvers = {
         */
       console.log(offerData);
       console.log("************************");
-      let cards = "";
 
-      offerData.forEach((e) => {
-        cards += aircraftCard(
-          e.serviceType,
-          e.assetName,
-          e.price,
-          e.flightTimeInMinutes
-        );
-      });
-
-      let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
-        ${cards} 
-      </div>`;
-      await sendMail(emailContent, email, "Service Offer");
-
-      console.log("email send(?)");
       const orderData = await createOrder({
         fullname,
         email,
@@ -175,6 +159,38 @@ const resolvers = {
         createdAt: new Date(),
         updatedAt: new Date(),
       });
+
+      let cards = "";
+
+      offerData.forEach((e) => {
+        cards += aircraftCard(
+          e.serviceType,
+          e.assetName,
+          e.price,
+          e.flightTimeInMinutes,
+          orderData._id.toString()
+        );
+      });
+
+      let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
+        ${cards} 
+        <button
+              style="
+                background-color: #cf0808;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Reject
+            </button>
+      </div>`;
+      await sendMail(emailContent, email, "Service Offer");
+      console.log("email send(?)");
 
       return orderData;
     },
