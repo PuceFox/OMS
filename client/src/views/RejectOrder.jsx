@@ -1,7 +1,7 @@
 import { Button, Radio } from "@material-tailwind/react";
 import formatPrice from "../utils/formatDollar";
 
-import { useParams } from "react-router-dom";
+import { redirect, useParams } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { UPDATE_ORDER_DATA } from "../queries";
 import { useState } from "react";
@@ -21,11 +21,11 @@ export function RejectOrder({ route }) {
       await updateReject({
         variables: {
           updateOrderDataId: orderId,
-          aircraft: queries.get("aircraft"),
           status: "Rejected",
           reason,
         },
       });
+      redirect("/")
     } catch (error) {
       console.log(error);
     }
