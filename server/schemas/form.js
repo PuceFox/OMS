@@ -10,6 +10,8 @@ const {
   findServiceTypeByQuery,
   findAirportByQuery,
   OrderTable,
+  findOrderByStatus,
+  findPecentage,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -34,6 +36,14 @@ const typeDefs = `#graphql
     createdAt: String
     updatedAt: String
     reason: String
+  }
+
+  type DataChart {
+    totalReject: Int
+    totalAccept: Int
+    totalPending: Int
+    totalNego: Int
+    totalRequest: Int
   }
 
   type Airport {
@@ -72,6 +82,9 @@ const typeDefs = `#graphql
     getServiceTypeByQuery(query: String): [Service]
     getOrder: [Order]
     getOrderById(id: ID): Order
+    getOrderByStatus(status: String): [Order]
+    getOrderChart: DataChart
+
   }
 
   type Mutation {
@@ -97,18 +110,33 @@ const resolvers = {
       return order;
     },
 
+    // Function untuk mendapatkan Order berdasarkan Statusnya
+    getOrderByStatus: async (_parent, args) => {
+      const { status } = args 
+      const order = await findOrderByStatus(status)
+      return order
+    },
+
+    // Function untuk mendapatkan Data Chart dari Status Order
+    getOrderChart: async () => {
+      const dataChart = await findPecentage()
+      return dataChart
+    },
+
     // Function untuk mendapatkan List semua Service
     getService: async () => {
       const services = await findAllService();
       return services;
     },
 
+    // Function untuk mendapatkan Data Service by Id
     getServiceById: async (_parent, args) => {
       const { id } = args;
       const service = await findServiceById(id);
       return service;
     },
 
+    // Function untuk mendapatkan Data Service dari Query
     getServiceTypeByQuery: async (_parent, args) => {
       const { query } = args;
       const service = await findServiceTypeByQuery(query);
@@ -121,6 +149,7 @@ const resolvers = {
       return airports;
     },
 
+    // Function untuk mendapatkan Data Service dari Query
     getAirportByQuery: async (_parent, args) => {
       const { query } = args;
       const airport = await findAirportByQuery(query);
@@ -218,6 +247,7 @@ const resolvers = {
       return orderData;
     },
 
+    // Function Update Order Data
     updateOrderData: async (_parent, args) => {
       const { id, price, aircraft, status } = args;
       const orders = await OrderTable();
