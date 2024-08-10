@@ -19,6 +19,7 @@ const { sendMail } = require("../helpers/mailer");
 const { aircraftCard } = require("../helpers/emailComponents");
 const { ObjectId } = require("mongodb");
 const CLIENT_URL = require("../helpers/clientUrl");
+const stripe = require("../helpers/stripe");
 
 const typeDefs = `#graphql
   type Order {
@@ -296,9 +297,25 @@ const resolvers = {
 
     // Function Update Order Data
     updateOrderData: async (_parent, args) => {
-      const { id, price, aircraft, status, reason } = args;
-  
+      console.log('hit updateorderdata');
+      
+      try {
+        const { id, price, aircraft, status, reason } = args;
+
+        const order = await findOrderById(id);
+
         const orders = await OrderTable();
+        //make product on stripe
+        const product = await stripe.products.create({
+          name: `${order.service} - ${aircraft}`,
+        });
+
+        const stripePrice = await stripe.prices.create({
+          product: product.id,
+          unit_amount: Number(price) * 100,
+          currency: 'usd'
+        })
+
         await orders.updateOne(
           {
             _id: new ObjectId(id),
@@ -308,13 +325,19 @@ const resolvers = {
               price,
               aircraft,
               status,
-              reason
+              reason,
+              priceId: stripePrice.id,
             },
           }
         );
 
         return "Success update order data";
+      } catch (error) {
+        console.log(error);
+        throw error
+        
       }
+    }
 
   },
 };
