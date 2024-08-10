@@ -84,6 +84,10 @@ const typeDefs = `#graphql
     pax: Int!
   }
 
+  type stripeSession {
+    clientSecret: String
+  }
+
   type Query {
     getAirport: [Airport]
     getAirportByQuery(query: String): [Airport]       
@@ -101,6 +105,7 @@ const typeDefs = `#graphql
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
+    getClientStripeSession(orderId: ID): stripeSession
   }
 `;
 
@@ -169,6 +174,35 @@ const resolvers = {
   },
 
   Mutation: {
+    getClientStripeSession: async (_parent, args) => {
+      try {
+        const {orderId} = args;
+        const order = await findOrderById(orderId);
+        const session = await stripe.checkout.sessions.create({
+          ui_mode: "embedded",
+          line_items: [
+            {
+              // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+              price: order.priceId,
+              quantity: 1,
+            },
+          ],
+          mode: "payment",
+          return_url: `${CLIENT_URL}/paymentsuccess?session_id={CHECKOUT_SESSION_ID}`,
+          automatic_tax: { enabled: true },
+        });
+
+        return {
+          clientSecret: session.client_secret
+        }
+      } catch (error) {
+        console.log(error);
+        throw error
+        
+      }
+
+    },
+
     // Function Add Order
     addOrder: async (_parent, args) => {
       try {

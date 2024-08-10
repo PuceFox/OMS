@@ -106,8 +106,14 @@ export const UPDATE_ORDER_DATA = gql`
       aircraft: $aircraft
       status: $status
       reason: $reason
-    ) {
-      fullname
+    ) 
+  }
+`;
+
+export const GET_STRIPE_CLIENT = gql`
+  mutation GetClientStripeSession($orderId: ID) {
+    getClientStripeSession(orderId: $orderId) {
+      clientSecret
     }
   }
 `;
