@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { UPDATE_ORDER_DATA } from '../queries/index'; 
 import { Button, Radio } from "@material-tailwind/react";
@@ -8,13 +8,16 @@ export function RejectOrder() {
   const [updateReject] = useMutation(UPDATE_ORDER_DATA);
   const [reason, setReason] = useState("");
   console.log(orderId);
+  console.log(reason);
+  
+  const nav = useNavigate()
 
   function handleRadioChange(event) {
     setReason(event.target.value);
   }
 
   async function submitOrder(event) {
-    event.preventDefault(); // Prevent the default form submission
+    event.preventDefault();
     try {
       await updateReject({
         variables: {
@@ -23,9 +26,13 @@ export function RejectOrder() {
           aircraft: "No Flights",
           status: "Rejected",
           reason: reason
+        },
+        onError: (error) => {
+          console.log(error);
+          
         }
       });
-      // Handle success (e.g., show a message or redirect)
+      nav("/form")
     } catch (error) {
       // Handle error
       console.error("Error updating order:", error);
