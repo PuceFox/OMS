@@ -9,6 +9,7 @@ const { mongoConnect } = require("./config/mongoConnection");
 const { companyResolvers, companyTypeDefs } = require("./schemas/company");
 const { formTypeDefs, formResolvers } = require("./schemas/form");
 const { authentication } = require("./helpers/helpers");
+const Controller = require("./controllers/controller");
 
 const server = new ApolloServer({
   typeDefs: [companyTypeDefs, formTypeDefs],
@@ -31,6 +32,7 @@ const server = new ApolloServer({
   server.applyMiddleware({ app });
 
   app.use(cors());
+  app.post('/create-checkout-session/:orderId', Controller.checkout)
 
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
