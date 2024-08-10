@@ -91,6 +91,7 @@ export const QUERY_ORDER_BY_ID = gql`
   }
 `;
 
+
 export const UPDATE_ORDER_DATA = gql`
   mutation UpdateOrderData(
     $updateOrderDataId: ID
@@ -105,6 +106,8 @@ export const UPDATE_ORDER_DATA = gql`
       aircraft: $aircraft
       status: $status
       reason: $reason
-    )
+    ) {
+      fullname
+    }
   }
 `;

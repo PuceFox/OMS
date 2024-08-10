@@ -24,6 +24,7 @@ export function AcceptOrder({ route }) {
   const [updateOrder, { data: updateOrderData }] =
     useMutation(UPDATE_ORDER_DATA);
 
+  const [isLoading, setIsLoading] = useState(false);
   //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
@@ -32,18 +33,20 @@ export function AcceptOrder({ route }) {
   
 
   async function submitOrder() {
+    setIsLoading(true)
     updateOrder({
       variables: {
         updateOrderDataId: orderId,
-        price: Number(queries.get("price")),
-        aircraft: queries.get("aircraft"),
+        price: Number(order?.offers[offer].price),
+        aircraft: order?.offers[offer].assetName,
         status: "Accepted",
       },
       onCompleted: (data) => {
         nav(`/payment/${orderId}`);
       },
       onError: (error) => {
-        console.log(error);
+        console.log(error.graphQLErrors);
+        setIsLoading(false);
       },
     });
   }
@@ -81,9 +84,14 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Aircraft
               </h2>
-              <select name="" id="" value={offer} onChange={(e) => setOffer(e.target.value)}>
+              <select
+                name=""
+                id=""
+                value={offer}
+                onChange={(e) => setOffer(e.target.value)}
+              >
                 {order?.offers.map((offer, i) => {
-                  return <option value={i}>{offer.assetName}</option>
+                  return <option value={i}>{offer.assetName}</option>;
                 })}
               </select>
             </div>
@@ -103,20 +111,28 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Price
               </h2>
-              <p className="text-gray-600">{formatPrice(order?.offers[offer].price)}</p>
+              <p className="text-gray-600">
+                {formatPrice(order?.offers[offer].price)}
+              </p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Flight Time
               </h2>
-              <p className="text-gray-600">{formatTime(order?.offers[offer].flightTimeInMinutes)}</p>
+              <p className="text-gray-600">
+                {formatTime(order?.offers[offer].flightTimeInMinutes)}
+              </p>
             </div>
           </div>
         </div>
         <div className="p-6 m-auto  w-fit">
-          <Button className="w-full bg-green-600" onClick={submitOrder}>
-            Confirm
-          </Button>
+          {isLoading ? (
+            <span className="loading loading-spinner loading-lg"></span>
+          ) : (
+            <Button className="w-full bg-green-600" onClick={submitOrder}>
+              Confirm
+            </Button>
+          )}
         </div>
       </div>
     </div>
