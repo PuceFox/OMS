@@ -99,7 +99,7 @@ const typeDefs = `#graphql
   type Mutation {
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
-    updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : Order
+    updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
   }
 `;
 
