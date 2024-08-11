@@ -12,6 +12,7 @@ const {
   OrderTable,
   findOrderByStatus,
   findPecentage,
+  findDataAI,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -20,6 +21,7 @@ const { aircraftCard } = require("../helpers/emailComponents");
 const { ObjectId } = require("mongodb");
 const CLIENT_URL = require("../helpers/clientUrl");
 const stripe = require("../helpers/stripe");
+const gemini = require("../helpers/geminiai");
 
 const typeDefs = `#graphql
   type Order {
@@ -98,7 +100,7 @@ const typeDefs = `#graphql
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
-
+    getPromptedAI: String
   }
 
   type Mutation {
@@ -136,6 +138,13 @@ const resolvers = {
     getOrderChart: async () => {
       const dataChart = await findPecentage()
       return dataChart
+    },
+
+    // Function untuk generate hasil analisa AI 
+    getPromptedAI: async () => {
+      const getDataAI = await findDataAI()
+      const resultAI = await gemini(getDataAI)
+      return resultAI
     },
 
     // Function untuk mendapatkan List semua Service

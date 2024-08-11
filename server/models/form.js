@@ -46,6 +46,25 @@ async function findOrderByStatus(status) {
     return order
 }
 
+// Function untuk generate data yang akan di prompting ke AI
+async function findDataAI() {
+    const agg = [
+        {
+          '$project': {
+            "_id": 0,
+            'fullname': 0, 
+            'email': 0, 
+            'phoneNumber': 0
+          }
+        }
+      ]
+    const dataAI = await (await OrderTable()).aggregate(agg).toArray()
+    // console.log(dataAI);
+    
+    return dataAI
+    
+}
+
 // Function untuk Get Data Percentage dari Status
 async function findPecentage() {
     const orderReject = await findOrderByStatus("Rejected")
@@ -177,6 +196,7 @@ module.exports = {
     findAllOrder,
     findOrderById,
     findOrderByStatus,
+    findDataAI,
     findPecentage,
     findAllService,
     findServiceById,
