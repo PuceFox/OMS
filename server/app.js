@@ -32,7 +32,8 @@ const server = new ApolloServer({
   server.applyMiddleware({ app });
 
   app.use(cors());
-  app.post('/create-checkout-session/:orderId', Controller.checkout)
+  app.post("/create-checkout-session/:orderId", Controller.checkout);
+  app.get("/session-status", Controller.status);
 
   app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
