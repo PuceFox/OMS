@@ -117,3 +117,20 @@ export const GET_STRIPE_CLIENT = gql`
     }
   }
 `;
+
+export const GET_REPORT = gql`
+query GetAirport {
+  getOrderChart {
+    totalReject
+    totalAccept
+    totalPending
+    totalNego
+    totalRequest
+  }
+}`
+
+export const GET_DataAi = gql`
+query GetAirport {
+  getPromptedAI
+}
+`
