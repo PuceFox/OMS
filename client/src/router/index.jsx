@@ -8,6 +8,9 @@ import Profile from "../views/Profile";
 import Report from "../views/Report";
 import { AcceptOrder } from "../views/AcceptOrder";
 import Payment from "../views/Payment";
+import { RejectOrder } from "../views/RejectOrder";
+
+import PaymentStatus from "../views/PaymentStatus";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +60,14 @@ const router = createBrowserRouter([
   {
     path: "/payment/:orderId",
     element: <Payment />,
+  },
+  {
+    path: "/paymentstatus",
+    element: <PaymentStatus />,
+  },
+  {
+    path: "/reject/:orderId",
+    element: <RejectOrder />,
   },
   {
     element: <BaseLayout />,

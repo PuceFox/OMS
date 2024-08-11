@@ -12,7 +12,7 @@ export default function Dashboard() {
   if (error) return <p>Error: {error.message}</p>;
 
   const tableRows = data.getOrder;
-  // console.log(tableRows);
+  console.log(tableRows);
 
   return (
     <div>
@@ -99,11 +99,14 @@ export default function Dashboard() {
                       {status}
                     </Typography>
                   </td>
-                  <td className={classes}>
-                    <Button as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                      follow up
-                    </Button>
-                  </td>
+
+                  {status !== "Accepted" && status !== "Rejected" && (
+                    <td className={classes}>
+                      <Button as="a" href="#" variant="small" color="amber" className="font-bold">
+                        follow up
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               );
             })}

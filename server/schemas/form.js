@@ -10,6 +10,9 @@ const {
   findServiceTypeByQuery,
   findAirportByQuery,
   OrderTable,
+  findOrderByStatus,
+  findPecentage,
+  findDataAI,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -17,6 +20,8 @@ const { sendMail } = require("../helpers/mailer");
 const { aircraftCard } = require("../helpers/emailComponents");
 const { ObjectId } = require("mongodb");
 const CLIENT_URL = require("../helpers/clientUrl");
+const stripe = require("../helpers/stripe");
+const gemini = require("../helpers/geminiai");
 
 const typeDefs = `#graphql
   type Order {
@@ -34,6 +39,23 @@ const typeDefs = `#graphql
     createdAt: String
     updatedAt: String
     reason: String
+    offers: [Offer]
+  }
+
+  type Offer {
+    serviceType: String
+    assetName: String
+    speed: Int
+    flightTimeInMinutes: Int
+    price: Int
+  }
+
+  type DataChart {
+    totalReject: Int
+    totalAccept: Int
+    totalPending: Int
+    totalNego: Int
+    totalRequest: Int
   }
 
   type Airport {
@@ -64,6 +86,10 @@ const typeDefs = `#graphql
     pax: Int!
   }
 
+  type stripeSession {
+    clientSecret: String
+  }
+
   type Query {
     getAirport: [Airport]
     getAirportByQuery(query: String): [Airport]       
@@ -72,12 +98,16 @@ const typeDefs = `#graphql
     getServiceTypeByQuery(query: String): [Service]
     getOrder: [Order]
     getOrderById(id: ID): Order
+    getOrderByStatus(status: String): [Order]
+    getOrderChart: DataChart
+    getPromptedAI: String
   }
 
   type Mutation {
     addOrder(input: CreateOrderInput): Order
     updateStatusOrder(id: ID, status: String): Order
-    updateOrderData(id: ID, price: Int, aircraft: String, status: String) : String
+    updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
+    getClientStripeSession(orderId: ID): stripeSession
   }
 `;
 
@@ -97,18 +127,40 @@ const resolvers = {
       return order;
     },
 
+    // Function untuk mendapatkan Order berdasarkan Statusnya
+    getOrderByStatus: async (_parent, args) => {
+      const { status } = args 
+      const order = await findOrderByStatus(status)
+      return order
+    },
+
+    // Function untuk mendapatkan Data Chart dari Status Order
+    getOrderChart: async () => {
+      const dataChart = await findPecentage()
+      return dataChart
+    },
+
+    // Function untuk generate hasil analisa AI 
+    getPromptedAI: async () => {
+      const getDataAI = await findDataAI()
+      const resultAI = await gemini(getDataAI)
+      return resultAI
+    },
+
     // Function untuk mendapatkan List semua Service
     getService: async () => {
       const services = await findAllService();
       return services;
     },
 
+    // Function untuk mendapatkan Data Service by Id
     getServiceById: async (_parent, args) => {
       const { id } = args;
       const service = await findServiceById(id);
       return service;
     },
 
+    // Function untuk mendapatkan Data Service dari Query
     getServiceTypeByQuery: async (_parent, args) => {
       const { query } = args;
       const service = await findServiceTypeByQuery(query);
@@ -121,6 +173,7 @@ const resolvers = {
       return airports;
     },
 
+    // Function untuk mendapatkan Data Service dari Query
     getAirportByQuery: async (_parent, args) => {
       const { query } = args;
       const airport = await findAirportByQuery(query);
@@ -130,6 +183,35 @@ const resolvers = {
   },
 
   Mutation: {
+    getClientStripeSession: async (_parent, args) => {
+      try {
+        const {orderId} = args;
+        const order = await findOrderById(orderId);
+        const session = await stripe.checkout.sessions.create({
+          ui_mode: "embedded",
+          line_items: [
+            {
+              // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+              price: order.priceId,
+              quantity: 1,
+            },
+          ],
+          mode: "payment",
+          return_url: `${CLIENT_URL}/paymentsuccess?session_id={CHECKOUT_SESSION_ID}`,
+          automatic_tax: { enabled: true },
+        });
+
+        return {
+          clientSecret: session.client_secret
+        }
+      } catch (error) {
+        console.log(error);
+        throw error
+        
+      }
+
+    },
+
     // Function Add Order
     addOrder: async (_parent, args) => {
       try {
@@ -160,6 +242,7 @@ const resolvers = {
           destination,
           service,
           pax,
+          offers: offerData,
           status: "Pending",
           price: 0,
           createdAt: new Date(),
@@ -179,8 +262,46 @@ const resolvers = {
           );
         });
 
-        let emailContent = `<div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; width: 100vw justify-content: center; align-items: center; height: 100vh; margin: 0;">
+        let emailContent = `
+         <p>
+          Dear ${fullname}, Thank you for considering Orderly for your private
+          jet charter needs. We are thrilled to offer you the luxury, comfort, and
+          flexibility that our service is known for. To ensure your experience is
+          perfectly tailored to your preferences, we provide a range of charter
+          options for ${service} flight. Please review the options below
+          and select the one that you find most suitable:
+        </p>
+        <table style="border-collapse: collapse; width: 100%">
+          <tr style="background-color: #f2f2f2">
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Aircraft
+            </th>
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Total Flight Time
+            </th>
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px">
+              Price
+            </th>
+          </tr>
           ${cards} 
+          
+        </table>
+          <a href="${CLIENT_URL}/accept/${orderData._id.toString()}">
+            <button
+              style="
+                background-color: #119125;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Proceed
+            </button>
+          </a>
           <a href="${CLIENT_URL}/reject/${orderData._id.toString()}">
             <button
               style="
@@ -196,8 +317,7 @@ const resolvers = {
             >
               Reject
             </button>
-          </a>
-        </div>`;
+          </a>`;
         await sendMail(emailContent, email, "Service Offer");
         console.log("email send(?)");
 
@@ -218,23 +338,50 @@ const resolvers = {
       return orderData;
     },
 
+    // Function Update Order Data
     updateOrderData: async (_parent, args) => {
-      const { id, price, aircraft, status } = args;
-      const orders = await OrderTable();
-      await orders.updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: {
-            price,
-            aircraft,
-            status,
+      console.log('hit updateorderdata');
+      
+      try {
+        const { id, price, aircraft, status, reason } = args;
+
+        const order = await findOrderById(id);
+
+        const orders = await OrderTable();
+        //make product on stripe
+        const product = await stripe.products.create({
+          name: `${order.service} - ${aircraft}`,
+        });
+
+        const stripePrice = await stripe.prices.create({
+          product: product.id,
+          unit_amount: Number(price) * 100,
+          currency: 'usd'
+        })
+
+        await orders.updateOne(
+          {
+            _id: new ObjectId(id),
           },
-        }
-      );
-      return "Success update order data";
-    },
+          {
+            $set: {
+              price,
+              aircraft,
+              status,
+              reason,
+              priceId: stripePrice.id,
+            },
+          }
+        );
+
+        return "Success update order data";
+      } catch (error) {
+        console.log(error);
+        throw error
+        
+      }
+    }
+
   },
 };
 

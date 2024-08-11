@@ -80,9 +80,17 @@ export const QUERY_ORDER_BY_ID = gql`
       aircraft
       createdAt
       updatedAt
+      offers {
+        assetName
+        flightTimeInMinutes
+        price
+        serviceType
+        speed
+      }
     }
   }
 `;
+
 
 export const UPDATE_ORDER_DATA = gql`
   mutation UpdateOrderData(
@@ -90,12 +98,22 @@ export const UPDATE_ORDER_DATA = gql`
     $price: Int
     $aircraft: String
     $status: String
+    $reason: String
   ) {
     updateOrderData(
       id: $updateOrderDataId
       price: $price
       aircraft: $aircraft
       status: $status
-    )
+      reason: $reason
+    ) 
+  }
+`;
+
+export const GET_STRIPE_CLIENT = gql`
+  mutation GetClientStripeSession($orderId: ID) {
+    getClientStripeSession(orderId: $orderId) {
+      clientSecret
+    }
   }
 `;

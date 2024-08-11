@@ -3,12 +3,15 @@ import formatPrice from "../utils/formatDollar";
 import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { formatTime } from "../utils/formatTime";
 
 export function AcceptOrder({ route }) {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
+  const [offer, setOffer] = useState(0);
 
-  const aircraft = queries.get("aircraft");
+  
   const price = queries.get("price");
   const nav = useNavigate();
 
@@ -21,23 +24,29 @@ export function AcceptOrder({ route }) {
   const [updateOrder, { data: updateOrderData }] =
     useMutation(UPDATE_ORDER_DATA);
 
+  const [isLoading, setIsLoading] = useState(false);
   //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
+  
+  console.log(order);
+  
 
   async function submitOrder() {
+    setIsLoading(true)
     updateOrder({
       variables: {
         updateOrderDataId: orderId,
-        price: Number(queries.get("price")),
-        aircraft: queries.get("aircraft"),
+        price: Number(order?.offers[offer].price),
+        aircraft: order?.offers[offer].assetName,
         status: "Accepted",
       },
       onCompleted: (data) => {
         nav(`/payment/${orderId}`);
       },
       onError: (error) => {
-        console.log(error);
+        console.log(error.graphQLErrors);
+        setIsLoading(false);
       },
     });
   }
@@ -75,7 +84,16 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Aircraft
               </h2>
-              <p className="text-gray-600">{aircraft}</p>
+              <select
+                name=""
+                id=""
+                value={offer}
+                onChange={(e) => setOffer(e.target.value)}
+              >
+                {order?.offers.map((offer, i) => {
+                  return <option value={i}>{offer.assetName}</option>;
+                })}
+              </select>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -93,14 +111,28 @@ export function AcceptOrder({ route }) {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Price
               </h2>
-              <p className="text-gray-600">{formatPrice(price)}</p>
+              <p className="text-gray-600">
+                {formatPrice(order?.offers[offer].price)}
+              </p>
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                Flight Time
+              </h2>
+              <p className="text-gray-600">
+                {formatTime(order?.offers[offer].flightTimeInMinutes)}
+              </p>
             </div>
           </div>
         </div>
         <div className="p-6 m-auto  w-fit">
-          <Button className="w-full bg-green-600" onClick={submitOrder}>
-            Confirm
-          </Button>
+          {isLoading ? (
+            <span className="loading loading-spinner loading-lg"></span>
+          ) : (
+            <Button className="w-full bg-green-600" onClick={submitOrder}>
+              Confirm
+            </Button>
+          )}
         </div>
       </div>
     </div>
