@@ -3,17 +3,12 @@ import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { GET_STRIPE_CLIENT, QUERY_ORDER_BY_ID } from "../queries";
 import { loadStripe } from "@stripe/stripe-js";
-import {
-  EmbeddedCheckout,
-  EmbeddedCheckoutProvider,
-} from "@stripe/react-stripe-js";
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { REST_API_URL } from "../constant/constant";
 
 export default function Payment() {
   const params = useParams();
-  const stripePromise = loadStripe(
-    "pk_test_51Pm2VjRwE7EqePmeCvWiUYtLPuv6V48ftkXigvelAdj2GxmKaf1Imyv8twGAnDDRM4TKnA23d20xAFmRCHQ8hpeV00A21Qjhdm"
-  );
+  const stripePromise = loadStripe("pk_test_51Pm2VjRwE7EqePmeCvWiUYtLPuv6V48ftkXigvelAdj2GxmKaf1Imyv8twGAnDDRM4TKnA23d20xAFmRCHQ8hpeV00A21Qjhdm");
 
   const { orderId } = params;
 
@@ -36,8 +31,7 @@ export default function Payment() {
 
   return (
     <>
-      <div>
-        <h1>PAYMENT PAGE</h1>
+      <div className="min-h-screen bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe] p-4">
         <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
           <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>
