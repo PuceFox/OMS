@@ -5,15 +5,15 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "79f807001@smtp-brevo.com",
-    pass: "PrdL4COMcgszbZRY",
+    user: "7a376f001@smtp-brevo.com",
+    pass: "NVAgWBkFSc40t6zK",
   },
 });
 
 const sendMail = async (content, targetEmail, subject) => {
   try {
     await transporter.sendMail({
-      from: "<zakyabdurrahman10@gmail.com>",
+      from: "<pucefoxorderly@gmail.com>",
       to: targetEmail,
       subject: subject,
       text: "details",
