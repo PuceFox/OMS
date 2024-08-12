@@ -22,6 +22,7 @@ import { useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
 import { ApolloProvider } from "@apollo/client";
+import "toastify-js/src/toastify.css";
 // import { client } from "./apollo-client"; // Adjust the path as necessary
 // client
 import router from "./router";
