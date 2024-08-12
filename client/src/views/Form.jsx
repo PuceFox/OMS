@@ -1,9 +1,526 @@
+// import React, { useState } from "react";
+// import Select from "react-select";
+// import { useMutation, useQuery } from "@apollo/client";
+// import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
+// import Logo from "../assets/name.png";
+
+// const customStyles = {
+//   control: (provided) => ({
+//     ...provided,
+//     border: "2px solid #CBD5E0",
+//     boxShadow: "none",
+//     "&:hover": {
+//       border: "2px solid #7c3aed",
+//     },
+//   }),
+//   placeholder: (provided) => ({
+//     ...provided,
+//     color: "#9CA3AF",
+//     fontSize: "1.125rem",
+//     textAlign: "center",
+//   }),
+//   singleValue: (provided) => ({
+//     ...provided,
+//     color: "#333",
+//     textAlign: "center",
+//   }),
+//   menu: (provided) => ({
+//     ...provided,
+//     fontSize: "1.125rem",
+//   }),
+//   menuList: (provided) => ({
+//     ...provided,
+//     textAlign: "center",
+//   }),
+//   option: (provided) => ({
+//     ...provided,
+//     textAlign: "center",
+//   }),
+// };
+
+// const Form = () => {
+//   const {
+//     data: airportData,
+//     loading: airportLoading,
+//     error: airportError,
+//   } = useQuery(GET_AIRPORTS);
+//   const {
+//     data: serviceData,
+//     loading: serviceLoading,
+//     error: serviceError,
+//   } = useQuery(GET_SERVICES);
+//   const [form, setForm] = useState({
+//     fullname: "",
+//     email: "",
+//     phoneNumber: "",
+//     origin: "",
+//     destination: "",
+//     service: "",
+//     pax: "",
+//   });
+//   const [originSelect, setOriginSelect] = useState(null);
+//   const [destinationSelect, setDestinationSelect] = useState(null);
+//   const [serviceSelect, setServiceSelect] = useState(null);
+//   const [showModal, setShowModal] = useState(false);
+//   const [errors, setErrors] = useState({});
+//   const [loading, setLoading] = useState(false);
+
+//   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
+//     onCompleted: () => {
+//       setForm({
+//         fullname: "",
+//         email: "",
+//         phoneNumber: "",
+//         origin: "",
+//         destination: "",
+//         service: "",
+//         pax: "",
+//       });
+//       setOriginSelect(null);
+//       setDestinationSelect(null);
+//       setServiceSelect(null);
+//       setShowModal(true);
+//       setLoading(false);
+//     },
+//     onError: (error) => {
+//       console.error("Mutation Error:", error);
+//       setLoading(false);
+//     },
+//   });
+
+//   if (airportLoading || serviceLoading) {
+//     return (
+//       <div
+//         style={{
+//           display: "flex",
+//           flexDirection: "column",
+//           justifyContent: "center",
+//           alignItems: "center",
+//           height: "100vh",
+//         }}
+//       >
+//         <div
+//           style={{
+//             border: "16px solid #f3f3f3",
+//             borderRadius: "50%",
+//             borderTop: "16px solid #3498db",
+//             width: "120px",
+//             height: "120px",
+//             animation: "spin 2s linear infinite",
+//           }}
+//         ></div>
+//         <p style={{ marginTop: "1rem", fontSize: "1.25rem", color: "#333" }}>
+//           Please wait, we are fetching data...
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   if (airportError || serviceError) {
+//     return <p>Error! {airportError?.message || serviceError?.message}</p>;
+//   }
+
+//   const airports = airportData?.getAirport || [];
+//   const services = serviceData?.getService || [];
+
+//   const renderAirportOptions = (airports) => {
+//     return airports.map((airport) => ({
+//       value: airport.iataCode,
+//       label: `${airport.city} - ${airport.airport} (${airport.iataCode})`,
+//     }));
+//   };
+
+//   const renderServiceOptions = (services) => {
+//     return services.map((service) => ({
+//       value: service.type,
+//       label: service.type,
+//     }));
+//   };
+
+//   const onChangeForm = (key, value) => {
+//     setForm((prevForm) => ({
+//       ...prevForm,
+//       [key]: value,
+//     }));
+//   };
+
+//   const validateForm = () => {
+//     const newErrors = {};
+//     if (!form.fullname) newErrors.fullname = "Full name is required";
+//     if (!form.email) newErrors.email = "Email address is required";
+//     if (!form.phoneNumber) newErrors.phoneNumber = "Phone number is required";
+//     if (!form.origin) newErrors.origin = "Origin city is required";
+//     if (!form.destination)
+//       newErrors.destination = "Destination city is required";
+//     if (!form.service) newErrors.service = "Service type is required";
+//     if (!form.pax || isNaN(form.pax) || parseInt(form.pax, 10) <= 0)
+//       newErrors.pax = "Number of passengers is required";
+//     return newErrors;
+//   };
+
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+//     const formErrors = validateForm();
+//     if (Object.keys(formErrors).length > 0) {
+//       setErrors(formErrors);
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       await addOrder({
+//         variables: {
+//           input: {
+//             fullname: form.fullname,
+//             email: form.email,
+//             phoneNumber: form.phoneNumber,
+//             origin: form.origin,
+//             destination: form.destination,
+//             service: form.service,
+//             pax: parseInt(form.pax, 10),
+//           },
+//         },
+//       });
+//     } catch (error) {
+//       console.error("Submit Error:", error);
+//       setLoading(false);
+//     }
+//   };
+
+//   const closeModal = () => {
+//     setShowModal(false);
+//   };
+
+//   return (
+//     <>
+//       <style>
+//         {`
+//           @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Lora:wght@400&display=swap');
+
+//           body {
+//             margin: 0;
+//             font-family: 'Roboto', sans-serif;
+//             background: linear-gradient(to right, #6e48aa, #9d50bb);
+//           }
+
+//           h1 {
+//             font-family: 'Lora', serif;
+//             font-size: 2rem;
+//             font-weight: 700;
+//             color: #fff;
+//             text-align: center;
+//             margin-bottom: 1.5rem;
+//             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+//           }
+
+//           .form-input {
+//             position: relative;
+//             width: 100%;
+//             margin-bottom: 1rem;
+//           }
+
+//           .form-input input {
+//             width: 100%;
+//             padding: 0.75rem;
+//             font-size: 1rem;
+//             background-color: transparent;
+//             border: none;
+//             outline: none;
+//             border-bottom: 2px solid #CBD5E0;
+//             text-align: center;
+//             color: #fff;
+//           }
+
+//           .form-input input::placeholder {
+//             color: #9CA3AF;
+//             font-size: 1rem;
+//             text-align: center;
+//           }
+
+//           .form-input input:focus::placeholder,
+//           .form-input input:not(:placeholder-shown)::placeholder {
+//             color: #7c3aed;
+//             font-size: 0.75rem;
+//           }
+
+//           .error-message {
+//             color: #f7c6c7;
+//             font-size: 0.75rem;
+//             margin-top: 0.25rem;
+//             text-align: center;
+//           }
+
+//           .form-container {
+//             display: flex;
+//             justify-content: center;
+//             align-items: center;
+//             height: calc(100vh - 2rem);
+//             margin: 0 1rem;
+//           }
+
+//           .form-box {
+//             width: 100%;
+//             max-width: 500px;
+//             padding: 1.5rem;
+//             background-color: rgba(255, 255, 255, 0.9);
+//             border: 0;
+//             border-radius: 8px;
+//             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+//           }
+
+//           .logo {
+//             display: block;
+//             margin-bottom: 1.5rem;
+//             max-width: 150px;
+//             margin-left: auto;
+//             margin-right: auto;
+//           }
+
+//           .loading-spinner {
+//             border: 16px solid #f3f3f3;
+//             border-radius: 50%;
+//             border-top: 16px solid #3498db;
+//             width: 120px;
+//             height: 120px;
+//             animation: spin 2s linear infinite;
+//             margin: 0 auto;
+//           }
+
+//           @keyframes spin {
+//             0% { transform: rotate(0deg); }
+//             100% { transform: rotate(360deg); }
+//           }
+
+//           .futuristic-button {
+//             background: #6e48aa;
+//             color: white;
+//             border: none;
+//             padding: 0.75rem 1.5rem;
+//             border-radius: 5px;
+//             cursor: pointer;
+//             font-size: 1rem;
+//             font-weight: bold;
+//             transition: background 0.3s ease;
+//             margin-top: 1rem;
+//             display: block;
+//             margin-left: auto;
+//             margin-right: auto;
+//           }
+
+//           .futuristic-button:hover {
+//             background: #9d50bb;
+//           }
+
+//           .modal-content {
+//             background: white;
+//             padding: 2rem;
+//             border-radius: 8px;
+//             text-align: center;
+//             max-width: 500px;
+//             margin: 0 auto;
+//             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+//           }
+
+//           .modal-content h2 {
+//             margin-bottom: 1rem;
+//             color: #333;
+//           }
+
+//           .modal-content button {
+//             background: #6e48aa;
+//             color: white;
+//             border: none;
+//             padding: 0.5rem 1.5rem;
+//             border-radius: 5px;
+//             cursor: pointer;
+//             transition: background 0.3s ease;
+//           }
+
+//           .modal-content button:hover {
+//             background: #9d50bb;
+//           }
+
+//           .service-description {
+//             font-size: 0.875rem;
+//             color: #666;
+//             margin-top: 0.5rem;
+//             text-align: left;
+//           }
+//         `}
+//       </style>
+//       <div className="form-container">
+//         <div className="form-box">
+//           <img src={Logo} alt="Logo" className="logo" />
+//           <h1 className="text-deep-purple-800">
+//             Please fill in your details...
+//           </h1>
+//           <form id="form" noValidate onSubmit={handleSubmit}>
+//             <div className="form-input">
+//               <input
+//                 type="text"
+//                 name="fullname"
+//                 placeholder="Full Name"
+//                 value={form.fullname}
+//                 onChange={(e) => onChangeForm("fullname", e.target.value)}
+//               />
+//               {errors.fullname && (
+//                 <div className="error-message">{errors.fullname}</div>
+//               )}
+//             </div>
+//             <div className="form-input">
+//               <input
+//                 type="email"
+//                 name="email"
+//                 placeholder="Email Address"
+//                 value={form.email}
+//                 onChange={(e) => onChangeForm("email", e.target.value)}
+//               />
+//               {errors.email && (
+//                 <div className="error-message">{errors.email}</div>
+//               )}
+//             </div>
+//             <div className="form-input">
+//               <input
+//                 type="tel"
+//                 name="phoneNumber"
+//                 placeholder="Phone Number"
+//                 value={form.phoneNumber}
+//                 onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
+//               />
+//               {errors.phoneNumber && (
+//                 <div className="error-message">{errors.phoneNumber}</div>
+//               )}
+//             </div>
+//             <div className="form-input">
+//               <Select
+//                 styles={customStyles}
+//                 value={originSelect}
+//                 onChange={(selectedOption) => {
+//                   setOriginSelect(selectedOption);
+//                   onChangeForm("origin", selectedOption?.value || "");
+//                 }}
+//                 options={renderAirportOptions(airports)}
+//                 placeholder="Select Origin City"
+//               />
+//               {errors.origin && (
+//                 <div className="error-message">{errors.origin}</div>
+//               )}
+//             </div>
+//             <div className="form-input">
+//               <Select
+//                 styles={customStyles}
+//                 value={destinationSelect}
+//                 onChange={(selectedOption) => {
+//                   setDestinationSelect(selectedOption);
+//                   onChangeForm("destination", selectedOption?.value || "");
+//                 }}
+//                 options={renderAirportOptions(airports)}
+//                 placeholder="Select Destination City"
+//               />
+//               {errors.destination && (
+//                 <div className="error-message">{errors.destination}</div>
+//               )}
+//             </div>
+//             <div className="form-input">
+//               <Select
+//                 styles={customStyles}
+//                 value={serviceSelect}
+//                 onChange={(selectedOption) => {
+//                   setServiceSelect(selectedOption);
+//                   onChangeForm("service", selectedOption?.value || "");
+//                 }}
+//                 options={renderServiceOptions(services)}
+//                 placeholder="Select Service Type"
+//               />
+//               {errors.service && (
+//                 <div className="error-message">{errors.service}</div>
+//               )}
+//               <div className="service-description">
+//                 - VIP: Premium service with extra comfort.
+//                 <br />
+//                 - Madevac: Medical evacuation service.
+//                 <br />- Citytour: Guided city tours.
+//               </div>
+//             </div>
+//             <div className="form-input">
+//               <input
+//                 type="number"
+//                 name="pax"
+//                 placeholder="Number of Passengers"
+//                 value={form.pax}
+//                 onChange={(e) => onChangeForm("pax", e.target.value)}
+//               />
+//               {errors.pax && <div className="error-message">{errors.pax}</div>}
+//             </div>
+//             <button
+//               type="submit"
+//               className="futuristic-button"
+//               disabled={loading}
+//             >
+//               {loading ? "Submitting..." : "Submit"}
+//             </button>
+//           </form>
+//         </div>
+//         {/* Modal */}
+//         {showModal && (
+//           <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+//             <div className="modal-content">
+//               <h2>Success!</h2>
+//               <p>
+//                 Your order has been received, please check your email for price
+//                 estimation.
+//               </p>
+//               <button onClick={closeModal}>Close</button>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </>
+//   );
+// };
+
+// export default Form;
+
+import React, { useState } from "react";
 import Select from "react-select";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
-import { useState } from "react";
+import Logo from "../assets/name.png";
 
-export default function Form() {
+const customStyles = {
+  control: (provided) => ({
+    ...provided,
+    border: "2px solid #CBD5E0",
+    boxShadow: "none",
+    "&:hover": {
+      border: "2px solid #7c3aed",
+    },
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#9CA3AF",
+    fontSize: "1.125rem",
+    textAlign: "center",
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#333",
+    textAlign: "center",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    fontSize: "1.125rem",
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    textAlign: "center",
+  }),
+  option: (provided) => ({
+    ...provided,
+    textAlign: "center",
+  }),
+};
+
+const Form = () => {
   const {
     data: airportData,
     loading: airportLoading,
@@ -14,7 +531,6 @@ export default function Form() {
     loading: serviceLoading,
     error: serviceError,
   } = useQuery(GET_SERVICES);
-
   const [form, setForm] = useState({
     fullname: "",
     email: "",
@@ -24,12 +540,12 @@ export default function Form() {
     service: "",
     pax: "",
   });
-
   const [originSelect, setOriginSelect] = useState(null);
   const [destinationSelect, setDestinationSelect] = useState(null);
   const [serviceSelect, setServiceSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const [addOrder] = useMutation(MUTATION_ADD_ORDER, {
     onCompleted: () => {
@@ -46,21 +562,45 @@ export default function Form() {
       setDestinationSelect(null);
       setServiceSelect(null);
       setShowModal(true);
+      setLoading(false);
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
+      setLoading(false);
     },
   });
 
-  if (airportLoading || serviceLoading)
+  if (airportLoading || serviceLoading) {
     return (
-      <div style={styles.loadingContainer}>
-        <div style={styles.spinner}></div>
-        <p style={styles.loadingText}>Please wait, we are fetching data...</p>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <div
+          style={{
+            border: "16px solid #f3f3f3",
+            borderRadius: "50%",
+            borderTop: "16px solid #3498db",
+            width: "120px",
+            height: "120px",
+            animation: "spin 2s linear infinite",
+          }}
+        ></div>
+        <p style={{ marginTop: "1rem", fontSize: "1.25rem", color: "#333" }}>
+          Please wait, we are fetching data...
+        </p>
       </div>
     );
-  if (airportError || serviceError)
+  }
+
+  if (airportError || serviceError) {
     return <p>Error! {airportError?.message || serviceError?.message}</p>;
+  }
 
   const airports = airportData?.getAirport || [];
   const services = serviceData?.getService || [];
@@ -107,6 +647,7 @@ export default function Form() {
       setErrors(formErrors);
       return;
     }
+    setLoading(true);
     try {
       await addOrder({
         variables: {
@@ -123,40 +664,12 @@ export default function Form() {
       });
     } catch (error) {
       console.error("Submit Error:", error);
+      setLoading(false);
     }
   };
 
   const closeModal = () => {
     setShowModal(false);
-  };
-
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-    }),
-    placeholder: (provided) => ({
-      ...provided,
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      margin: 0,
-      padding: 0,
-      textAlign: "center",
-      fontSize: "1.125rem",
-      color: "#9CA3AF",
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "0.5rem",
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      textAlign: "center",
-    }),
   };
 
   return (
@@ -165,127 +678,172 @@ export default function Form() {
         {`
           @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Lora:wght@400&display=swap');
 
+          body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #6e48aa, #9d50bb);
+          }
+
           h1 {
             font-family: 'Roboto', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: #333;
+            color: black;
             text-align: center;
             margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-          }
-
-          h2 {
-            font-family: 'Lora', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
-            color: #666;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-style: italic;
-          }
-
-          .origin-0 {
-            transform-origin: 0%;
-          }
-
-          input:focus ~ .placeholder-text,
-          input:not(:placeholder-shown) ~ .placeholder-text,
-          .react-select__control:focus ~ .placeholder-text,
-          .react-select__control:not(:placeholder-shown) ~ .placeholder-text {
-            --tw-translate-x: 0;
-            --tw-translate-y: 0;
-            --tw-rotate: 0;
-            --tw-skew-x: 0;
-            --tw-skew-y: 0;
-            transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
-              skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-            --tw-scale-x: 0.75;
-            --tw-scale-y: 0.75;
-            --tw-translate-y: -1.5rem;
-          }
-
-          input:focus ~ .placeholder-text,
-          .react-select__control:focus ~ .placeholder-text {
-            --tw-text-opacity: 1;
-            color: rgba(0, 0, 0, var(--tw-text-opacity));
-            left: 50%;
-            transform: translateX(-50%) translateY(-50%) scale(0.75);
-            top: 0.25rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
           }
 
           .form-input {
             position: relative;
             width: 100%;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #CBD5E0;
+            margin-bottom: 1rem;
           }
 
-          .placeholder-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            color: #9CA3AF;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            text-align: center;
-          }
-
-          .form-input input,
-          .react-select__control {
+          .form-input input {
             width: 100%;
-            padding: 1rem;
-            font-size: 1.125rem;
+            padding: 0.75rem;
+            font-size: 1rem;
             background-color: transparent;
             border: none;
             outline: none;
-          }
-
-          .react-select__control {
             border-bottom: 2px solid #CBD5E0;
+            text-align: center;
+            color: #000; /* Changed text color to black */
           }
 
-          .react-select__placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+          .form-input input::placeholder {
             color: #9CA3AF;
-            font-size: 1.125rem;
+            font-size: 1rem;
+            text-align: center;
           }
 
-          .react-select__menu {
-            font-size: 1.125rem;
-          }
-
-          .react-select__value-container {
-            padding: 0.5rem;
-            justify-content: center;
+          .form-input input:focus::placeholder,
+          .form-input input:not(:placeholder-shown)::placeholder {
+            color: #7c3aed;
+            font-size: 0.75rem;
           }
 
           .error-message {
-            color: red;
-            font-size: 0.875rem;
+            color: #f7c6c7;
+            font-size: 0.75rem;
             margin-top: 0.25rem;
             text-align: center;
           }
+
+          .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 2rem);
+            margin: 0 1rem;
+          }
+
+          .form-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
+
+          .logo {
+            display: block;
+            margin-bottom: 1.5rem;
+            max-width: 150px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .loading-spinner {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+
+          .futuristic-button {
+            background: #6e48aa;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .futuristic-button:hover {
+            background: #9d50bb;
+          }
+
+          .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+          .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #333;
+          }
+
+          .modal-content button {
+            background: #6e48aa;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+          }
+
+          .modal-content button:hover {
+            background: #9d50bb;
+          }
+
+          .service-description {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.5rem;
+            text-align: left;
+          }
         `}
       </style>
-      <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
-        <div className="mx-auto max-w-3xl px-8 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
-          <h1>Input Form</h1>
-          <h2>Please fill in your details...</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <img src={Logo} alt="Logo" className="logo" />
+          <h1 className="text-deep-purple-800">
+            Please fill in your details...
+          </h1>
           <form id="form" noValidate onSubmit={handleSubmit}>
             <div className="form-input">
               <input
                 type="text"
                 name="fullname"
-                placeholder=" "
+                placeholder="Full Name"
                 value={form.fullname}
                 onChange={(e) => onChangeForm("fullname", e.target.value)}
               />
-              <div className="placeholder-text">Full Name</div>
               {errors.fullname && (
                 <div className="error-message">{errors.fullname}</div>
               )}
@@ -294,11 +852,10 @@ export default function Form() {
               <input
                 type="email"
                 name="email"
-                placeholder=" "
+                placeholder="Email Address"
                 value={form.email}
                 onChange={(e) => onChangeForm("email", e.target.value)}
               />
-              <div className="placeholder-text">Email Address</div>
               {errors.email && (
                 <div className="error-message">{errors.email}</div>
               )}
@@ -307,27 +864,24 @@ export default function Form() {
               <input
                 type="tel"
                 name="phoneNumber"
-                placeholder=" "
+                placeholder="Phone Number"
                 value={form.phoneNumber}
                 onChange={(e) => onChangeForm("phoneNumber", e.target.value)}
               />
-              <div className="placeholder-text">Phone Number</div>
               {errors.phoneNumber && (
                 <div className="error-message">{errors.phoneNumber}</div>
               )}
             </div>
             <div className="form-input">
               <Select
-                id="origin"
-                name="origin"
+                styles={customStyles}
                 value={originSelect}
-                onChange={(option) => {
-                  onChangeForm("origin", option?.value || "");
-                  setOriginSelect(option);
+                onChange={(selectedOption) => {
+                  setOriginSelect(selectedOption);
+                  onChangeForm("origin", selectedOption?.value || "");
                 }}
                 options={renderAirportOptions(airports)}
                 placeholder="Select Origin City"
-                styles={customStyles}
               />
               {errors.origin && (
                 <div className="error-message">{errors.origin}</div>
@@ -335,16 +889,14 @@ export default function Form() {
             </div>
             <div className="form-input">
               <Select
-                id="destination"
-                name="destination"
+                styles={customStyles}
                 value={destinationSelect}
-                onChange={(option) => {
-                  onChangeForm("destination", option?.value || "");
-                  setDestinationSelect(option);
+                onChange={(selectedOption) => {
+                  setDestinationSelect(selectedOption);
+                  onChangeForm("destination", selectedOption?.value || "");
                 }}
                 options={renderAirportOptions(airports)}
                 placeholder="Select Destination City"
-                styles={customStyles}
               />
               {errors.destination && (
                 <div className="error-message">{errors.destination}</div>
@@ -352,82 +904,60 @@ export default function Form() {
             </div>
             <div className="form-input">
               <Select
-                id="service"
-                name="service"
+                styles={customStyles}
                 value={serviceSelect}
-                onChange={(option) => {
-                  onChangeForm("service", option?.value || "");
-                  setServiceSelect(option);
+                onChange={(selectedOption) => {
+                  setServiceSelect(selectedOption);
+                  onChangeForm("service", selectedOption?.value || "");
                 }}
                 options={renderServiceOptions(services)}
-                placeholder="Select Service"
-                styles={customStyles}
+                placeholder="Select Service Type"
               />
               {errors.service && (
                 <div className="error-message">{errors.service}</div>
               )}
+              <div className="service-description">
+                - VIP: Premium service with extra comfort.
+                <br />
+                - Madevac: Medical evacuation service.
+                <br />- Citytour: Guided city tours.
+              </div>
             </div>
             <div className="form-input">
               <input
                 type="number"
                 name="pax"
-                placeholder=" "
+                placeholder="Number of Passengers"
                 value={form.pax}
                 onChange={(e) => onChangeForm("pax", e.target.value)}
               />
-              <div className="placeholder-text">Number of Passengers</div>
               {errors.pax && <div className="error-message">{errors.pax}</div>}
             </div>
             <button
-              className="mt-4 w-full px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
               type="submit"
+              className="futuristic-button"
+              disabled={loading}
             >
-              Submit
+              {loading ? "Submitting..." : "Submit"}
             </button>
           </form>
-          {showModal && (
-            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4">Success!</h2>
-                <p>
-                  Your order has been received, please check your email for
-                  price estimation
-                </p>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 ml-56 px-6 py-3 bg-purple-800 text-white font-bold text-lg rounded-xl shadow-xl transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-opacity-50"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+            <div className="modal-content">
+              <h1>Success!</h1>
+              <p>
+                Your order has been received, please check your email for price
+                estimation.
+              </p>
+              <button onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
-}
-
-const styles = {
-  loadingContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f3f3f3",
-  },
-  spinner: {
-    border: "16px solid #f3f3f3",
-    borderRadius: "50%",
-    borderTop: "16px solid #3498db",
-    width: "120px",
-    height: "120px",
-    animation: "spin 2s linear infinite",
-  },
-  loadingText: {
-    marginLeft: "20px",
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: "#3498db",
-  },
 };
+
+export default Form;
