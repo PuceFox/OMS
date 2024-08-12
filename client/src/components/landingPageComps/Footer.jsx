@@ -79,16 +79,16 @@ const FooterPage = () => {
             </div>
             {/* social icons */}
             <div className="flex space-x-6 py-3">
-              <a href="https://chat.whatsapp.com/FQSKgJ5f1eIAhlyF5sVym0">
+              <a href="https://chat.whatsapp.com/Eg3VHplzgwzJC3u6h3z9RU">
                 <FaWhatsapp className="cursor-pointer hover:text-blue-300 hover:scale-105 duration-200" />
               </a>
-              <a href="https://www.instagram.com/the.coding.journey/">
+              <a href="https://www.instagram.com/hacktiv8id?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
                 <FaInstagram className="cursor-pointer hover:text-blue-300 hover:scale-105 duration-200" />
               </a>
-              <a href="https://thecodingjourney.com/">
+              <a href="https://www.hacktiv8.com/">
                 <TbWorldWww className="cursor-pointer hover:text-blue-300 hover:scale-105 duration-200" />
               </a>
-              <a href="https://www.youtube.com/@TheCodingJourney">
+              <a href="https://www.youtube.com/@HACKTIV8">
                 <FaYoutube className="cursor-pointer hover:text-blue-300 hover:scale-105 duration-200" />
               </a>
             </div>
