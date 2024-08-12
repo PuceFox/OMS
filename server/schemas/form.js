@@ -444,7 +444,7 @@ const resolvers = {
                 Proceed
               </button>
           </a>
-          <a href="${CLIENT_URL}/negotiate/${orderData._id.toString()}">
+          <a href="${CLIENT_URL}/negotiate/${id.toString()}">
             <button
               style="
                 background-color: #F9DD3F;
