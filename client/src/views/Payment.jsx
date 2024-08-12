@@ -53,17 +53,15 @@ export default function Payment() {
           </div>
         </motion.div>
       </nav>
-      <div className="relative w-full h-screen bg-gradient-to-r from-blue-300 via-indigo-600 to-purple-800 opacity-80">
-        <br />
-        <h1 className="text-center mt-16 text-6xl font-serif mb-8 bg-gradient-to-r from-purple-500 via-blue-200 to-blue-500 bg-clip-text text-transparent shadow-lg stroke-effect">
-          PAYMENT PAGE
-        </h1>
+      <div className="relative w-full h-screen bg-white opacity-80">
+        <div className="flex justify-center items-center mt-1">
+          <h2 className="text-center mt-24 text-4xl font-serif mb-10 bg-gradient-to-r from-purple-800 via-blue-400 to-blue-600 bg-clip-text text-current shadow-sm inline-block border-b-4 border-indigo-500 pb-2">
+            Please fill in the details to complete your payment
+          </h2>
+        </div>
         <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
           <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full flex justify-center z-30">
-          <img src={logo} alt="Logo" className="w-4/12 t" />
-        </div>
       </div>
     </>
   );
