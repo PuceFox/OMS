@@ -101,6 +101,7 @@ const typeDefs = `#graphql
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
     getPromptedAI: String
+    followUpMail(id: ID): Order
   }
 
   type Mutation {
@@ -108,6 +109,7 @@ const typeDefs = `#graphql
     updateStatusOrder(id: ID, status: String): Order
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
     getClientStripeSession(orderId: ID): stripeSession
+    followUpMail(id: ID): Order
   }
 `;
 
@@ -180,6 +182,16 @@ const resolvers = {
 
       return airport;
     },
+
+    followUpMail: async (_parent, args) => {
+      const { id } = args
+      const order = await findOrderById(id)
+      const { fullname, email, service } = order
+      console.log(service);
+
+      return order
+    }
+
   },
 
   Mutation: {
@@ -395,6 +407,67 @@ const resolvers = {
         console.log(error);
         throw error
 
+      }
+    },
+
+    followUpMail: async (_parent, args) => {
+      const { id } = args
+      try {
+
+        const order = await findOrderById(id)
+        const { fullname, email, service } = order
+
+        let emailContent = `
+         <p>Dear ${fullname},</p>
+
+         <p>I hope this message finds you well. I wanted to follow up on the proposal we sent regarding your private jet charter needs with Orderly. We understand that making the right choice for your travel is important, and we’re here to assist you in any way we can.</p>
+
+         <p>We would be delighted to discuss any questions you might have or provide additional details about the charter options for your ${service} flight. Your satisfaction and comfort are our top priorities, and we’re eager to ensure that your experience with Orderly is nothing short of exceptional.</p>
+
+         <p>Please let us know if you need more information or if you're ready to proceed with your booking. We look forward to hearing from you soon.</p>
+
+        <p>Best regards,<br>
+        <strong>Orderly Private Jet Charter Services</strong></p>
+          <a href="${CLIENT_URL}/accept/${id.toString()}">
+              <button
+                style="
+                  background-color: #119125;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  padding: 10px 20px;
+                  font-size: 16px;
+                  cursor: pointer;
+                  margin-top: 20px;
+                "
+              >
+                Proceed
+              </button>
+          </a>
+            <a href="${CLIENT_URL}/reject/${id.toString()}">
+              <button
+                style="
+                  background-color: #cf0808;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  padding: 10px 20px;
+                  font-size: 16px;
+                  cursor: pointer;
+                  margin-top: 20px;
+                "
+              >
+                Reject
+              </button>
+          </a>
+        `
+        await sendMail(emailContent, email, "Reminder Offer")
+        console.log("reminder email send(?)");
+
+        return order
+      } catch (error) {
+        console.log(error);
+        throw error
       }
     }
 

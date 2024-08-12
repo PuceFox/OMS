@@ -134,3 +134,30 @@ query GetAirport {
   getPromptedAI
 }
 `
+export const MUTATION_FOLLOW_UP = gql`
+mutation FollowUpMail($followUpMailId: ID) {
+  followUpMail(id: $followUpMailId) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+    reason
+    offers {
+      serviceType
+      assetName
+      speed
+      flightTimeInMinutes
+      price
+    }
+  }
+}
+`
