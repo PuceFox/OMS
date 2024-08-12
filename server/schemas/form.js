@@ -96,7 +96,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder: [Order]
+    getOrder(page: Int!): [Order]
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -116,9 +116,11 @@ const typeDefs = `#graphql
 const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
-    getOrder: async (_parent, _args, contextValue) => {
+    getOrder: async (_parent, args, contextValue) => {
+      const { page } = args;
+      const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
-      const orders = await findAllOrder();
+      const orders = await findAllOrder(offset);
       return orders;
     },
 
@@ -131,22 +133,22 @@ const resolvers = {
 
     // Function untuk mendapatkan Order berdasarkan Statusnya
     getOrderByStatus: async (_parent, args) => {
-      const { status } = args
-      const order = await findOrderByStatus(status)
-      return order
+      const { status } = args;
+      const order = await findOrderByStatus(status);
+      return order;
     },
 
     // Function untuk mendapatkan Data Chart dari Status Order
     getOrderChart: async () => {
-      const dataChart = await findPecentage()
-      return dataChart
+      const dataChart = await findPecentage();
+      return dataChart;
     },
 
-    // Function untuk generate hasil analisa AI 
+    // Function untuk generate hasil analisa AI
     getPromptedAI: async () => {
-      const getDataAI = await findDataAI()
-      const resultAI = await gemini(getDataAI)
-      return resultAI
+      const getDataAI = await findDataAI();
+      const resultAI = await gemini(getDataAI);
+      return resultAI;
     },
 
     // Function untuk mendapatkan List semua Service
@@ -184,14 +186,13 @@ const resolvers = {
     },
 
     followUpMail: async (_parent, args) => {
-      const { id } = args
-      const order = await findOrderById(id)
-      const { fullname, email, service } = order
+      const { id } = args;
+      const order = await findOrderById(id);
+      const { fullname, email, service } = order;
       console.log(service);
 
-      return order
-    }
-
+      return order;
+    },
   },
 
   Mutation: {
@@ -214,14 +215,12 @@ const resolvers = {
         });
 
         return {
-          clientSecret: session.client_secret
-        }
+          clientSecret: session.client_secret,
+        };
       } catch (error) {
         console.log(error);
-        throw error
-
+        throw error;
       }
-
     },
 
     // Function Add Order
@@ -368,7 +367,7 @@ const resolvers = {
 
     // Function Update Order Data
     updateOrderData: async (_parent, args) => {
-      console.log('hit updateorderdata');
+      console.log("hit updateorderdata");
 
       try {
         const { id, price, aircraft, status, reason } = args;
@@ -384,8 +383,8 @@ const resolvers = {
         const stripePrice = await stripe.prices.create({
           product: product.id,
           unit_amount: Number(price) * 100,
-          currency: 'usd'
-        })
+          currency: "usd",
+        });
 
         await orders.updateOne(
           {
@@ -405,17 +404,15 @@ const resolvers = {
         return "Success update order data";
       } catch (error) {
         console.log(error);
-        throw error
-
+        throw error;
       }
     },
 
     followUpMail: async (_parent, args) => {
-      const { id } = args
+      const { id } = args;
       try {
-
-        const order = await findOrderById(id)
-        const { fullname, email, service } = order
+        const order = await findOrderById(id);
+        const { fullname, email, service } = order;
 
         let emailContent = `
          <p>Dear ${fullname},</p>
@@ -476,17 +473,16 @@ const resolvers = {
                 Reject
               </button>
           </a>
-        `
-        await sendMail(emailContent, email, "Reminder Offer")
+        `;
+        await sendMail(emailContent, email, "Reminder Offer");
         console.log("reminder email send(?)");
 
-        return order
+        return order;
       } catch (error) {
         console.log(error);
-        throw error
+        throw error;
       }
-    }
-
+    },
   },
 };
 

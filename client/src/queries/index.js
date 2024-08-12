@@ -45,8 +45,8 @@ export const MUTATION_ADD_ORDER = gql`
 `;
 
 export const QUERY_GET_ORDERS = gql`
-  query GetAirport {
-    getOrder {
+  query GetOrder($page: Int!) {
+    getOrder(page: $page) {
       _id
       fullname
       email
@@ -91,7 +91,6 @@ export const QUERY_ORDER_BY_ID = gql`
   }
 `;
 
-
 export const UPDATE_ORDER_DATA = gql`
   mutation UpdateOrderData(
     $updateOrderDataId: ID
@@ -106,7 +105,7 @@ export const UPDATE_ORDER_DATA = gql`
       aircraft: $aircraft
       status: $status
       reason: $reason
-    ) 
+    )
   }
 `;
 
@@ -119,45 +118,46 @@ export const GET_STRIPE_CLIENT = gql`
 `;
 
 export const GET_REPORT = gql`
-query GetAirport {
-  getOrderChart {
-    totalReject
-    totalAccept
-    totalPending
-    totalNego
-    totalRequest
-  }
-}`
-
-export const GET_DataAi = gql`
-query GetAirport {
-  getPromptedAI
-}
-`
-export const MUTATION_FOLLOW_UP = gql`
-mutation FollowUpMail($followUpMailId: ID) {
-  followUpMail(id: $followUpMailId) {
-    _id
-    fullname
-    email
-    phoneNumber
-    origin
-    destination
-    service
-    pax
-    status
-    price
-    aircraft
-    createdAt
-    updatedAt
-    reason
-    offers {
-      serviceType
-      assetName
-      speed
-      flightTimeInMinutes
-      price
+  query GetAirport {
+    getOrderChart {
+      totalReject
+      totalAccept
+      totalPending
+      totalNego
+      totalRequest
     }
   }
-}
-`
+`;
+
+export const GET_DataAi = gql`
+  query GetAirport {
+    getPromptedAI
+  }
+`;
+export const MUTATION_FOLLOW_UP = gql`
+  mutation FollowUpMail($followUpMailId: ID) {
+    followUpMail(id: $followUpMailId) {
+      _id
+      fullname
+      email
+      phoneNumber
+      origin
+      destination
+      service
+      pax
+      status
+      price
+      aircraft
+      createdAt
+      updatedAt
+      reason
+      offers {
+        serviceType
+        assetName
+        speed
+        flightTimeInMinutes
+        price
+      }
+    }
+  }
+`;
