@@ -5,7 +5,6 @@ import HeroPng from "../../assets/LOGO.png";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-// Function for framer-motion animation
 export const FadeUp = (delay) => {
   return {
     initial: {
@@ -36,11 +35,10 @@ const Hero = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900 via-indigo-600 to-blue-300 opacity-80"></div>
         <div className="relative container grid grid-cols-1 md:grid-cols-2 gap-3 px-4 py-6 md:py-24">
-          {/* Brand Info */}
           <div
             id="brand-info"
             className="flex flex-col justify-center py-14 md:py-0 relative z-20 text-center md:text-left"
-            style={{ transform: "translateX(-50px)" }} // Geser teks ke kiri
+            style={{ transform: "translateX(-50px)" }}
           >
             <div className="space-y-6 lg:max-w-xl mx-auto md:mx-0">
               <motion.h1
@@ -71,7 +69,6 @@ const Hero = () => {
               </motion.div>
             </div>
           </div>
-          {/* Hero Image */}
           <div
             id="hero-image"
             className="relative flex justify-center items-center ml-10"
@@ -85,9 +82,6 @@ const Hero = () => {
               className="relative z-10 "
               style={{
                 maxWidth: "130%",
-                // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                // borderRadius: "20px",
-                // padding: "30px",
               }}
             />
           </div>
