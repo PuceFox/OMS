@@ -1,12 +1,29 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Card, Typography, Button } from "@material-tailwind/react";
-import { QUERY_GET_ORDERS } from "../queries";
+import { MUTATION_FOLLOW_UP, QUERY_GET_ORDERS } from "../queries";
 import formatPrice from "../utils/formatDollar";
 
 const TABLE_HEAD = ["Fullname", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Aircraft", "Status", "Action"];
 
 export default function Dashboard() {
   const { loading, error, data } = useQuery(QUERY_GET_ORDERS);
+  const [followUp] = useMutation(MUTATION_FOLLOW_UP, {
+    onError: (error) => {
+      console.error("Mutation Error:", error)
+    }
+  })
+  const handleFollowUp = async (id) => {
+    try {
+      await followUp({
+        variables: {
+          "followUpMailId": id
+        }
+      })
+    } catch (error) {
+      console.log("FollowUp Error:", error);
+      
+    }
+  }
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -31,7 +48,7 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map(({ fullname, email, phoneNumber, origin, destination, service, pax, price, aircraft, status }, index) => {
+            {tableRows.map(({ _id, fullname, email, phoneNumber, origin, destination, service, pax, price, aircraft, status }, index) => {
               const isLast = index === tableRows.length - 1;
               const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
@@ -102,7 +119,7 @@ export default function Dashboard() {
 
                   {status !== "Accepted" && status !== "Rejected" && (
                     <td className={classes}>
-                      <Button as="a" href="#" variant="small" color="amber" className="font-bold">
+                      <Button as="a" href="#" variant="small" color="amber" className="font-bold" onClick={() => handleFollowUp(_id)}>
                         follow up
                       </Button>
                     </td>
