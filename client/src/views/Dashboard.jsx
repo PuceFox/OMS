@@ -187,7 +187,7 @@ export default function Dashboard() {
                             color="blue-gray"
                             className="font-medium"
                           >
-                            Waiting
+                            -
                           </Typography>
                         )}
                       </td>
