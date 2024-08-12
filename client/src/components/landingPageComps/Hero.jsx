@@ -5,7 +5,6 @@ import HeroPng from "../../assets/logo.png";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-// Function for framer-motion animation
 export const FadeUp = (delay) => {
   return {
     initial: {
@@ -35,11 +34,11 @@ const Hero = () => {
         className="relative bg-gray-100 overflow-hidden min-h-screen flex items-center justify-center"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900 via-indigo-600 to-blue-300 opacity-80"></div>
-        <div className="relative container grid grid-cols-1 md:grid-cols-2 gap-8 px-4 py-6 md:py-24">
-          {/* Brand Info */}
+        <div className="relative container grid grid-cols-1 md:grid-cols-2 gap-3 px-4 py-6 md:py-24">
           <div
             id="brand-info"
             className="flex flex-col justify-center py-14 md:py-0 relative z-20 text-center md:text-left"
+            style={{ transform: "translateX(-50px)" }}
           >
             <div className="space-y-6 lg:max-w-xl mx-auto md:mx-0">
               <motion.h1
@@ -70,10 +69,9 @@ const Hero = () => {
               </motion.div>
             </div>
           </div>
-          {/* Hero Image */}
           <div
             id="hero-image"
-            className="relative flex justify-center items-center"
+            className="relative flex justify-center items-center ml-10"
           >
             <motion.img
               initial={{ scale: 0.9, opacity: 0 }}
@@ -81,14 +79,9 @@ const Hero = () => {
               transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
               src={HeroPng}
               alt="Hero"
-              className="relative z-10"
+              className="relative z-10 "
               style={{
-                maxWidth: "110%",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                border: "2px solid rgba(255, 255, 255, 0.3)",
-                borderRadius: "20px",
-                padding: "30px",
-                filter: "brightness(0.9)",
+                maxWidth: "130%",
               }}
             />
           </div>

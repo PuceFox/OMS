@@ -91,6 +91,7 @@ const Form = () => {
       setServiceSelect(null);
       setShowModal(true);
       setLoading(false);
+      setErrors({});
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
@@ -152,6 +153,9 @@ const Form = () => {
       ...prevForm,
       [key]: value,
     }));
+    if (errors[key]) {
+      setErrors((prevErrors) => ({ ...prevErrors, [key]: null }));
+    }
   };
 
   const validateForm = () => {
@@ -207,6 +211,7 @@ const Form = () => {
   return (
     <>
       <style>
+        {" "}
         {`
           @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Lora:wght@400&display=swap');
 
@@ -248,9 +253,9 @@ const Form = () => {
             text-align: center;
             margin-bottom: 1rem;
             margin: 0;
-
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
           }
+
           .navbar h1 {
             margin: 0;
             font-size: 1.5rem;
@@ -278,17 +283,20 @@ const Form = () => {
           .form-input input::placeholder {
             color: #9CA3AF;
             font-size: 1rem;
-            text-align: center;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+            transform-origin: center; /* Ubah dari left bottom ke center */
           }
 
           .form-input input:focus::placeholder,
           .form-input input:not(:placeholder-shown)::placeholder {
+            transform: translateY(-1rem) scale(0.75);
             color: #7c3aed;
             font-size: 0.75rem;
+            padding-left: 0; /* Hapus padding kiri saat placeholder ditransformasi */
           }
 
           .error-message {
-            color: #f7c6c7;
+            color: red;
             font-size: 0.75rem;
             margin-top: 0.25rem;
             text-align: center;
@@ -299,7 +307,7 @@ const Form = () => {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding-top: 4rem; /* Adjust for navbar height */
+            padding-top: 4rem;
           }
 
           .form-box {
@@ -390,7 +398,6 @@ const Form = () => {
           }
         `}
       </style>
-
       <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 text-white shadow-lg z-20">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
