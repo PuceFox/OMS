@@ -1,9 +1,36 @@
 import React from "react";
-import { IconButton, Typography, List, ListItem, ListItemPrefix, ListItemSuffix, Chip, Input, Drawer, Card, Button } from "@material-tailwind/react";
-import { PresentationChartBarIcon, ShoppingBagIcon, UserCircleIcon, Cog6ToothIcon, InboxIcon, PowerIcon, BeakerIcon, ChartBarIcon } from "@heroicons/react/24/solid";
-import { ChevronRightIcon, ChevronDownIcon, MagnifyingGlassIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  IconButton,
+  Typography,
+  List,
+  ListItem,
+  ListItemPrefix,
+  ListItemSuffix,
+  Chip,
+  Input,
+  Drawer,
+  Card,
+  Button,
+} from "@material-tailwind/react";
+import {
+  PresentationChartBarIcon,
+  ShoppingBagIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+  InboxIcon,
+  PowerIcon,
+  BeakerIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/solid";
+import {
+  ChevronRightIcon,
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  Bars3Icon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { Link as NavLink, useNavigate } from "react-router-dom";
-import logo from "../assets/LOGO.png";
+import logo from "../assets/logo.png";
 
 export default function SideBar() {
   const [open, setOpen] = React.useState(0);
@@ -27,10 +54,22 @@ export default function SideBar() {
   return (
     <>
       <IconButton variant="text" size="lg" onClick={openDrawer}>
-        {isDrawerOpen ? <XMarkIcon className="h-8 w-8 stroke-2" /> : <Bars3Icon className="h-8 w-8 stroke-2" />}
+        {isDrawerOpen ? (
+          <XMarkIcon className="h-8 w-8 stroke-2" />
+        ) : (
+          <Bars3Icon className="h-8 w-8 stroke-2" />
+        )}
       </IconButton>
-      <Drawer open={isDrawerOpen} onClose={closeDrawer} className="bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]">
-        <Card color="transparent" shadow={false} className="h-[calc(100vh-2rem)] w-full p-4 ">
+      <Drawer
+        open={isDrawerOpen}
+        onClose={closeDrawer}
+        className="bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]"
+      >
+        <Card
+          color="transparent"
+          shadow={false}
+          className="h-[calc(100vh-2rem)] w-full p-4 "
+        >
           <div className="mb-2 flex items-center gap-4 p-4">
             <img src={logo} alt="brand" className="h-full w-full" />
           </div>

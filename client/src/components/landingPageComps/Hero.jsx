@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../../components/landingPageComps/Navbar";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import HeroPng from "../../assets/LOGO.png";
+import HeroPng from "../../assets/logo.png";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
