@@ -234,9 +234,8 @@ export default function Dashboard() {
                             variant="small"
                             color="amber"
                             className="font-bold"
-                          >
-                            follow up
-                          </Button>
+                            onClick={() => handleFollowUp(_id)}
+                          ></Button>
                         </td>
                       )}
                     </tr>

@@ -10,6 +10,7 @@ const { companyResolvers, companyTypeDefs } = require("./schemas/company");
 const { formTypeDefs, formResolvers } = require("./schemas/form");
 const { authentication } = require("./helpers/helpers");
 const Controller = require("./controllers/controller");
+const { google } = require("googleapis");
 
 const server = new ApolloServer({
   typeDefs: [companyTypeDefs, formTypeDefs],
@@ -25,6 +26,10 @@ const server = new ApolloServer({
 });
 
 (async () => {
+  const auth = new google.auth.GoogleAuth({
+    scopes: ["https://www.googleapis.com/auth/calendar"],
+  });
+
   await mongoConnect();
   await server.start();
   console.log("Mongo Connected");
