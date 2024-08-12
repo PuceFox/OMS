@@ -9,6 +9,7 @@ import Report from "../views/Report";
 import { AcceptOrder } from "../views/AcceptOrder";
 import Payment from "../views/Payment";
 import { RejectOrder } from "../views/RejectOrder";
+import { NegotiateOrder } from "../views/NegotiateOrder";
 
 import PaymentStatus from "../views/PaymentStatus";
 
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
   {
     path: "/reject/:orderId",
     element: <RejectOrder />,
+  },
+  {
+    path: "/negotiate/:orderId",
+    element: <NegotiateOrder />,
   },
   {
     element: <BaseLayout />,
