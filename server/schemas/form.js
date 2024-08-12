@@ -444,6 +444,22 @@ const resolvers = {
                 Proceed
               </button>
           </a>
+          <a href="${CLIENT_URL}/negotiate/${orderData._id.toString()}">
+            <button
+              style="
+                background-color: #F9DD3F;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Negotiate
+            </button>
+          </a>
             <a href="${CLIENT_URL}/reject/${id.toString()}">
               <button
                 style="
