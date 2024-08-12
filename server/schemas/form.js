@@ -129,7 +129,7 @@ const resolvers = {
 
     // Function untuk mendapatkan Order berdasarkan Statusnya
     getOrderByStatus: async (_parent, args) => {
-      const { status } = args 
+      const { status } = args
       const order = await findOrderByStatus(status)
       return order
     },
@@ -185,7 +185,7 @@ const resolvers = {
   Mutation: {
     getClientStripeSession: async (_parent, args) => {
       try {
-        const {orderId} = args;
+        const { orderId } = args;
         const order = await findOrderById(orderId);
         const session = await stripe.checkout.sessions.create({
           ui_mode: "embedded",
@@ -207,7 +207,7 @@ const resolvers = {
       } catch (error) {
         console.log(error);
         throw error
-        
+
       }
 
     },
@@ -302,6 +302,22 @@ const resolvers = {
               Proceed
             </button>
           </a>
+          <a href="${CLIENT_URL}/negotiate/${orderData._id.toString()}">
+            <button
+              style="
+                background-color: #F9DD3F;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+              "
+            >
+              Negotiate
+            </button>
+          </a>
           <a href="${CLIENT_URL}/reject/${orderData._id.toString()}">
             <button
               style="
@@ -341,7 +357,7 @@ const resolvers = {
     // Function Update Order Data
     updateOrderData: async (_parent, args) => {
       console.log('hit updateorderdata');
-      
+
       try {
         const { id, price, aircraft, status, reason } = args;
 
@@ -378,7 +394,7 @@ const resolvers = {
       } catch (error) {
         console.log(error);
         throw error
-        
+
       }
     }
 

@@ -6,7 +6,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { formatTime } from "../utils/formatTime";
 
-export function AcceptOrder({ route }) {
+export function NegotiateOrder({ route }) {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
   const [offer, setOffer] = useState(0);
@@ -20,54 +20,43 @@ export function AcceptOrder({ route }) {
     },
   });
 
-  const [updateOrder, { data: updateOrderData }] =
-    useMutation(UPDATE_ORDER_DATA);
+  const [updateNegotiate] = useMutation(UPDATE_ORDER_DATA);
 
   const [isLoading, setIsLoading] = useState(false);
   //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
 
-  console.log(order);
+  console.log(order, `data order`);
 
-  async function submitOrder() {
-    setIsLoading(true);
-    updateOrder({
-      variables: {
-        updateOrderDataId: orderId,
-        price: Number(order?.offers[offer].price),
-        aircraft: order?.offers[offer].assetName,
-        status: "Accepted",
-      },
-      onCompleted: (data) => {
-        nav(`/payment/${orderId}`);
-      },
-      onError: (error) => {
-        console.log(error.graphQLErrors);
-        setIsLoading(false);
-      },
-    });
+  async function submitOrder(event) {
+    event.preventDefault();
+    try {
+      await updateNegotiate({
+        variables: {
+          updateOrderDataId: orderId,
+          price: parseInt(price), // assuming price is an integer
+          aircraft: order?.offers[offer].assetName,
+          status: "Negotiate",
+          reason: "", // you need to provide a reason or remove it from the mutation if it's not required
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+      });
+      nav("/form");
+    } catch (error) {
+      // Handle error
+      console.error("Error updating order:", error);
+    }
   }
-
-  //   const data = {
-  //     _id: "66b4a0aeed2e1c5f2e0b702b",
-  //     fullname: "jajang",
-  //     email: "jajang@mail.com",
-  //     phoneNumber: "12345",
-  //     origin: "DJJ",
-  //     destination: "BTJ",
-  //     service: "VIP",
-  //     aircraft: "Gulfstream G150",
-  //     price: "5000",
-  //   };
-  //   console.log(data);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-purple-800 p-6">
           <h1 className="text-3xl font-bold text-white">
-            Confirm Service Order
+            Negotiate Service Order
           </h1>
         </div>
         <div className="p-6">
@@ -128,7 +117,7 @@ export function AcceptOrder({ route }) {
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
             <Button className="w-full bg-green-600" onClick={submitOrder}>
-              Confirm
+              Negotiate
             </Button>
           )}
         </div>
