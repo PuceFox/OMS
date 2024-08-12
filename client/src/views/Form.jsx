@@ -5,7 +5,7 @@ import { GET_AIRPORTS, GET_SERVICES, MUTATION_ADD_ORDER } from "../queries";
 import Logo from "../assets/name.png";
 import { IoMdMenu } from "react-icons/io";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 
 const customStyles = {
   control: (provided) => ({
