@@ -14,10 +14,12 @@ import { Button } from "@material-tailwind/react";
 export function NegotiateOrder() {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
-  const price = queries.get("price");
+
   const [offer, setOffer] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const price = queries.get("price");
 
   const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
     variables: {
@@ -30,41 +32,27 @@ export function NegotiateOrder() {
   const [sendNegotiationEmail] = useMutation(MUTATION_SEND_NEGOTIATION_EMAIL);
   const [updateOrder] = useMutation(UPDATE_ORDER_DATA);
 
-  useEffect(() => {
-    if (orderId) {
-      sendNegotiationEmail({
-        variables: {
-          orderId: orderId,
-          email: order?.email,
-          fullname: order?.fullname,
-          aircraft: order?.offers[offer].assetName,
-          price: parseInt(price),
-        },
-      });
-    }
-  }, [orderId, sendNegotiationEmail, order, offer, price]);
-
   async function submitNegotiate(event) {
     event.preventDefault();
     try {
       setIsLoading(true);
+      if (!order) {
+        throw new Error("Order data is not available");
+      }
       await updateOrder({
         variables: {
           updateOrderDataId: orderId,
           price: parseInt(price),
-          aircraft: order?.offers[offer].assetName,
+          aircraft: order.offers[offer].assetName,
           status: "Negotiate",
           reason: "",
         },
       });
 
+      // Add this line to send the negotiation email
       await sendNegotiationEmail({
         variables: {
-          orderId: orderId,
-          email: order.email,
-          fullname: order.fullname,
-          aircraft: order?.offers[offer].assetName,
-          price: parseInt(price),
+          negotiationMailId: orderId,
         },
       });
 

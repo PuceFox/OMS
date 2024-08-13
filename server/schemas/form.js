@@ -15,6 +15,7 @@ const {
   findDataAI,
   findAirportByIataCode,
   findOrderCount,
+  updateNegotiation,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -118,7 +119,7 @@ const typeDefs = `#graphql
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
     generateInvoice(id: ID): Order
-    negosiationMail(id: ID): Order
+    negotiationMail(id: ID): Order
   }
 `;
 
@@ -602,7 +603,7 @@ const resolvers = {
       }
     },
 
-    negosiationMail: async (_parent, args) => {
+    negotiationMail: async (_parent, args) => {
       const { id } = args;
       try {
         const order = await findOrderById(id);

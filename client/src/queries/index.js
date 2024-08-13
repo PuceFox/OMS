@@ -195,16 +195,29 @@ mutation Mutation($generateInvoiceId: ID) {
 `
 
 export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
-  mutation Mutation($orderId: ID!, $email: String!, $fullname: String!, $aircraft: String!, $price: Int!) {
-    sendNegotiationEmail(
-      orderId: $orderId
-      email: $email
-      fullname: $fullname
-      aircraft: $aircraft
-      price: $price
-    ) {
-      success
-      message
+  mutation NegotiationMail($negotiationMailId: ID) {
+  negotiationMail(id: $negotiationMailId) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+    reason
+    offers {
+      serviceType
+      assetName
+      speed
+      flightTimeInMinutes
+      price
     }
   }
+}
 `;
