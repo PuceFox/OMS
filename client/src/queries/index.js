@@ -196,7 +196,6 @@ export const MUTATION_SEND_INVOICE = gql`
       }
     }
   }
-}
 `
 export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
   mutation NegotiationMail($negotiationMailId: ID) {
