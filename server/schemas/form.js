@@ -108,6 +108,7 @@ const typeDefs = `#graphql
     getOrderChart: DataChart
     getPromptedAI: String
     followUpMail(id: ID): Order
+    invoiceMail(id: ID): Order
   }
 
   type Mutation {
@@ -116,6 +117,7 @@ const typeDefs = `#graphql
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
+    invoiceMail(id: ID): Order
   }
 `;
 
@@ -202,8 +204,18 @@ const resolvers = {
       const { fullname, email, service } = order;
       console.log(service);
 
-      return order;
+      return order
     },
+
+    invoiceMail: async (_parent, args) => {
+      const { id } = args
+      const order = await findOrderById(id)
+      const { fullname, email, service } = order
+      console.log(service);
+
+      return order
+    }
+
   },
 
   Mutation: {
@@ -285,12 +297,15 @@ const resolvers = {
         });
 
         let emailContent = `
-         <p>
-          Dear ${fullname}, Thank you for considering Orderly for your private
+        <p>Dear ${fullname},</p>
+
+        <p>Thank you for considering Orderly for your private
           jet charter needs. We are thrilled to offer you the luxury, comfort, and
           flexibility that our service is known for. To ensure your experience is
           perfectly tailored to your preferences, we provide a range of charter
-          options for ${service} flight. Please review the options below
+          options for ${service} flight.</p>
+
+        <p>Please review the options below
           and select the one that you find most suitable:
         </p>
         <table style="border-collapse: collapse; width: 100%">
@@ -455,7 +470,7 @@ const resolvers = {
           <a href="${CLIENT_URL}/negotiate/${id.toString()}">
             <button
               style="
-                background-color: #F9DD3F;
+                background-color: #FE9900;
                 color: white;
                 border: none;
                 border-radius: 5px;
@@ -494,6 +509,42 @@ const resolvers = {
         throw error;
       }
     },
+
+    invoiceMail: async (_parent, args) => {
+      const { id } = args;
+      try {
+        const order = await findOrderById(id);
+        console.log(order);
+
+        const { fullname, email, service, price, aircraft } = order;
+
+        let emailContent = `
+          <p>Dear ${fullname},</p>
+    
+          <p>We are pleased to inform you that your payment has been successfully processed. Thank you for choosing Orderly for your ${service} flight on ${aircraft}.</p>
+    
+          <p>Your payment details are as follows:
+            Amount Paid: ${price}
+            Payment Date: ${new Date().toLocaleDateString()}
+    
+          If you have any questions or need further assistance, please don’t hesitate to contact us. We are here to help you at any time.</p>
+    
+          <p>Once again, thank you for choosing Orderly. We look forward to serving you again in the future.</p>
+    
+          <p>Best regards,<br>
+          <strong>Orderly Private Jet Charter Services</strong></p>
+        `;
+
+        await sendMail(emailContent, email, "Invoice of Payment");
+        console.log("invoice send(?");
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
   },
 };
 
