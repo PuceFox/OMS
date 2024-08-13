@@ -53,7 +53,7 @@ export function RejectOrder() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
       <div className="flex justify-center w-full">
-        <img src={logo} alt="Logo" className="w-4/12 mb-16" />
+        <img src={logo} alt="Logo" className="w-4/12 mb-16 " />
       </div>
       <div className="w-full max-w-xl bg-white rounded-lg shadow-lg overflow-hidden mb-14">
         <div className="bg-purple-800 p-6 rounded-t-lg">
