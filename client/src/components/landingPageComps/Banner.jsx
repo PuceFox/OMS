@@ -88,7 +88,7 @@ const Banner1 = () => {
                 <div className="absolute -inset-2 rounded-full border-2 border-indigo-600"></div>
                 <GrUserExpert className="text-5xl text-indigo-600" />
                 <p className="text-xl font-semibold text-gray-800">
-                  AI Integreted for Business Intelligence
+                  AI Integreted for Business Insight
                 </p>
               </motion.div>
               <motion.div
