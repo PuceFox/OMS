@@ -30,7 +30,7 @@ const TABLE_HEAD = [
 export default function Dashboard() {
   const [
     fetchOrders,
-    { loading: tableLoading, error: tableError, data: tableData },
+    { loading: tableLoading, error: tableError, data: tableData, refetch },
   ] = useLazyQuery(QUERY_GET_ORDERS);
   const [followUp] = useMutation(MUTATION_FOLLOW_UP, {
     onError: (error) => {
@@ -82,6 +82,8 @@ export default function Dashboard() {
   }, [page]);
 
   const tableRows = tableData?.getOrder.orders;
+  console.log(tableRows?.length, "DATA");
+  console.log(page, "PAGE");
   if (tableData) totalPage = tableData?.getOrder.totalPage;
   if (tableError) return <p>Error: {tableError.message}</p>;
 
