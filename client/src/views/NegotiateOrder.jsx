@@ -9,7 +9,7 @@ import {
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
-import { Button } from "@material-tailwind/react";
+import logo from "../assets/logo.png";
 
 export function NegotiateOrder() {
   const { orderId } = useParams();
@@ -67,9 +67,9 @@ export function NegotiateOrder() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
       <div className="flex justify-center w-full">
-        <img src={logo} alt="Logo" className="w-4/12 mb-28" />
+        <img src={logo} alt="Logo" className="w-4/12 mb-16" />
       </div>
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden mb-10">
         <div className="bg-purple-800 p-6">
           <h1 className="text-3xl font-bold text-white text-center">
             Negotiate Service Order
