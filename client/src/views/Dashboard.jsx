@@ -68,7 +68,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-8">
         {/* Filters and Sorting */}
         <Card className="flex flex-wrap gap-4 p-4 w-min max-w-screen-lg">
           {/* Filters - First row */}
