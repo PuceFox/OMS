@@ -13,6 +13,7 @@ import Toastify from "toastify-js";
 import { useEffect, useState } from "react";
 import Paging from "../components/Paging";
 import { formatDate } from "../utils/formatDate";
+import { Link } from "react-router-dom";
 
 const TABLE_HEAD = [
   "No",
@@ -352,24 +353,29 @@ export default function Dashboard() {
                           {formatDate(updatedAt)}
                         </Typography>
                       </td>
-                      {status === "Negotiate" && (
+                      {status === "Negotiation" && (
                         <td className={classes}>
-                          <Button
-                            as="a"
-                            href="#"
-                            size="sm"
-                            color="blue"
-                            className="font-bold"
-                            onClick={() => handleFollowUp(_id)}
+                          <Link
+                            to={`/update/${_id}`}
+                            className="text-white bg-blue-500 p-2 rounded-md"
                           >
-                            Update
-                          </Button>
+                            <Button
+                              as="a"
+                              href="#"
+                              size="sm"
+                              color="blue"
+                              className="font-bold"
+                              onClick={() => handleFollowUp(_id)}
+                            >
+                              Update
+                            </Button>
+                          </Link>
                         </td>
                       )}
                       {status !== "Accepted" &&
                         status !== "Rejected" &&
                         status !== "Paid" &&
-                        status !== "Negotiate" && (
+                        status !== "Negotiation" && (
                           <td className={classes}>
                             <Button
                               as="a"
