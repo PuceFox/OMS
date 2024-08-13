@@ -87,7 +87,7 @@ export default function Report() {
                 Report
               </Typography>
             </div>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Typography variant="small" color="blue-gray">
                 Year:
               </Typography>
@@ -98,7 +98,7 @@ export default function Report() {
                   </Option>
                 ))}
               </Select>
-            </div>
+            </div> */}
           </div>
         </CardHeader>
         <CardBody className="mt-4 grid place-items-center px-2">

@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import Paging from "../components/Paging";
 
 const TABLE_HEAD = [
+  "No",
   "Name",
   "Email",
   "Phone Number",
@@ -30,7 +31,7 @@ const TABLE_HEAD = [
 export default function Dashboard() {
   const [
     fetchOrders,
-    { loading: tableLoading, error: tableError, data: tableData, refetch },
+    { loading: tableLoading, error: tableError, data: tableData },
   ] = useLazyQuery(QUERY_GET_ORDERS);
   const [followUp] = useMutation(MUTATION_FOLLOW_UP, {
     onError: (error) => {
@@ -75,11 +76,13 @@ export default function Dashboard() {
     fetchOrders({
       variables: {
         page: page,
+        statusFilter,
+        serviceFilter,
+        sortField,
+        sortOrder,
       },
     });
-
-    // console.log(totalPage);
-  }, [page]);
+  }, [page, statusFilter, serviceFilter, sortField, sortOrder]);
 
   const tableRows = tableData?.getOrder.orders;
   console.log(tableRows?.length, "DATA");
@@ -89,7 +92,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-8">
         {/* Filters and Sorting */}
         <Card className="flex flex-wrap gap-4 p-4 w-min max-w-screen-lg">
           {/* Filters - First row */}
@@ -201,7 +204,17 @@ export default function Dashboard() {
                     : "p-4 border-b border-blue-gray-50";
 
                   return (
-                    <tr key={fullname}>
+                    <tr key={_id}>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {index + 1 + (page - 1) * 10}{" "}
+                          {/* Adjust based on current page */}
+                        </Typography>
+                      </td>
                       <td className={classes}>
                         <Typography
                           variant="small"
