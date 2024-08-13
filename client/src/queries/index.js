@@ -45,8 +45,12 @@ export const MUTATION_ADD_ORDER = gql`
 `;
 
 export const QUERY_GET_ORDERS = gql`
-  query GetOrder($page: Int!) {
-    getOrder(page: $page) {
+  query GetOrder($page: Int!, $filterStatus: String, $filterService: String) {
+    getOrder(
+      page: $page
+      filterStatus: $filterStatus
+      filterService: $filterService
+    ) {
       orders {
         _id
         fullname
@@ -167,8 +171,36 @@ export const MUTATION_FOLLOW_UP = gql`
 `;
 
 export const MUTATION_SEND_INVOICE = gql`
-mutation Mutation($generateInvoiceId: ID) {
-  generateInvoice(id: $generateInvoiceId) {
+  mutation Mutation($generateInvoiceId: ID) {
+    generateInvoice(id: $generateInvoiceId) {
+      _id
+      fullname
+      email
+      phoneNumber
+      origin
+      destination
+      service
+      pax
+      status
+      price
+      aircraft
+      createdAt
+      updatedAt
+      reason
+      offers {
+        serviceType
+        assetName
+        speed
+        flightTimeInMinutes
+        price
+      }
+    }
+  }
+}
+`
+export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
+  mutation NegotiationMail($negotiationMailId: ID) {
+  negotiationMail(id: $negotiationMailId) {
     _id
     fullname
     email
@@ -192,4 +224,4 @@ mutation Mutation($generateInvoiceId: ID) {
     }
   }
 }
-`
+`;

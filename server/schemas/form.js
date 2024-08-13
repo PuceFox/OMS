@@ -105,14 +105,12 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!, filterStatus: String): OrderResponse
+    getOrder(page: Int!, filterStatus: String, filterService: String): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
     getPromptedAI: String
     followUpMail(id: ID): Order
-    invoiceMail(id: ID): Order
-    negosiationMail(id: ID): Order
   }
 
   type Mutation {
@@ -122,7 +120,7 @@ const typeDefs = `#graphql
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
     generateInvoice(id: ID): Order
-    negosiationMail(id: ID): Order
+    negotiationMail(id: ID): Order
     updatePayment(id: ID): Order
   }
 `;
@@ -131,15 +129,16 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, args, contextValue) => {
-      const { page, filterStatus } = args;
+      const { page, filterStatus, filterService } = args;
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
       let filter = false;
-      if (filterStatus) {
-        filter = {
-          status: filterStatus,
-        };
+      if (filterStatus || filterService) {
+        filter = {};
       }
+
+      if (filterStatus) filter.status = filterStatus;
+      if (filterService) filter.service = filterService;
       const { orders, totalCount } = await findAllOrder(offset, filter);
 
       const totalPage = Math.ceil(totalCount / 10);
@@ -220,14 +219,6 @@ const resolvers = {
       return order;
     },
 
-    invoiceMail: async (_parent, args) => {
-      const { id } = args;
-      const order = await findOrderById(id);
-      const { fullname, email, service } = order;
-      console.log(service);
-
-      return order;
-    },
   },
 
   Mutation: {
@@ -527,8 +518,8 @@ const resolvers = {
       try {
         const order = await findOrderById(id);
         const { fullname, email, service } = order;
-        const origin = await findAirportByIataCode(order.origin)
-        const destination = await findAirportByIataCode(order.destination)
+        const origin = await findAirportByIataCode(order.origin);
+        const destination = await findAirportByIataCode(order.destination);
 
         let emailContent = `
          <html lang="en">
@@ -588,7 +579,13 @@ const resolvers = {
         <div class="invoice-details">
             <p><strong>Invoice for:</strong> ${fullname}</p>
             <p><strong>Service:</strong> ${service} Flight</p>
-            <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\//g, '-')}</p>
+            <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            .replace(/\//g, "-")}</p>
             <p><strong>Invoice Number:</strong> ${order._id}</p>
             <p><strong>Payment Status:</strong> ${order.status}</p>
         </div>
@@ -598,7 +595,10 @@ const resolvers = {
         <p><strong>Departure Location:</strong> ${origin.city}</p>
         <p><strong>Destination:</strong> ${destination.city}</p>
         <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
-        <p><strong>Total Price:</strong> ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.price)}</p>
+        <p><strong>Total Price:</strong> ${new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(order.price)}</p>
 
         <p>Thank you for choosing Orderly Private Jet Charter Services. We look forward to providing you with an exceptional travel experience.</p>
     </div>
@@ -615,7 +615,7 @@ const resolvers = {
         await sendMail(emailContent, email, "Invoice");
         console.log("Invoice email send(?)");
         const updateOrder = await updatePaid(id)
-        
+
         return updateOrder;
       } catch (error) {
         console.log(error);
@@ -623,7 +623,7 @@ const resolvers = {
       }
     },
 
-    negosiationMail: async (_parent, args) => {
+    negotiationMail: async (_parent, args) => {
       const { id } = args;
       try {
         const order = await findOrderById(id);
