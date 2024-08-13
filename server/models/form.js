@@ -205,6 +205,25 @@ async function updateOrder(id, status) {
   return updatedOrder;
 }
 
+// Function untuk Update Negotiation Data Order
+async function updateNegotiation(id) {
+  const updateStatus = await (
+    await OrderTable()
+  ).updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        status: "Negotiation",
+        updatedAt: new Date(),
+      },
+    }
+  );
+
+  const updatedOrder = await findOrderById(id);
+
+  return updatedOrder;
+}
+
 module.exports = {
   OrderTable,
   createOrder,

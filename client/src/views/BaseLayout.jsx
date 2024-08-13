@@ -7,10 +7,8 @@ export default function BaseLayout() {
       <div className="flex bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]">
         <SideBar />
         <div className="flex-1 p-14 bg-gradient-to-r from-[#fbc2eb] to-[#a6c0fe]">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold">Orderly</h1>
-
-            <img src={logo} alt="Company Logo" className="h-14 w-40" />
+          <div className="flex mb-4">
+            <img src={logo} alt="Company Logo" className="h-20 w-56" />
           </div>
           <Outlet />
         </div>

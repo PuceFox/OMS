@@ -109,6 +109,7 @@ const typeDefs = `#graphql
     getPromptedAI: String
     followUpMail(id: ID): Order
     invoiceMail(id: ID): Order
+    negosiationMail(id: ID): Order
   }
 
   type Mutation {
@@ -118,6 +119,7 @@ const typeDefs = `#graphql
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
     invoiceMail(id: ID): Order
+    negosiationMail(id: ID): Order
   }
 `;
 
@@ -543,6 +545,39 @@ const resolvers = {
 
         await sendMail(emailContent, email, "Invoice of Payment");
         console.log("invoice send(?");
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
+    negosiationMail: async (_parent, args) => {
+      const { id } = args;
+      try {
+        const order = await findOrderById(id);
+        console.log(order);
+
+        const { fullname, email, service, aircraft } = order;
+
+        let emailContent = `
+          <p>Dear ${fullname},</p>
+    
+          <p>Thank you for your recent inquiry regarding the ${service} flight on ${aircraft}. We appreciate your interest in our services and your request for further negotiation.</p>
+    
+          <p>We wanted to let you know that one of our dedicated staff members will be in touch with you within the next 3 days to discuss the details and finalize any arrangements. We aim to ensure that all your needs are met with the highest level of service.</p>
+    
+          <p>If you have any immediate questions or concerns, please feel free to reach out to us. We are here to assist you at any time.</p>
+    
+          <p>Once again, thank you for choosing Orderly. We look forward to finalizing the details and providing you with an exceptional private jet experience.</p>
+        `;
+
+        await sendMail(emailContent, email, "Negotiation Confirmation");
+        console.log("negotiation email sent(?");
+
+        // Update the order status to "Negotiation"
+        await updateNegotiation(id);
 
         return order;
       } catch (error) {
