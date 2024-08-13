@@ -59,7 +59,7 @@ const Testimonials = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-indigo-600 to-purple-500 opacity-30"></div>
 
-      <div className="relative container mx-auto text-center">
+      <div className="relative container mx-auto text-center mt-16">
         <h2
           className="text-4xl md:text-5xl font-bold text-white leading-tight mb-12"
           style={{
