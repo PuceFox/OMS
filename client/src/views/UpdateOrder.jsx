@@ -1,21 +1,55 @@
 import { Button } from "@material-tailwind/react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
 import logo from "../assets/logo.png";
 import { useState } from "react";
+import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
+import formatPrice from "../utils/formatDollar";
+import { formatTime } from "../utils/formatTime";
 
 export function UpdateOrder() {
-  // Dummy data
-  const order = {
-    fullname: "John Doe",
-    offers: [
-      { assetName: "Aircraft 1", price: 5000, flightTimeInMinutes: 120 },
-      { assetName: "Aircraft 2", price: 6000, flightTimeInMinutes: 150 },
-    ],
-    origin: "New York",
-    destination: "Los Angeles",
+  const { orderId } = useParams();
+  const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
+    variables: {
+      getOrderByIdId: orderId,
+    },
+  });
+  const [offer, setOffer] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [manualPrice, setManualPrice] = useState(""); // added state for manual price
+  const order = data?.getOrderById;
+
+  const [updateOrderData, { loading: updateLoading }] =
+    useMutation(UPDATE_ORDER_DATA);
+
+  const handlePriceChange = (e) => {
+    setManualPrice(e.target.value);
   };
 
-  const [offer, setOffer] = useState(0);
-  const [manualPrice, setManualPrice] = useState("");
+  const handleSave = async () => {
+    if (!manualPrice) return; // don't update if no manual price is entered
+    try {
+      setIsLoading(true);
+      if (!order) {
+        throw new Error("Order data is not available");
+      }
+      await updateOrderData({
+        variables: {
+          updateOrderDataId: orderId,
+          price: parseInt(manualPrice || order.offers[offer].price),
+          aircraft: order.offers[offer].assetName,
+          status: "Negotiate",
+          reason: "",
+        },
+      });
+      alert("Order updated successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Error updating order: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
@@ -34,35 +68,34 @@ export function UpdateOrder() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Name
               </h2>
-              <p className="text-gray-600">{order.fullname}</p>
+              <p className="text-gray-600">{order?.fullname}</p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Aircraft
               </h2>
               <select
+                name=""
+                id=""
                 value={offer}
-                onChange={(e) => setOffer(Number(e.target.value))}
-                className="border-gray-300 rounded-md"
+                onChange={(e) => setOffer(e.target.value)}
               >
-                {order.offers.map((offer, i) => (
-                  <option key={i} value={i}>
-                    {offer.assetName}
-                  </option>
-                ))}
+                {order?.offers.map((offer, i) => {
+                  return <option value={i}>{offer.assetName}</option>;
+                })}
               </select>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Departure
               </h2>
-              <p className="text-gray-600">{order.origin}</p>
+              <p className="text-gray-600">{order?.origin}</p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 Arrival
               </h2>
-              <p className="text-gray-600">{order.destination}</p>
+              <p className="text-gray-600">{order?.destination}</p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -70,8 +103,8 @@ export function UpdateOrder() {
               </h2>
               <input
                 type="number"
-                value={manualPrice || order.offers[offer].price}
-                onChange={(e) => setManualPrice(e.target.value)}
+                value={manualPrice || formatPrice(order?.offers[offer].price)}
+                onChange={handlePriceChange}
                 className="border border-gray-300 rounded-md p-2 w-full"
               />
             </div>
@@ -80,7 +113,7 @@ export function UpdateOrder() {
                 Total Flight Time
               </h2>
               <p className="text-gray-600">
-                {order.offers[offer].flightTimeInMinutes} minutes
+                {formatTime(order?.offers[offer].flightTimeInMinutes)}
               </p>
             </div>
           </div>
@@ -94,7 +127,7 @@ export function UpdateOrder() {
           </Button>
           <Button
             className="bg-indigo-700 hover:bg-blue-600 text-white"
-            onClick={() => alert("Save clicked")}
+            onClick={handleSave}
           >
             Save
           </Button>
