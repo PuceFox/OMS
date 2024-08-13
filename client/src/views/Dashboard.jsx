@@ -60,7 +60,7 @@ export default function Dashboard() {
         filterService: serviceFilter,
       },
     });
-  }, [page, statusFilter, serviceFilter]);
+  }, [page, statusFilter]);
 
   const tableRows = tableData?.getOrder.orders;
   console.log(tableRows?.length, "DATA");
@@ -101,11 +101,12 @@ export default function Dashboard() {
               }}
               className="flex-1"
             >
-              <Option value="ASC">A - Z</Option>
-              <Option value="DESC">Z - A</Option>
+              <Option value="">None</Option>
+              <Option value="ASC">Ascending</Option>
+              <Option value="DESC">Descending</Option>
             </Select>
             <Select
-              label="Sort by date"
+              label="Sort by Created At"
               value={sortField === "createdAt" ? sortOrder : ""}
               onChange={(e) => {
                 if (e.target.value === "ASC" || e.target.value === "DESC") {
@@ -115,8 +116,9 @@ export default function Dashboard() {
               }}
               className="flex-1"
             >
-              <Option value="ASC">Oldest</Option>
-              <Option value="DESC">Newest</Option>
+              <Option value="">None</Option>
+              <Option value="ASC">Ascending</Option>
+              <Option value="DESC">Descending</Option>
             </Select>
           </div>
         </Card>

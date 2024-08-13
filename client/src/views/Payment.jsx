@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { GET_STRIPE_CLIENT, QUERY_ORDER_BY_ID } from "../queries";
+import { QUERY_ORDER_BY_ID } from "../queries";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckout,
