@@ -45,11 +45,17 @@ export const MUTATION_ADD_ORDER = gql`
 `;
 
 export const QUERY_GET_ORDERS = gql`
-  query GetOrder($page: Int!, $filterStatus: String, $filterService: String) {
+  query GetOrder(
+    $page: Int!
+    $filterStatus: String
+    $filterService: String
+    $sortByName: Int
+  ) {
     getOrder(
       page: $page
       filterStatus: $filterStatus
       filterService: $filterService
+      sortByName: $sortByName
     ) {
       orders {
         _id
