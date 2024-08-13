@@ -109,8 +109,6 @@ const typeDefs = `#graphql
     getOrderChart: DataChart
     getPromptedAI: String
     followUpMail(id: ID): Order
-    invoiceMail(id: ID): Order
-    negotiationMail(id: ID): Order
   }
 
   type Mutation {
@@ -119,13 +117,8 @@ const typeDefs = `#graphql
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
-<<<<<<< HEAD
-    invoiceMail(id: ID): Order
-    negotiationMail(id: ID): Order
-=======
     generateInvoice(id: ID): Order
     negosiationMail(id: ID): Order
->>>>>>> deff62e679c3cd613bb12ec7706d62ab016eaa52
   }
 `;
 
@@ -214,15 +207,6 @@ const resolvers = {
 
       return order
     },
-
-    invoiceMail: async (_parent, args) => {
-      const { id } = args
-      const order = await findOrderById(id)
-      const { fullname, email, service } = order
-      console.log(service);
-
-      return order
-    }
 
   },
 

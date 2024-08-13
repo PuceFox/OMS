@@ -193,3 +193,18 @@ mutation Mutation($generateInvoiceId: ID) {
   }
 }
 `
+
+export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
+  mutation Mutation($orderId: ID!, $email: String!, $fullname: String!, $aircraft: String!, $price: Int!) {
+    sendNegotiationEmail(
+      orderId: $orderId
+      email: $email
+      fullname: $fullname
+      aircraft: $aircraft
+      price: $price
+    ) {
+      success
+      message
+    }
+  }
+`;
