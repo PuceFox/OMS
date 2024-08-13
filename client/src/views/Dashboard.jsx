@@ -6,6 +6,7 @@ import Loading from "../components/Loading";
 import logo from "../assets/name.png";
 import Toastify from "toastify-js";
 import { useEffect, useState } from "react";
+import Paging from "../components/Paging";
 
 const TABLE_HEAD = [
   "Fullname",
@@ -32,6 +33,7 @@ export default function Dashboard() {
     },
   });
   const [page, setPage] = useState(1);
+  let totalPage = 1;
   const handleFollowUp = async (id) => {
     try {
       await followUp({
@@ -62,8 +64,11 @@ export default function Dashboard() {
         page: page,
       },
     });
+
+    console.log(totalPage);
   }, [page]);
-  const tableRows = tableData?.getOrder;
+  const tableRows = tableData?.getOrder.orders;
+  if (tableData) totalPage = tableData?.getOrder.totalPage;
   if (tableError) return <p>Error: {tableError.message}</p>;
 
   // console.log(tableRows);
@@ -274,6 +279,8 @@ export default function Dashboard() {
           </table>
         </Card>
       )}
+      {/* Paging component*/}
+      <Paging totalPage={totalPage} page={page} setPage={setPage} />
     </div>
   );
 }

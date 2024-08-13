@@ -23,6 +23,11 @@ async function findAllOrder(offset) {
     return orders;
 }
 
+async function findOrderCount() {
+    const orderTable = await OrderTable();
+    return orderTable.countDocuments();
+}
+
 // Function untuk Get Data Order by Id
 async function findOrderById(id) {
     const order = await (
@@ -227,5 +232,5 @@ module.exports = {
     findAllAirports,
     findAirportsById,
     findAirportByQuery,
-    updateNegotiation,
+    findOrderCount,
 };
