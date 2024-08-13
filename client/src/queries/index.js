@@ -134,6 +134,7 @@ export const GET_DataAi = gql`
     getPromptedAI
   }
 `;
+
 export const MUTATION_FOLLOW_UP = gql`
   mutation FollowUpMail($followUpMailId: ID) {
     followUpMail(id: $followUpMailId) {
