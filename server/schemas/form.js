@@ -122,6 +122,7 @@ const typeDefs = `#graphql
     generateInvoice(id: ID): Order
     negotiationMail(id: ID): Order
     updatePayment(id: ID): Order
+    updateNego(id: ID, price: Int, aircraft: String): Order
   }
 `;
 
@@ -597,6 +598,7 @@ const resolvers = {
         <p><strong>Departure Location:</strong> ${origin.city}</p>
         <p><strong>Destination:</strong> ${destination.city}</p>
         <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
+        <p><strong>Total Passanger:</strong> ${order.pax}</p>
         <p><strong>Total Price:</strong> ${new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",
@@ -657,6 +659,126 @@ const resolvers = {
         throw error;
       }
     },
+
+    updateNego: async (_parent, args) => {
+      try {
+        const { id, price, aircraft } = args;
+
+        const order = await findOrderById(id)
+        const orders = await OrderTable()
+        const { fullname, email } = order
+        const origin = await findAirportByIataCode(order.origin);
+        const destination = await findAirportByIataCode(order.destination);
+        const product = await stripe.products.create({
+          name: `${order.service} - ${aircraft}`
+        })
+
+        const stripePrice = await stripe.prices.create({
+          product: product.id,
+          unit_amount: Number(price) * 100,
+          currency: "usd",
+        })
+
+        await orders.updateOne(
+          {
+            _id: new ObjectId(id)
+          },
+          {
+            $set: {
+              price,
+              aircraft,
+              priceId: stripePrice.id
+            }
+          }
+        )
+
+        let emailContent = `
+        <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Negotiation Confirmation for Orderly Service</title>
+  </head>
+  <body>
+      <p>Dear ${fullname},</p>
+  
+      <p>I hope this message finds you well.</p>
+  
+      <p>Following our recent discussions, I am writing to confirm the details of our agreement for the private jet service. We are pleased to move forward with the terms we discussed, and I want to ensure that everything is clearly understood by both parties.</p>
+  
+      <h3>Service Details:</h3>
+      <ul>
+          <li><strong>Aircraft Type:</strong> ${aircraft}</li>
+          <li><strong>Departure Date:</strong> ${new Date(order.updatedAt)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            .replace(/\//g, "-")}</li>
+          <li><strong>Departure Location:</strong> ${origin.city}</li>
+          <li><strong>Destination:</strong> ${destination.city}</li>
+          <li><strong>Number of Passengers:</strong> ${order.pax}</li>
+      </ul>
+  
+      <h3>Financial Terms:</h3>
+      <ul>
+          <li><strong>Total Cost:</strong> ${price}</li>
+      </ul>
+ 
+  
+      <p>Thank you for your cooperation and for entrusting us with your private jet needs. We are committed to providing you with an exceptional travel experience.</p>
+  
+      <p>Looking forward to your confirmation.</p>
+  
+      <p>Best regards,</p>
+      <strong>Orderly Private Jet Charter Services</strong></p
+      
+      <a href="${CLIENT_URL}/payment/${id.toString()}">
+        <button
+            style="
+                background-color: #119125;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+            "
+        >
+            Proceed
+        </button>
+    </a>
+    <a href="${CLIENT_URL}/reject/${id.toString()}" style="margin-left: 10px;">
+        <button
+            style="
+                background-color: #d9534f;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+            "
+        >
+            Reject
+        </button>
+    </a>
+  </body>
+  </html>
+        `
+        await sendMail(emailContent, email, "Negotiation Offer")
+        console.log("Negotiation Offer Send(?)");
+
+        return order
+      } catch (error) {
+        console.log(error);
+        throw error
+      }
+    }
   },
 };
 
