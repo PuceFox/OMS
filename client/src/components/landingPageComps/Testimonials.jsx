@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import rina from "../../assets/rina.jpg";
 
 const TestimonialCard = ({ testimonial }) => {
   return (
@@ -14,7 +15,7 @@ const TestimonialCard = ({ testimonial }) => {
       <img
         src={testimonial.image}
         alt={testimonial.name}
-        className="w-20 h-20 rounded-full mb-6 border-4 border-indigo-200"
+        className="w-40 h-40 rounded-full mb-6 border-4 border-indigo-200"
       />
       <h3 className="font-semibold text-xl mb-3">{testimonial.name}</h3>
       <p className="text-gray-700 mb-5">{testimonial.text}</p>
@@ -27,28 +28,31 @@ const TestimonialCard = ({ testimonial }) => {
 const Testimonials = () => {
   const testimonialsData = [
     {
-      name: "Fatan Cabs",
-      text: "This platform has changed the way I learn! The courses are well-structured and informative.",
-      position: "Software Engineer",
-      image: "https://via.placeholder.com/150",
+      name: "Naufal Jundi",
+      text: "We’ve cut down on errors and saved time thanks to Orderly. A must-have for any aviation business!",
+      position: "CEO of SkyFac",
+      image:
+        "https://media.licdn.com/dms/image/D5603AQHh_2J2Dh-Ohg/profile-displayphoto-shrink_200_200/0/1712022490532?e=2147483647&v=beta&t=ovjY1ZXRy1m4D5aSVDXwXi8-dDP2x3phrV2nuE9lwps",
     },
     {
-      name: "Rina Cuantiks",
-      text: "I love the variety of courses available. The instructors are knowledgeable and supportive.",
-      position: "Product Manager",
-      image: "https://via.placeholder.com/150",
+      name: "Rina Sismita",
+      text: "Orderly has made our aviation order management process so much smoother. It's user-friendly and incredibly efficient!",
+      position: "Public Figure",
+      image: rina,
     },
     {
-      name: "Dylan Mamen",
-      text: "A fantastic learning experience! I have gained so much knowledge in a short period.",
-      position: "Web Developer",
-      image: "https://via.placeholder.com/150",
+      name: "Fathan Jundi",
+      text: "Orderly’s seamless integration into our workflow has boosted our operational efficiency. Highly recommended!",
+      position: "Senior Software Engineer",
+      image:
+        "https://media.licdn.com/dms/image/C4D03AQHAORhUStydqg/profile-displayphoto-shrink_200_200/0/1632191220479?e=2147483647&v=beta&t=YQc6UogjmsSRwBYTiFl5-zCbsLRKBOXJY4_On8638QM",
     },
     {
-      name: "Farhan Figs",
-      text: "A fantastic learning experience! I have gained so much knowledge in a short period.",
-      position: "Web Developer",
-      image: "https://via.placeholder.com/150",
+      name: "Farhan Amirullah",
+      text: "Managing aviation orders has never been easier. Orderly is reliable, fast, and easy to use!",
+      position: "Owner of Amirullah Corp",
+      image:
+        "https://media.licdn.com/dms/image/D5603AQFcfzUSiD4kuw/profile-displayphoto-shrink_200_200/0/1665424589330?e=2147483647&v=beta&t=w6HBwbp7bs1ePshv3nfxWCR-lGqPdY27hKwQxqhWFmU",
     },
   ];
 

@@ -67,7 +67,7 @@ export function NegotiateOrder() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
       <div className="flex justify-center w-full">
-        <img src={logo} alt="Logo" className="w-4/12 mb-28" />
+        <img src={logo} alt="Logo" className="w-4/12 mb-28 mr-16" />
       </div>
       <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-purple-800 p-6">
@@ -134,7 +134,7 @@ export function NegotiateOrder() {
           ) : (
             <Button
               onClick={submitNegotiate}
-              className="bg-purple-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-purple-800 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
             >
               Submit Negotiation
             </Button>
