@@ -152,8 +152,10 @@ async function findAirportsById(id) {
 
 // Function untuk Get Airport by iataCode
 async function findAirportByIataCode(iataCode) {
-  const airport = await (await AirportTable()).findOne({ iataCode });
-  return airport;
+  const airport = await (
+    await AirportTable()
+  ).findOne({ iataCode })
+  return airport
 }
 
 // Function untuk Get Data Airport by Query
@@ -245,7 +247,7 @@ async function updateNegotiation(id) {
     }
   );
 
-  const updatedOrder = await findOrderById(id);  
+  const updatedOrder = await findOrderById(id);
 
   return updatedOrder;
 }

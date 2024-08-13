@@ -1,19 +1,25 @@
-import { Button } from "@material-tailwind/react";
-import formatPrice from "../utils/formatDollar";
-import { useMutation, useQuery } from "@apollo/client";
-import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { formatTime } from "../utils/formatTime";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  MUTATION_SEND_NEGOTIATION_EMAIL,
+  QUERY_ORDER_BY_ID,
+  UPDATE_ORDER_DATA,
+} from "../queries";
+import formatPrice from "../utils/formatDollar";
+import { formatTime } from "../utils/formatTime";
+import { Button } from "@material-tailwind/react";
 
-export function NegotiateOrder({ route }) {
+export function NegotiateOrder() {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
+
   const [offer, setOffer] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const price = queries.get("price");
-  const nav = useNavigate();
 
   const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
     variables: {
@@ -21,49 +27,49 @@ export function NegotiateOrder({ route }) {
     },
   });
 
-  const [updateNegotiate] = useMutation(UPDATE_ORDER_DATA);
-
-  const [isLoading, setIsLoading] = useState(false);
-  //   console.log(data?.getOrderById);
-
   const order = data?.getOrderById;
 
-  console.log(order, `data order`);
+  const [sendNegotiationEmail] = useMutation(MUTATION_SEND_NEGOTIATION_EMAIL);
+  const [updateOrder] = useMutation(UPDATE_ORDER_DATA);
 
-  useEffect(() => {
-    if (order && order.status !== "Pending") {
-      nav("/form");
-    }
-  }, [order, nav]);
-
-  async function submitOrder(event) {
+  async function submitNegotiate(event) {
     event.preventDefault();
     try {
-      await updateNegotiate({
+      setIsLoading(true);
+      if (!order) {
+        throw new Error("Order data is not available");
+      }
+      await updateOrder({
         variables: {
           updateOrderDataId: orderId,
-          price: parseInt(price), // assuming price is an integer
-          aircraft: order?.offers[offer].assetName,
+          price: parseInt(price),
+          aircraft: order.offers[offer].assetName,
           status: "Negotiate",
-          reason: "", // you need to provide a reason or remove it from the mutation if it's not required
-        },
-        onError: (error) => {
-          console.log(error);
+          reason: "",
         },
       });
-      nav("/form");
+
+      // Add this line to send the negotiation email
+      await sendNegotiationEmail({
+        variables: {
+          negotiationMailId: orderId,
+        },
+      });
+
+      navigate("/");
     } catch (error) {
-      // Handle error
-      console.error("Error updating order:", error);
+      console.error("Error updating order and sending email:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
       <div className="flex justify-center w-full">
-        <img src={logo} alt="Logo" className="w-4/12 mb-16" />
+        <img src={logo} alt="Logo" className="w-4/12 mb-28" />
       </div>
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden mb-10">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-purple-800 p-6">
           <h1 className="text-3xl font-bold text-white text-center">
             Negotiate Service Order
@@ -127,10 +133,10 @@ export function NegotiateOrder({ route }) {
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
             <Button
-              className="w-full bg-indigo-700 hover:bg-deep-orange-400"
-              onClick={submitOrder}
+              onClick={submitNegotiate}
+              className="bg-purple-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
             >
-              Negotiate
+              Submit Negotiation
             </Button>
           )}
         </div>
