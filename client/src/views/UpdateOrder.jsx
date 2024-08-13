@@ -3,7 +3,11 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import logo from "../assets/logo.png";
 import { useState } from "react";
-import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
+import {
+  MUTATION_NEGOTIATION_ORDER,
+  QUERY_ORDER_BY_ID,
+  UPDATE_ORDER_DATA,
+} from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
 
@@ -19,8 +23,9 @@ export function UpdateOrder() {
   const [manualPrice, setManualPrice] = useState(""); // added state for manual price
   const order = data?.getOrderById;
 
-  const [updateOrderData, { loading: updateLoading }] =
-    useMutation(UPDATE_ORDER_DATA);
+  const [updateOrderData, { loading: updateLoading }] = useMutation(
+    MUTATION_NEGOTIATION_ORDER
+  );
 
   const handlePriceChange = (e) => {
     setManualPrice(e.target.value);
@@ -35,7 +40,7 @@ export function UpdateOrder() {
       }
       await updateOrderData({
         variables: {
-          updateOrderDataId: orderId,
+          updateNegoId: orderId,
           price: parseInt(manualPrice || order.offers[offer].price),
           aircraft: order.offers[offer].assetName,
           status: "Negotiate",

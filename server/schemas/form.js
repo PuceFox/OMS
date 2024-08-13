@@ -725,7 +725,10 @@ const resolvers = {
   
       <h3>Financial Terms:</h3>
       <ul>
-          <li><strong>Total Cost:</strong> ${price}</li>
+          <li><strong>Total Cost:</strong> ${new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(price)}</li>
       </ul>
  
   
@@ -734,7 +737,7 @@ const resolvers = {
       <p>Looking forward to your confirmation.</p>
   
       <p>Best regards,</p>
-      <strong>Orderly Private Jet Charter Services</strong></p
+      <strong>Orderly Private Jet Charter Services</strong></p><br/>
       
       <a href="${CLIENT_URL}/payment/${id.toString()}">
         <button
