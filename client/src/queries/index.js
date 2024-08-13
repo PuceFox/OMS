@@ -197,31 +197,31 @@ export const MUTATION_SEND_INVOICE = gql`
     }
   }
 }
-`
+`;
 export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
   mutation NegotiationMail($negotiationMailId: ID) {
-  negotiationMail(id: $negotiationMailId) {
-    _id
-    fullname
-    email
-    phoneNumber
-    origin
-    destination
-    service
-    pax
-    status
-    price
-    aircraft
-    createdAt
-    updatedAt
-    reason
-    offers {
-      serviceType
-      assetName
-      speed
-      flightTimeInMinutes
+    negotiationMail(id: $negotiationMailId) {
+      _id
+      fullname
+      email
+      phoneNumber
+      origin
+      destination
+      service
+      pax
+      status
       price
+      aircraft
+      createdAt
+      updatedAt
+      reason
+      offers {
+        serviceType
+        assetName
+        speed
+        flightTimeInMinutes
+        price
+      }
     }
   }
-}
 `;
