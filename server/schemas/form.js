@@ -641,6 +641,9 @@ const resolvers = {
           <p>If you have any immediate questions or concerns, please feel free to reach out to us. We are here to assist you at any time.</p>
     
           <p>Once again, thank you for choosing Orderly. We look forward to finalizing the details and providing you with an exceptional private jet experience.</p>
+
+          <p>Best regards,<br>
+          <strong>Orderly Private Jet Charter Services</strong></p>
         `;
 
         await sendMail(emailContent, email, "Negotiation Confirmation");
