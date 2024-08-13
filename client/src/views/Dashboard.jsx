@@ -6,8 +6,9 @@ import Loading from "../components/Loading";
 import Toastify from "toastify-js";
 import { useEffect, useState } from "react";
 import Paging from "../components/Paging";
+import { formatDate } from "../utils/formatDate";
 
-const TABLE_HEAD = ["No", "Name", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Aircraft", "Status", "Action"];
+const TABLE_HEAD = ["No", "Name", "Email", "Phone Number", "Origin", "Destination", "Services", "Total Pax", "Total Price", "Aircraft", "Status", "Date", "Action"];
 
 export default function Dashboard() {
   const [fetchOrders, { loading: tableLoading, error: tableError, data: tableData }] = useLazyQuery(QUERY_GET_ORDERS);
@@ -139,7 +140,7 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {tableRows?.map(({ _id, fullname, email, phoneNumber, origin, destination, service, pax, price, aircraft, status }, index) => {
+              {tableRows?.map(({ _id, fullname, email, phoneNumber, origin, destination, service, pax, price, aircraft, status, updatedAt }, index) => {
                 const isLast = index === tableRows.length - 1;
                 const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
@@ -210,6 +211,11 @@ export default function Dashboard() {
                     <td className={classes}>
                       <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {status}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
+                        {formatDate(updatedAt)}
                       </Typography>
                     </td>
                     {status !== "Accepted" && status !== "Rejected" && status !== "Paid" && (
