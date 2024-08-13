@@ -5,6 +5,7 @@ import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatTime } from "../utils/formatTime";
+import logo from "../assets/logo.png";
 
 export function AcceptOrder({ route }) {
   const { orderId } = useParams();
@@ -54,7 +55,10 @@ export function AcceptOrder({ route }) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
+      <div className="flex justify-center w-full">
+        <img src={logo} alt="Logo" className="w-4/12 mb-16" />
+      </div>
       <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-purple-800 p-6">
           <h1 className="text-3xl font-bold text-white">
@@ -118,7 +122,10 @@ export function AcceptOrder({ route }) {
           {isLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
-            <Button className="w-full bg-green-600" onClick={submitOrder}>
+            <Button
+              className="w-full  bg-indigo-700 hover:bg-green-600"
+              onClick={submitOrder}
+            >
               Confirm
             </Button>
           )}
