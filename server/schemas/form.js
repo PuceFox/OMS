@@ -13,6 +13,7 @@ const {
   findOrderByStatus,
   findPecentage,
   findDataAI,
+  findAirportByIataCode,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -110,6 +111,7 @@ const typeDefs = `#graphql
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
+    generateInvoice(id: ID): Order
   }
 `;
 
@@ -476,6 +478,106 @@ const resolvers = {
         `;
         await sendMail(emailContent, email, "Reminder Offer");
         console.log("reminder email send(?)");
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
+    generateInvoice: async (_parent, args) => {
+      const { id } = args;
+      try {
+        const order = await findOrderById(id);
+        const { fullname, email, service } = order;
+        const origin = await findAirportByIataCode(order.origin)
+        const destination = await findAirportByIataCode(order.destination)
+
+        let emailContent = `
+         <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .invoice-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
+        .content p {
+            margin: 10px 0;
+        }
+        .invoice-details {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            margin: 20px 0;
+        }
+        .invoice-details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-container">
+    <div class="header">
+        <h2>Orderly Private Jet Charter Services</h2>
+    </div>
+
+    <div class="content">
+        <p>Dear ${fullname},</p>
+
+        <p>I hope this message finds you well. We are pleased to provide you with the following invoice for your private jet charter service.</p>
+
+        <div class="invoice-details">
+            <p><strong>Invoice for:</strong> ${fullname}</p>
+            <p><strong>Service:</strong> ${service} Flight</p>
+            <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\//g, '-')}</p>
+            <p><strong>Invoice Number:</strong> ${order._id}</p>
+            <p><strong>Payment Status:</strong> Paid</p>
+        </div>
+
+        <h3>Flight Details:</h3>
+        <p><strong>Service Type:</strong> ${service} Flight</p>
+        <p><strong>Departure Location:</strong> ${origin.city}</p>
+        <p><strong>Destination:</strong> ${destination.city}</p>
+        <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
+        <p><strong>Total Price:</strong> ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.price)}</p>
+
+        <p>Thank you for choosing Orderly Private Jet Charter Services. We look forward to providing you with an exceptional travel experience.</p>
+    </div>
+
+    <div class="footer">
+        <p>Best regards,<br>
+        <strong>Orderly Private Jet Charter Services</strong></p>
+    </div>
+</div>
+
+</body>
+</html>
+        `;
+        await sendMail(emailContent, email, "Invoice");
+        console.log("Invoice email send(?)");
 
         return order;
       } catch (error) {

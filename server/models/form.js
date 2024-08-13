@@ -138,6 +138,15 @@ async function findAirportsById(id) {
   return airport;
 }
 
+// Function untuk Get Airport by iataCode
+async function findAirportByIataCode(iataCode) {
+  const airport = await (
+    await AirportTable()
+  ).findOne({ iataCode })
+  return airport
+}
+
+// Function untuk Get Data Airport by Query
 async function findAirportByQuery(query) {
   const agg = [
     {
@@ -208,4 +217,5 @@ module.exports = {
   findAllAirports,
   findAirportsById,
   findAirportByQuery,
+  findAirportByIataCode
 };

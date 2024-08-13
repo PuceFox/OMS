@@ -161,3 +161,31 @@ export const MUTATION_FOLLOW_UP = gql`
     }
   }
 `;
+
+export const MUTATION_SEND_INVOICE = gql`
+mutation Mutation($generateInvoiceId: ID) {
+  generateInvoice(id: $generateInvoiceId) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+    reason
+    offers {
+      serviceType
+      assetName
+      speed
+      flightTimeInMinutes
+      price
+    }
+  }
+}
+`
