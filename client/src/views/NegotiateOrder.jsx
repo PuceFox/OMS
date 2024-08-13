@@ -36,7 +36,7 @@ export function NegotiateOrder({ route }) {
     }
   }, [order, nav]);
 
-  async function submitOrder(event) {
+  async function submitNegotiate(event) {
     event.preventDefault();
     try {
       await updateNegotiate({
@@ -51,7 +51,7 @@ export function NegotiateOrder({ route }) {
           console.log(error);
         },
       });
-      nav("/form");
+      nav("/");
     } catch (error) {
       // Handle error
       console.error("Error updating order:", error);
@@ -128,7 +128,7 @@ export function NegotiateOrder({ route }) {
           ) : (
             <Button
               className="w-full bg-indigo-700 hover:bg-deep-orange-400"
-              onClick={submitOrder}
+              onClick={submitNegotiate}
             >
               Negotiate
             </Button>
