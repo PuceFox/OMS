@@ -47,19 +47,22 @@ export const MUTATION_ADD_ORDER = gql`
 export const QUERY_GET_ORDERS = gql`
   query GetOrder($page: Int!) {
     getOrder(page: $page) {
-      _id
-      fullname
-      email
-      phoneNumber
-      origin
-      destination
-      service
-      pax
-      status
-      price
-      aircraft
-      createdAt
-      updatedAt
+      orders {
+        _id
+        fullname
+        email
+        phoneNumber
+        origin
+        destination
+        service
+        pax
+        status
+        price
+        aircraft
+        createdAt
+        updatedAt
+      }
+      totalPage
     }
   }
 `;
@@ -134,6 +137,7 @@ export const GET_DataAi = gql`
     getPromptedAI
   }
 `;
+
 export const MUTATION_FOLLOW_UP = gql`
   mutation FollowUpMail($followUpMailId: ID) {
     followUpMail(id: $followUpMailId) {
