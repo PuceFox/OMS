@@ -12,6 +12,7 @@ import { RejectOrder } from "../views/RejectOrder";
 import { NegotiateOrder } from "../views/NegotiateOrder";
 
 import PaymentStatus from "../views/PaymentStatus";
+import { UpdateOrder } from "../views/UpdateOrder";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,17 @@ const router = createBrowserRouter([
   {
     path: "/negotiate/:orderId",
     element: <NegotiateOrder />,
+  },
+  {
+    path: "/update/:orderId",
+    element: <UpdateOrder />,
+    loader: () => {
+      if (!localStorage.token) {
+        // console.log("Must Login First");
+        return redirect("/login");
+      }
+      return null;
+    },
   },
   {
     element: <BaseLayout />,

@@ -33,16 +33,13 @@ const FooterPage = () => {
               <h1 className="text-2xl font-bold">Services</h1>
               <ul className="space-y-2 text-lg">
                 <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  Web Development
+                  VIP
                 </li>
                 <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  Software Development
+                  Madevac
                 </li>
                 <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  Apps Development
-                </li>
-                <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  E-learning
+                  City Tour
                 </li>
               </ul>
             </div>
@@ -56,10 +53,10 @@ const FooterPage = () => {
                   Services
                 </li>
                 <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  About
+                  Features
                 </li>
                 <li className="cursor-pointer hover:text-blue-200 duration-200">
-                  Contact
+                  About Us
                 </li>
               </ul>
             </div>
