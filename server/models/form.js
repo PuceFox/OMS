@@ -212,6 +212,25 @@ async function updateOrder(id, status) {
   return updatedOrder;
 }
 
+// Function untuk Update Status Data Order
+async function updatePaid(id) {
+  const updateStatus = await (
+    await OrderTable()
+  ).updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        status: "Paid",
+        updatedAt: new Date(),
+      },
+    }
+  );
+
+  const updatedOrder = await findOrderById(id);
+
+  return updatedOrder;
+}
+
 // Function untuk Update Negotiation Data Order
 async function updateNegotiation(id) {
   const updateStatus = await (
@@ -226,7 +245,7 @@ async function updateNegotiation(id) {
     }
   );
 
-  const updatedOrder = await findOrderById(id);
+  const updatedOrder = await findOrderById(id);  
 
   return updatedOrder;
 }
@@ -248,4 +267,6 @@ module.exports = {
   findAirportByQuery,
   findOrderCount,
   findAirportByIataCode,
+  updateNegotiation,
+  updatePaid
 };
