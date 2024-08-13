@@ -218,7 +218,14 @@ export default function Dashboard() {
                         {formatDate(updatedAt)}
                       </Typography>
                     </td>
-                    {status !== "Accepted" && status !== "Rejected" && status !== "Paid" && (
+                    {status === "Negotiate" && (
+                      <td className={classes}>
+                        <Button as="a" href="#" size="sm" color="blue" className="font-bold" onClick={() => handleFollowUp(_id)}>
+                          Update
+                        </Button>
+                      </td>
+                    )}
+                    {status !== "Accepted" && status !== "Rejected" && status !== "Paid" && status !== "Negotiate" && (
                       <td className={classes}>
                         <Button as="a" href="#" size="sm" color="amber" className="font-bold" onClick={() => handleFollowUp(_id)}>
                           Follow Up
