@@ -590,7 +590,7 @@ const resolvers = {
             <p><strong>Service:</strong> ${service} Flight</p>
             <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/\//g, '-')}</p>
             <p><strong>Invoice Number:</strong> ${order._id}</p>
-            <p><strong>Payment Status:</strong> Paid</p>
+            <p><strong>Payment Status:</strong> ${order.status}</p>
         </div>
 
         <h3>Flight Details:</h3>
