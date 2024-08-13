@@ -154,8 +154,10 @@ async function findAirportsById(id) {
 
 // Function untuk Get Airport by iataCode
 async function findAirportByIataCode(iataCode) {
-  const airport = await (await AirportTable()).findOne({ iataCode });
-  return airport;
+  const airport = await (
+    await AirportTable()
+  ).findOne({ iataCode })
+  return airport
 }
 
 // Function untuk Get Data Airport by Query
@@ -214,6 +216,25 @@ async function updateOrder(id, status) {
   return updatedOrder;
 }
 
+// Function untuk Update Status Data Order
+async function updatePaid(id) {
+  const updateStatus = await (
+    await OrderTable()
+  ).updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        status: "Paid",
+        updatedAt: new Date(),
+      },
+    }
+  );
+
+  const updatedOrder = await findOrderById(id);
+
+  return updatedOrder;
+}
+
 // Function untuk Update Negotiation Data Order
 async function updateNegotiation(id) {
   const updateStatus = await (
@@ -250,4 +271,6 @@ module.exports = {
   findAirportByQuery,
   findOrderCount,
   findAirportByIataCode,
+  updateNegotiation,
+  updatePaid
 };
