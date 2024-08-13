@@ -180,7 +180,7 @@ export default function Payment() {
           <div className="page-container">
             <img src={logo} alt="Logo" className="logo" />
             <div className="message-container">
-              <h1>This order has been Paid</h1>
+              <h1>This Order has been Paid</h1>
               <p>Thank you for your payment.</p>
               <p>Your transaction has been successfully completed.</p>
             </div>
