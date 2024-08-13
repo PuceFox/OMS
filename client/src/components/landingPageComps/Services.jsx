@@ -1,38 +1,29 @@
 import React from "react";
-import { RiComputerLine } from "react-icons/ri";
-import { TbWorldWww } from "react-icons/tb";
-import { IoMdHappy } from "react-icons/io";
-import { BiSupport } from "react-icons/bi";
 import { motion } from "framer-motion";
-
+import { GiCommercialAirplane } from "react-icons/gi";
+import { GiAirplaneDeparture } from "react-icons/gi";
+import { PiAirplaneTiltBold } from "react-icons/pi";
 const ServicesData = [
   {
     id: 1,
-    title: "Web Development",
+    title: "VIP : Premium service with extra comfort",
     link: "#",
-    icon: <TbWorldWww />,
+    icon: <GiCommercialAirplane />,
     delay: 0.2,
   },
   {
     id: 2,
-    title: "Software Development",
+    title: "Madevac : Medical evacuation service",
     link: "#",
-    icon: <RiComputerLine />,
+    icon: <PiAirplaneTiltBold />,
     delay: 0.3,
   },
   {
     id: 3,
-    title: "Satisfied Clients",
+    title: "Citytour: Guided city tours",
     link: "#",
-    icon: <IoMdHappy />,
+    icon: <GiAirplaneDeparture />,
     delay: 0.4,
-  },
-  {
-    id: 4,
-    title: "24/7 Support",
-    link: "#",
-    icon: <BiSupport />,
-    delay: 0.5,
   },
 ];
 
@@ -72,7 +63,7 @@ const Services = () => {
         >
           Discover Our <br /> Exceptional Services
         </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-20 mr-16">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-20 mr-12 ml-16">
           {ServicesData.map((service) => (
             <motion.div
               key={service.id}
