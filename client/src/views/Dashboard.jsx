@@ -132,7 +132,7 @@ export default function Dashboard() {
               <tr>
                 {TABLE_HEAD.map((head) => (
                   <th key={head} className="border-b border-blue-gray-100 bg-purple-300 p-4">
-                    <Typography variant="small" color="blue-gray" className="font-bold leading-none text-white">
+                    <Typography variant="small" color="blue-gray" className="font-bold leading-none text-white text-center">
                       {head}
                     </Typography>
                   </th>
@@ -147,75 +147,75 @@ export default function Dashboard() {
                 return (
                   <tr key={_id}>
                     <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
+                      <Typography variant="small" color="blue-gray" className="font-normal text-center">
                         {index + 1 + (page - 1) * 10} {/* Adjust based on current page */}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
+                      <Typography variant="small" color="blue-gray" className="font-normal text-left">
                         {fullname}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
+                      <Typography variant="small" color="blue-gray" className="font-normal text-center">
                         {email}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography variant="small" color="blue-gray" className="font-normal">
+                      <Typography variant="small" color="blue-gray" className="font-normal text-center">
                         {phoneNumber}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {origin}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {destination}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {service}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {pax}
                       </Typography>
                     </td>
                     <td className={classes}>
                       {price ? (
-                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                           {formatPrice(price)}
                         </Typography>
                       ) : (
-                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                           -
                         </Typography>
                       )}
                     </td>
                     <td className={classes}>
                       {aircraft ? (
-                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                           {aircraft}
                         </Typography>
                       ) : (
-                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                        <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                           Waiting
                         </Typography>
                       )}
                     </td>
                     <td className={classes}>
-                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
+                      <Typography as="a" href="#" variant="small" color="blue-gray" className="font-normal text-center">
                         {status}
                       </Typography>
                     </td>
                     {status !== "Accepted" && status !== "Rejected" && (
                       <td className={classes}>
-                        <Button as="a" href="#" variant="small" color="amber" className="font-bold" onClick={() => handleFollowUp(_id)}>
+                        <Button as="a" href="#" size="sm" color="amber" className="font-bold">
                           Follow Up
                         </Button>
                       </td>
