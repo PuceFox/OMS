@@ -18,7 +18,14 @@ async function AirportTable() {
 
 // Function untuk Get Semua Data Order
 async function findAllOrder() {
-    const orders = await (await OrderTable()).find().toArray();
+    const agg = [
+        {
+            $sort: {
+                createdAt: -1,
+            },
+        },
+    ];
+    const orders = await (await OrderTable()).aggregate(agg).toArray();
     return orders;
 }
 
@@ -50,19 +57,19 @@ async function findOrderByStatus(status) {
 async function findDataAI() {
     const agg = [
         {
-          '$project': {
-            "_id": 0,
-            'fullname': 0, 
-            'email': 0, 
-            'phoneNumber': 0
-          }
+            '$project': {
+                "_id": 0,
+                'fullname': 0,
+                'email': 0,
+                'phoneNumber': 0
+            }
         }
-      ]
+    ]
     const dataAI = await (await OrderTable()).aggregate(agg).toArray()
     // console.log(dataAI);
-    
+
     return dataAI
-    
+
 }
 
 // Function untuk Get Data Percentage dari Status
