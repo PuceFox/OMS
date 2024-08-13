@@ -15,6 +15,8 @@ const {
   findDataAI,
   findAirportByIataCode,
   findOrderCount,
+  updateNegotiation,
+  updatePaid,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -121,6 +123,7 @@ const typeDefs = `#graphql
     followUpMail(id: ID): Order
     generateInvoice(id: ID): Order
     negosiationMail(id: ID): Order
+    updatePayment(id: ID): Order
   }
 `;
 
@@ -594,7 +597,7 @@ const resolvers = {
               })
               .replace(/\//g, "-")}</p>
             <p><strong>Invoice Number:</strong> ${order._id}</p>
-            <p><strong>Payment Status:</strong> Paid</p>
+            <p><strong>Payment Status:</strong> ${order.status}</p>
         </div>
 
         <h3>Flight Details:</h3>
@@ -621,8 +624,9 @@ const resolvers = {
         `;
         await sendMail(emailContent, email, "Invoice");
         console.log("Invoice email send(?)");
-
-        return order;
+        const updateOrder = await updatePaid(id)
+        
+        return updateOrder;
       } catch (error) {
         console.log(error);
         throw error;
