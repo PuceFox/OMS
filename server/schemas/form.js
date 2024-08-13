@@ -13,6 +13,7 @@ const {
   findOrderByStatus,
   findPecentage,
   findDataAI,
+  findOrderCount,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -24,6 +25,11 @@ const stripe = require("../helpers/stripe");
 const gemini = require("../helpers/geminiai");
 
 const typeDefs = `#graphql
+  type OrderResponse {
+    totalPage: Int,
+    orders: [Order]
+  }
+
   type Order {
     _id: ID
     fullname: String
@@ -96,7 +102,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!): [Order]
+    getOrder(page: Int!): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -121,7 +127,12 @@ const resolvers = {
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
       const orders = await findAllOrder(offset);
-      return orders;
+      const totalCount = await findOrderCount();
+      const totalPage = Math.ceil(totalCount / 10);
+      return {
+        totalPage,
+        orders,
+      };
     },
 
     // Function untuk mendapatkan Order berdasarkan Idnya
@@ -210,7 +221,7 @@ const resolvers = {
             },
           ],
           mode: "payment",
-          return_url: `${CLIENT_URL}/paymentsuccess?session_id={CHECKOUT_SESSION_ID}`,
+          return_url: `${CLIENT_URL}/paymentstatus/${order._id.toString()}?session_id={CHECKOUT_SESSION_ID}`,
           automatic_tax: { enabled: true },
         });
 
