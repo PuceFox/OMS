@@ -13,6 +13,7 @@ const {
   findOrderByStatus,
   findPecentage,
   findDataAI,
+  findOrderCount,
 } = require("../models/form");
 const { createError } = require("../helpers/helpers");
 
@@ -24,6 +25,11 @@ const stripe = require("../helpers/stripe");
 const gemini = require("../helpers/geminiai");
 
 const typeDefs = `#graphql
+  type OrderResponse {
+    totalPage: Int,
+    orders: [Order]
+  }
+
   type Order {
     _id: ID
     fullname: String
@@ -96,12 +102,14 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!): [Order]
+    getOrder(page: Int!): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
     getPromptedAI: String
     followUpMail(id: ID): Order
+    invoiceMail(id: ID): Order
+    negosiationMail(id: ID): Order
   }
 
   type Mutation {
@@ -110,6 +118,8 @@ const typeDefs = `#graphql
     updateOrderData(id: ID, price: Int, aircraft: String, status: String, reason: String) : String
     getClientStripeSession(orderId: ID): stripeSession
     followUpMail(id: ID): Order
+    invoiceMail(id: ID): Order
+    negosiationMail(id: ID): Order
   }
 `;
 
@@ -121,7 +131,12 @@ const resolvers = {
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
       const orders = await findAllOrder(offset);
-      return orders;
+      const totalCount = await findOrderCount();
+      const totalPage = Math.ceil(totalCount / 10);
+      return {
+        totalPage,
+        orders,
+      };
     },
 
     // Function untuk mendapatkan Order berdasarkan Idnya
@@ -191,8 +206,18 @@ const resolvers = {
       const { fullname, email, service } = order;
       console.log(service);
 
-      return order;
+      return order
     },
+
+    invoiceMail: async (_parent, args) => {
+      const { id } = args
+      const order = await findOrderById(id)
+      const { fullname, email, service } = order
+      console.log(service);
+
+      return order
+    }
+
   },
 
   Mutation: {
@@ -210,7 +235,7 @@ const resolvers = {
             },
           ],
           mode: "payment",
-          return_url: `${CLIENT_URL}/paymentsuccess?session_id={CHECKOUT_SESSION_ID}`,
+          return_url: `${CLIENT_URL}/paymentstatus/${order._id.toString()}?session_id={CHECKOUT_SESSION_ID}`,
           automatic_tax: { enabled: true },
         });
 
@@ -274,12 +299,15 @@ const resolvers = {
         });
 
         let emailContent = `
-         <p>
-          Dear ${fullname}, Thank you for considering Orderly for your private
+        <p>Dear ${fullname},</p>
+
+        <p>Thank you for considering Orderly for your private
           jet charter needs. We are thrilled to offer you the luxury, comfort, and
           flexibility that our service is known for. To ensure your experience is
           perfectly tailored to your preferences, we provide a range of charter
-          options for ${service} flight. Please review the options below
+          options for ${service} flight.</p>
+
+        <p>Please review the options below
           and select the one that you find most suitable:
         </p>
         <table style="border-collapse: collapse; width: 100%">
@@ -444,7 +472,7 @@ const resolvers = {
           <a href="${CLIENT_URL}/negotiate/${id.toString()}">
             <button
               style="
-                background-color: #F9DD3F;
+                background-color: #FE9900;
                 color: white;
                 border: none;
                 border-radius: 5px;
@@ -483,6 +511,75 @@ const resolvers = {
         throw error;
       }
     },
+
+    invoiceMail: async (_parent, args) => {
+      const { id } = args;
+      try {
+        const order = await findOrderById(id);
+        console.log(order);
+
+        const { fullname, email, service, price, aircraft } = order;
+
+        let emailContent = `
+          <p>Dear ${fullname},</p>
+    
+          <p>We are pleased to inform you that your payment has been successfully processed. Thank you for choosing Orderly for your ${service} flight on ${aircraft}.</p>
+    
+          <p>Your payment details are as follows:
+            Amount Paid: ${price}
+            Payment Date: ${new Date().toLocaleDateString()}
+    
+          If you have any questions or need further assistance, please don’t hesitate to contact us. We are here to help you at any time.</p>
+    
+          <p>Once again, thank you for choosing Orderly. We look forward to serving you again in the future.</p>
+    
+          <p>Best regards,<br>
+          <strong>Orderly Private Jet Charter Services</strong></p>
+        `;
+
+        await sendMail(emailContent, email, "Invoice of Payment");
+        console.log("invoice send(?");
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
+    negosiationMail: async (_parent, args) => {
+      const { id } = args;
+      try {
+        const order = await findOrderById(id);
+        console.log(order);
+
+        const { fullname, email, service, aircraft } = order;
+
+        let emailContent = `
+          <p>Dear ${fullname},</p>
+    
+          <p>Thank you for your recent inquiry regarding the ${service} flight on ${aircraft}. We appreciate your interest in our services and your request for further negotiation.</p>
+    
+          <p>We wanted to let you know that one of our dedicated staff members will be in touch with you within the next 3 days to discuss the details and finalize any arrangements. We aim to ensure that all your needs are met with the highest level of service.</p>
+    
+          <p>If you have any immediate questions or concerns, please feel free to reach out to us. We are here to assist you at any time.</p>
+    
+          <p>Once again, thank you for choosing Orderly. We look forward to finalizing the details and providing you with an exceptional private jet experience.</p>
+        `;
+
+        await sendMail(emailContent, email, "Negotiation Confirmation");
+        console.log("negotiation email sent(?");
+
+        // Update the order status to "Negotiation"
+        await updateNegotiation(id);
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
   },
 };
 
