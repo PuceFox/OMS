@@ -103,7 +103,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!): OrderResponse
+    getOrder(page: Int!, filterStatus: String): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -128,12 +128,19 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, args, contextValue) => {
-      const { page } = args;
+      const { page, filterStatus } = args;
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
-      const orders = await findAllOrder(offset);
-      const totalCount = await findOrderCount();
+      let filter = false;
+      if (filterStatus) {
+        filter = {
+          status: filterStatus,
+        };
+      }
+      const { orders, totalCount } = await findAllOrder(offset, filter);
+
       const totalPage = Math.ceil(totalCount / 10);
+
       return {
         totalPage,
         orders,
@@ -207,18 +214,17 @@ const resolvers = {
       const { fullname, email, service } = order;
       console.log(service);
 
-      return order
+      return order;
     },
 
     invoiceMail: async (_parent, args) => {
-      const { id } = args
-      const order = await findOrderById(id)
-      const { fullname, email, service } = order
+      const { id } = args;
+      const order = await findOrderById(id);
+      const { fullname, email, service } = order;
       console.log(service);
 
-      return order
-    }
-
+      return order;
+    },
   },
 
   Mutation: {
@@ -645,7 +651,6 @@ const resolvers = {
         throw error;
       }
     },
-
   },
 };
 
