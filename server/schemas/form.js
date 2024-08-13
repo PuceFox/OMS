@@ -219,14 +219,6 @@ const resolvers = {
       return order;
     },
 
-    invoiceMail: async (_parent, args) => {
-      const { id } = args;
-      const order = await findOrderById(id);
-      const { fullname, email, service } = order;
-      console.log(service);
-
-      return order;
-    },
   },
 
   Mutation: {
