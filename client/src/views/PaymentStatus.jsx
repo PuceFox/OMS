@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "../assets/logo.png";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import { MUTATION_SEND_INVOICE, QUERY_ORDER_BY_ID } from "../queries";
 
 export default function PaymentSuccess() {
-  return (
+  const { orderId } = useParams()
+  const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
+    variables: {
+      getOrderByIdId: orderId,
+    },
+  });
+  const order = data?.getOrderByIdId
+  const [sendInvoice] = useMutation(MUTATION_SEND_INVOICE)
+
+  useEffect(() => {
+    if (orderId) {
+      sendInvoice({
+        variables: {
+          generateInvoiceId : order._id
+        }
+      });
+    }
+  }, [orderId, sendInvoice]);
+
+  return (  
     <>
       <style>
         {`

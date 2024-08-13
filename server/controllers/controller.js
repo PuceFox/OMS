@@ -35,7 +35,7 @@ class Controller {
           },
         ],
         mode: "payment",
-        return_url: `${CLIENT_URL}/paymentstatus?session_id={CHECKOUT_SESSION_ID}`,
+        return_url: `${CLIENT_URL}/paymentstatus/${order._id}?session_id={CHECKOUT_SESSION_ID}`,
         automatic_tax: { enabled: true },
       });
 
