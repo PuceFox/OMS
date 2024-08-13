@@ -596,6 +596,7 @@ const resolvers = {
         <p><strong>Departure Location:</strong> ${origin.city}</p>
         <p><strong>Destination:</strong> ${destination.city}</p>
         <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
+        <p><strong>Total Passanger:</strong> ${order.pax}</p>
         <p><strong>Total Price:</strong> ${new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",
