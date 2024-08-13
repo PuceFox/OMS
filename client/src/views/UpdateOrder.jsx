@@ -23,6 +23,7 @@ export function UpdateOrder() {
   const [manualPrice, setManualPrice] = useState(""); // added state for manual price
   const order = data?.getOrderById;
 
+  const nav = useNavigate();
   const [updateOrderData, { loading: updateLoading }] = useMutation(
     MUTATION_NEGOTIATION_ORDER
   );
@@ -47,7 +48,8 @@ export function UpdateOrder() {
           reason: "",
         },
       });
-      alert("Order updated successfully!");
+      // alert("Order updated successfully!");
+      nav("/dashboard");
     } catch (error) {
       console.error(error);
       alert("Error updating order: " + error.message);
