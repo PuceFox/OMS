@@ -45,7 +45,7 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
-  const [sortField, setSortField] = useState("name"); // default sorting by name
+  const [nameSort, setNameSort] = useState(0); // default sorting by name
   const [sortOrder, setSortOrder] = useState("ASC"); // default sorting order
 
   let totalPage = 1;
@@ -82,9 +82,10 @@ export default function Dashboard() {
         page: page,
         filterStatus: statusFilter,
         filterService: serviceFilter,
+        sortByName: nameSort,
       },
     });
-  }, [page, statusFilter]);
+  }, [page, statusFilter, nameSort]);
 
   const tableRows = tableData?.getOrder.orders;
   console.log(tableRows?.length, "DATA");
@@ -126,25 +127,20 @@ export default function Dashboard() {
           <div className="flex gap-4 w-full">
             <Select
               label="Sort by Name"
-              value={sortField === "name" ? sortOrder : ""}
+              value={nameSort}
               onChange={(e) => {
-                if (e.target.value === "ASC" || e.target.value === "DESC") {
-                  setSortField("name");
-                  setSortOrder(e.target.value);
-                }
+                setNameSort(Number(e));
               }}
               className="flex-1"
             >
-              <Option value="">None</Option>
-              <Option value="ASC">Ascending</Option>
-              <Option value="DESC">Descending</Option>
+              <Option value={0}>None</Option>
+              <Option value={1}>A-Z</Option>
+              <Option value={-1}>Z-A</Option>
             </Select>
             <Select
               label="Sort by Created At"
-              value={sortField === "createdAt" ? sortOrder : ""}
               onChange={(e) => {
                 if (e.target.value === "ASC" || e.target.value === "DESC") {
-                  setSortField("createdAt");
                   setSortOrder(e.target.value);
                 }
               }}
