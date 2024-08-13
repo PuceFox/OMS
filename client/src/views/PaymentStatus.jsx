@@ -13,7 +13,6 @@ export default function PaymentSuccess() {
   });
   const order = data?.getOrderByIdId
   const [sendInvoice] = useMutation(MUTATION_SEND_INVOICE)
-  // const [updatePaymentStatus] = useMutation()
 
   useEffect(() => {
     if (orderId) {
