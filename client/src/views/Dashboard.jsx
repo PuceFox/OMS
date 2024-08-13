@@ -54,10 +54,6 @@ export default function Dashboard() {
     fetchOrders({
       variables: {
         page: page,
-        status: statusFilter,
-        service: serviceFilter,
-        sortField: sortField,
-        sortOrder: sortOrder,
       },
     });
 
