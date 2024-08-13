@@ -3,7 +3,7 @@ import formatPrice from "../utils/formatDollar";
 import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatTime } from "../utils/formatTime";
 
 export function NegotiateOrder({ route }) {
@@ -28,6 +28,12 @@ export function NegotiateOrder({ route }) {
   const order = data?.getOrderById;
 
   console.log(order, `data order`);
+
+  useEffect(() => {
+    if (order && order.status !== "Pending") {
+      nav("/form");
+    }
+  }, [order, nav]);
 
   async function submitOrder(event) {
     event.preventDefault();
