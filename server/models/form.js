@@ -17,15 +17,9 @@ async function AirportTable() {
 }
 
 // Function untuk Get Semua Data Order
-async function findAllOrder() {
-    const agg = [
-        {
-            $sort: {
-                createdAt: -1,
-            },
-        },
-    ];
-    const orders = await (await OrderTable()).aggregate(agg).toArray();
+async function findAllOrder(offset) {
+    const orderTable = await OrderTable();
+    const orders = await orderTable.find().skip(offset).limit(10).toArray();
     return orders;
 }
 
@@ -44,41 +38,44 @@ async function findOrderById(id) {
 async function findOrderByStatus(status) {
     const agg = [
         {
-            '$match': {
-                status
-            }
-        }
-    ]
-    const order = await (await OrderTable()).aggregate(agg).toArray()
-    return order
+            $match: {
+                status,
+            },
+        },
+    ];
+    const order = await (await OrderTable()).aggregate(agg).toArray();
+    return order;
 }
 
 // Function untuk generate data yang akan di prompting ke AI
 async function findDataAI() {
     const agg = [
         {
-            '$project': {
-                "_id": 0,
-                'fullname': 0,
-                'email': 0,
-                'phoneNumber': 0
-            }
-        }
-    ]
-    const dataAI = await (await OrderTable()).aggregate(agg).toArray()
+            $project: {
+                _id: 0,
+                fullname: 0,
+                email: 0,
+                phoneNumber: 0,
+            },
+        },
+    ];
+    const dataAI = await (await OrderTable()).aggregate(agg).toArray();
     // console.log(dataAI);
 
-    return dataAI
-
+    return dataAI;
 }
 
 // Function untuk Get Data Percentage dari Status
 async function findPecentage() {
-    const orderReject = await findOrderByStatus("Rejected")
-    const orderAccept = await findOrderByStatus("Accepted")
-    const orderPending = await findOrderByStatus("Pending")
-    const orderNegotiate = await findOrderByStatus("Negotiation")
-    const totalOrder = orderReject.length + orderAccept.length + orderPending.length + orderNegotiate.length
+    const orderReject = await findOrderByStatus("Rejected");
+    const orderAccept = await findOrderByStatus("Accepted");
+    const orderPending = await findOrderByStatus("Pending");
+    const orderNegotiate = await findOrderByStatus("Negotiation");
+    const totalOrder =
+        orderReject.length +
+        orderAccept.length +
+        orderPending.length +
+        orderNegotiate.length;
 
     return {
         totalReject: orderReject.length,
@@ -86,7 +83,7 @@ async function findPecentage() {
         totalPending: orderPending.length,
         totalNego: orderNegotiate.length,
         totalRequest: totalOrder,
-    }
+    };
 }
 
 // Function untuk Get Semua Data Service

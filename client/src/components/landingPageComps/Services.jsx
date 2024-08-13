@@ -59,20 +59,20 @@ const Services = () => {
   return (
     <section
       id="services"
-      className="relative bg-indigo-200 overflow-hidden py-16"
+      className="relative bg-indigo-200 h-screen w-full overflow-hidden py-16"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-indigo-500 to-blue-100 opacity-30"></div>
 
-      <div className="relative container mx-auto pb-14 pt-16 px-4 md:px-8">
+      <div className="relative container mx-auto pb-7 pt-40 px-4 md:px-8">
         <h1
-          className="text-4xl md:text-5xl font-extrabold text-center text-white mb-12 leading-tight border-b-4 border-white pb-2"
+          className="text-4xl md:text-5xl font-extrabold text-center text-white mb-28 leading-tight border-b-4 border-white pb-10"
           style={{
             textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
           }}
         >
           Discover Our <br /> Exceptional Services
         </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-20 mr-16">
           {ServicesData.map((service) => (
             <motion.div
               key={service.id}
@@ -80,8 +80,8 @@ const Services = () => {
               initial="initial"
               whileInView="animate"
               viewport={{ once: true }}
-              className="relative bg-[#f4f4f4] rounded-full flex flex-col items-center justify-center p-10 hover:bg-blue-200 hover:shadow-2xl hover:scale-105 duration-300"
-              style={{ height: "250px", width: "250px" }}
+              className="relative bg-[#f4f4f4] rounded-full flex flex-col items-center justify-center p-5 hover:bg-blue-200 hover:shadow-2xl hover:scale-105 duration-300"
+              style={{ height: "300px", width: "300px" }}
             >
               <div className="relative z-10 text-6xl text-purple-600 mb-4">
                 {service.icon}

@@ -3,7 +3,7 @@ import formatPrice from "../utils/formatDollar";
 import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatTime } from "../utils/formatTime";
 
 export function AcceptOrder({ route }) {
@@ -24,11 +24,15 @@ export function AcceptOrder({ route }) {
     useMutation(UPDATE_ORDER_DATA);
 
   const [isLoading, setIsLoading] = useState(false);
-  //   console.log(data?.getOrderById);
 
   const order = data?.getOrderById;
 
-  console.log(order);
+  // console.log(order);
+  useEffect(() => {
+    if (order && order.status !== "Pending") {
+      nav("/form");
+    }
+  }, [order, nav]);
 
   async function submitOrder() {
     setIsLoading(true);
@@ -48,19 +52,6 @@ export function AcceptOrder({ route }) {
       },
     });
   }
-
-  //   const data = {
-  //     _id: "66b4a0aeed2e1c5f2e0b702b",
-  //     fullname: "jajang",
-  //     email: "jajang@mail.com",
-  //     phoneNumber: "12345",
-  //     origin: "DJJ",
-  //     destination: "BTJ",
-  //     service: "VIP",
-  //     aircraft: "Gulfstream G150",
-  //     price: "5000",
-  //   };
-  //   console.log(data);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">

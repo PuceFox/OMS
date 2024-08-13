@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import { UPDATE_ORDER_DATA } from "../queries/index";
+import { useMutation, useQuery } from "@apollo/client";
+import { QUERY_ORDER_BY_ID, UPDATE_ORDER_DATA } from "../queries/index";
 import { Button, Radio } from "@material-tailwind/react";
 export function RejectOrder() {
   const { orderId } = useParams();
@@ -37,6 +37,20 @@ export function RejectOrder() {
       console.error("Error updating order:", error);
     }
   }
+
+  const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
+    variables: {
+      getOrderByIdId: orderId,
+    },
+  });
+
+  const order = data?.getOrderById;
+
+  useEffect(() => {
+    if (order && order.status !== "Pending") {
+      nav("/form");
+    }
+  }, [order, nav]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
