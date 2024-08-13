@@ -171,7 +171,7 @@ export default function Dashboard() {
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-bold leading-none text-white"
+                      className="font-bold leading-none text-white text-center"
                     >
                       {head}
                     </Typography>
@@ -208,7 +208,7 @@ export default function Dashboard() {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal text-center"
                         >
                           {index + 1 + (page - 1) * 10}{" "}
                           {/* Adjust based on current page */}
@@ -218,7 +218,7 @@ export default function Dashboard() {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal text-left"
                         >
                           {fullname}
                         </Typography>
@@ -227,7 +227,7 @@ export default function Dashboard() {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal text-center"
                         >
                           {email}
                         </Typography>
@@ -236,7 +236,7 @@ export default function Dashboard() {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal text-center"
                         >
                           {phoneNumber}
                         </Typography>
@@ -247,7 +247,7 @@ export default function Dashboard() {
                           href="#"
                           variant="small"
                           color="blue-gray"
-                          className="font-medium"
+                          className="font-normal text-center"
                         >
                           {origin}
                         </Typography>
@@ -258,7 +258,7 @@ export default function Dashboard() {
                           href="#"
                           variant="small"
                           color="blue-gray"
-                          className="font-medium"
+                          className="font-normal text-center"
                         >
                           {destination}
                         </Typography>
@@ -269,7 +269,7 @@ export default function Dashboard() {
                           href="#"
                           variant="small"
                           color="blue-gray"
-                          className="font-medium"
+                          className="font-normal text-center"
                         >
                           {service}
                         </Typography>
@@ -280,7 +280,7 @@ export default function Dashboard() {
                           href="#"
                           variant="small"
                           color="blue-gray"
-                          className="font-medium"
+                          className="font-normal text-center"
                         >
                           {pax}
                         </Typography>
@@ -292,7 +292,7 @@ export default function Dashboard() {
                             href="#"
                             variant="small"
                             color="blue-gray"
-                            className="font-medium"
+                            className="font-normal text-center"
                           >
                             {formatPrice(price)}
                           </Typography>
@@ -302,7 +302,7 @@ export default function Dashboard() {
                             href="#"
                             variant="small"
                             color="blue-gray"
-                            className="font-medium"
+                            className="font-normal text-center"
                           >
                             -
                           </Typography>
@@ -315,7 +315,7 @@ export default function Dashboard() {
                             href="#"
                             variant="small"
                             color="blue-gray"
-                            className="font-medium"
+                            className="font-normal text-center"
                           >
                             {aircraft}
                           </Typography>
@@ -325,7 +325,7 @@ export default function Dashboard() {
                             href="#"
                             variant="small"
                             color="blue-gray"
-                            className="font-medium"
+                            className="font-normal text-center"
                           >
                             Waiting
                           </Typography>
@@ -337,7 +337,7 @@ export default function Dashboard() {
                           href="#"
                           variant="small"
                           color="blue-gray"
-                          className="font-medium"
+                          className="font-normal text-center"
                         >
                           {status}
                         </Typography>
@@ -347,7 +347,7 @@ export default function Dashboard() {
                           <Button
                             as="a"
                             href="#"
-                            variant="small"
+                            size="sm"
                             color="amber"
                             className="font-bold"
                             onClick={() => handleFollowUp(_id)}
