@@ -73,16 +73,15 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    console.log("USE EFFECT TRIGGERED");
     fetchOrders({
       variables: {
         page: page,
-        statusFilter,
-        serviceFilter,
-        sortField,
-        sortOrder,
+        filterStatus: statusFilter,
+        filterService: serviceFilter,
       },
     });
-  }, [page, statusFilter, serviceFilter, sortField, sortOrder]);
+  }, [page, statusFilter]);
 
   const tableRows = tableData?.getOrder.orders;
   console.log(tableRows?.length, "DATA");
@@ -100,7 +99,7 @@ export default function Dashboard() {
             <Select
               label="Filter by Status"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => setStatusFilter(e)}
               className="flex-1"
             >
               <Option value="">All</Option>
@@ -111,13 +110,13 @@ export default function Dashboard() {
             <Select
               label="Filter by Service"
               value={serviceFilter}
-              onChange={(e) => setServiceFilter(e.target.value)}
+              onChange={(e) => setServiceFilter(e)}
               className="flex-1"
             >
               <Option value="">All</Option>
-              <Option value="Service 1">Service 1</Option>
-              <Option value="Service 2">Service 2</Option>
-              <Option value="Service 3">Service 3</Option>
+              <Option value="VIP">VIP</Option>
+              <Option value="Medevac">Medevac</Option>
+              <Option value="City-tour">City-tour</Option>
             </Select>
           </div>
           {/* Sorting - Second row */}
