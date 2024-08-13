@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
     if (orderId) {
       sendInvoice({
         variables: {
-          generateInvoiceId : order._id
+          generateInvoiceId : orderId
         }
       });
     }
