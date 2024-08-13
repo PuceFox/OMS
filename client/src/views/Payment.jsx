@@ -27,8 +27,6 @@ export default function Payment() {
     },
   });
 
-  console.log(orderData);
-  
   const fetchClientSecret = useCallback(() => {
     return fetch(`${REST_API_URL}/create-checkout-session/${orderId}`, {
       method: "POST",
