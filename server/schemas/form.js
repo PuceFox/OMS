@@ -103,7 +103,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!, filterStatus: String, filterService: String): OrderResponse
+    getOrder(page: Int!, filterStatus: String, filterService: String, sortByName: Int): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -128,9 +128,11 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, args, contextValue) => {
-      const { page, filterStatus, filterService } = args;
+      const { page, filterStatus, filterService, sortByName } = args;
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
+      let sort = false;
+      if (sortByName !== 0) sort = { fullname: sortByName };
       let filter = false;
       if (filterStatus || filterService) {
         filter = {};
@@ -138,7 +140,7 @@ const resolvers = {
 
       if (filterStatus) filter.status = filterStatus;
       if (filterService) filter.service = filterService;
-      const { orders, totalCount } = await findAllOrder(offset, filter);
+      const { orders, totalCount } = await findAllOrder(offset, filter, sort);
 
       const totalPage = Math.ceil(totalCount / 10);
 
