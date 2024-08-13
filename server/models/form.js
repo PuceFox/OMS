@@ -17,10 +17,17 @@ async function AirportTable() {
 }
 
 // Function untuk Get Semua Data Order
-async function findAllOrder(offset) {
+async function findAllOrder(offset, filter) {
+  let filterObj = {};
+  if (filter) filterObj = filter;
   const orderTable = await OrderTable();
-  const orders = await orderTable.find().skip(offset).limit(10).toArray();
-  return orders;
+  const cursor = orderTable.find(filterObj);
+  const count = await cursor.toArray();
+  const totalCount = count.length;
+  cursor.rewind();
+  const orders = await cursor.skip(offset).limit(10).toArray();
+
+  return { orders, totalCount };
 }
 
 async function findOrderCount() {
