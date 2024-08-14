@@ -50,12 +50,14 @@ export const QUERY_GET_ORDERS = gql`
     $filterStatus: String
     $filterService: String
     $sortByName: Int
+    $sortByDate: Int
   ) {
     getOrder(
       page: $page
       filterStatus: $filterStatus
       filterService: $filterService
       sortByName: $sortByName
+      sortByDate: $sortByDate
     ) {
       orders {
         _id
