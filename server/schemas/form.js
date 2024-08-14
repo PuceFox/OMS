@@ -62,6 +62,7 @@ const typeDefs = `#graphql
   type DataChart {
     totalReject: Int
     totalAccept: Int
+    totalPaid: Int
     totalPending: Int
     totalNego: Int
     totalRequest: Int
