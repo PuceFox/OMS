@@ -47,7 +47,7 @@ export function UpdateOrder() {
           updateNegoId: orderId,
           price: parseInt(manualPrice || order.offers[offer].price),
           aircraft: order.offers[offer].assetName,
-          status: "Negotiation",
+          status: "Nego Sent",
           reason: "",
         },
       });
@@ -61,30 +61,30 @@ export function UpdateOrder() {
     }
   };
 
-  const handleReject = async () => {
-    try {
-      setIsLoading(true);
-      if (!order) {
-        throw new Error("Order data is not available");
-      }
-      await rejectNegoData({
-        variables: {
-          id: orderId,
-          price: parseInt(manualPrice || order.offers[offer].price),
-          aircraft: order.offers[offer].assetName,
-          status: "Rejected",
-          reason: "rejected after negotiation due to no update from user",
-        },
-      });
-      // alert("Order rejected successfully!");
-      nav("/dashboard");
-    } catch (error) {
-      console.error(error);
-      alert("Error rejecting order: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleReject = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     if (!order) {
+  //       throw new Error("Order data is not available");
+  //     }
+  //     await rejectNegoData({
+  //       variables: {
+  //         id: orderId,
+  //         price: parseInt(manualPrice || order.offers[offer].price),
+  //         aircraft: order.offers[offer].assetName,
+  //         status: "Rejected",
+  //         reason: "rejected after negotiation due to no update from user",
+  //       },
+  //     });
+  //     // alert("Order rejected successfully!");
+  //     nav("/dashboard");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Error rejecting order: " + error.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
@@ -156,7 +156,7 @@ export function UpdateOrder() {
         <div className="p-6 flex justify-between w-full max-w-xs m-auto">
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
-            onClick={handleReject}
+            // onClick={handleReject}
           >
             Reject
           </Button>

@@ -82,7 +82,7 @@ async function findDataAI() {
 // Function untuk Get Data Percentage dari Status
 async function findPecentage() {
   const orderReject = await findOrderByStatus("Rejected");
-  const orderAccept = await findOrderByStatus("Accepted");
+  const orderAccept = await findOrderByStatus("Paid");
   const orderPending = await findOrderByStatus("Pending");
   const orderNegotiate = await findOrderByStatus("Negotiation");
   const totalOrder =

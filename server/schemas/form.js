@@ -787,47 +787,40 @@ const resolvers = {
       }
     },
 
-    rejectNego: async (_parent, args) => {
-      console.log(args, `data args di schema rejectNego`);
+    // rejectNego: async (_parent, args) => {
+    //   console.log(args, `data args di schema rejectNego`);
 
-      try {
-        const { id, price, aircraft, status, reason } = args;
+    //   try {
+    //     const { id, price, aircraft, status, reason } = args;
 
-        const order = await findOrderById(id);
-        const orders = await OrderTable();
+    //     const order = await findOrderById(id);
+    //     const orders = await OrderTable();
 
-        // You need to uncomment and fix the stripe product and price creation
-        const product = await stripe.products.create({
-          name: `${order?.service} - ${aircraft}`
-        });
+    //     // You need to uncomment and fix the stripe product and price creation
+    //     const product = await stripe.products.create({
+    //       name: `${order?.service} - ${aircraft}`
+    //     });
 
-        const stripePrice = await stripe.prices.create({
-          product: product.id,
-          unit_amount: Number(price) * 100,
-          currency: "usd",
-        });
+    //     await orders.updateOne(
+    //       {
+    //         _id: new ObjectId(id)
+    //       },
+    //       {
+    //         $set: {
+    //           price, // uncommented
+    //           aircraft,
+    //           status,
+    //           reason
+    //         }
+    //       }
+    //     );
 
-        await orders.updateOne(
-          {
-            _id: new ObjectId(id)
-          },
-          {
-            $set: {
-              price, // uncommented
-              aircraft,
-              priceId: stripePrice.id,
-              status,
-              reason
-            }
-          }
-        );
-
-        return order;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    }
+    //     return order;
+    //   } catch (error) {
+    //     console.log(error);
+    //     throw error;
+    //   }
+    // }
   },
 };
 
