@@ -105,7 +105,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!, filterStatus: String, filterService: String): OrderResponse
+    getOrder(page: Int!, filterStatus: String, filterService: String, sortByName: Int): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -130,9 +130,11 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, args, contextValue) => {
-      const { page, filterStatus, filterService } = args;
+      const { page, filterStatus, filterService, sortByName } = args;
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
+      let sort = false;
+      if (sortByName !== 0) sort = { fullname: sortByName };
       let filter = false;
       if (filterStatus || filterService) {
         filter = {};
@@ -140,7 +142,7 @@ const resolvers = {
 
       if (filterStatus) filter.status = filterStatus;
       if (filterService) filter.service = filterService;
-      const { orders, totalCount } = await findAllOrder(offset, filter);
+      const { orders, totalCount } = await findAllOrder(offset, filter, sort);
 
       const totalPage = Math.ceil(totalCount / 10);
 
@@ -659,6 +661,9 @@ const resolvers = {
           <p>If you have any immediate questions or concerns, please feel free to reach out to us. We are here to assist you at any time.</p>
     
           <p>Once again, thank you for choosing Orderly. We look forward to finalizing the details and providing you with an exceptional private jet experience.</p>
+
+          <p>Best regards,<br>
+          <strong>Orderly Private Jet Charter Services</strong></p>
         `;
 
         await sendMail(emailContent, email, "Negotiation Confirmation");
@@ -738,7 +743,10 @@ const resolvers = {
   
       <h3>Financial Terms:</h3>
       <ul>
-          <li><strong>Total Cost:</strong> ${price}</li>
+          <li><strong>Total Cost:</strong> ${new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(price)}</li>
       </ul>
  
   
@@ -747,7 +755,7 @@ const resolvers = {
       <p>Looking forward to your confirmation.</p>
   
       <p>Best regards,</p>
-      <strong>Orderly Private Jet Charter Services</strong></p
+      <strong>Orderly Private Jet Charter Services</strong></p><br/>
       
       <a href="${CLIENT_URL}/payment/${id.toString()}">
         <button
