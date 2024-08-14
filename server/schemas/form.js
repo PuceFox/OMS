@@ -288,6 +288,9 @@ const resolvers = {
           reason: "",
         });
 
+        const newOrigin = await findAirportByIataCode(orderData.origin);
+        const newDestination = await findAirportByIataCode(orderData.destination);
+
         let cards = "";
 
         offerData.forEach((e) => {
@@ -308,6 +311,19 @@ const resolvers = {
           flexibility that our service is known for. To ensure your experience is
           perfectly tailored to your preferences, we provide a range of charter
           options for ${service} flight.</p>
+
+        <h3>Order Details:</h3>
+        <ul>
+          <li><strong>Ordered Date:</strong> ${new Date(orderData.updatedAt)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            .replace(/\//g, "-")}</li>
+          <li><strong>Departure Location:</strong> ${newOrigin.city}</li>
+          <li><strong>Arrival Location:</strong> ${newDestination.city}</li>
+        </ul>
 
         <p>Please review the options below
           and select the one that you find most suitable:
