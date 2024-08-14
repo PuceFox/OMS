@@ -6,6 +6,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatTime } from "../utils/formatTime";
 import logo from "../assets/logo.png";
+import Loading from "../components/Loading";
 
 export function AcceptOrder({ route }) {
   const { orderId } = useParams();
@@ -120,7 +121,7 @@ export function AcceptOrder({ route }) {
         </div>
         <div className="p-6 m-auto  w-fit">
           {isLoading ? (
-            <span className="loading loading-spinner loading-lg"></span>
+            <Loading />
           ) : (
             <Button
               className="w-full  bg-indigo-700 hover:bg-green-600"

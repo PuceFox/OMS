@@ -10,6 +10,7 @@ import {
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
 import { Button } from "@material-tailwind/react";
+import Loading from "../components/Loading";
 
 export function NegotiateOrder() {
   const { orderId } = useParams();
@@ -130,7 +131,7 @@ export function NegotiateOrder() {
         </div>
         <div className="p-6 m-auto  w-fit">
           {isLoading ? (
-            <span className="loading loading-spinner loading-lg"></span>
+            <Loading />
           ) : (
             <Button
               onClick={submitNegotiate}
