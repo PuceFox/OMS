@@ -10,7 +10,9 @@ import logo from "../assets/o.png";
 
 export default function Report() {
   const [year, setYear] = useState(new Date().getFullYear());
-  const { loading, error, data, refetch } = useQuery(GET_REPORT, { variables: { year } });
+  const { loading, error, data, refetch } = useQuery(GET_REPORT, {
+    variables: { year },
+  });
   const { loading: loadingAI, error: errorAI, data: dataAI } = useQuery(GET_DataAi);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function Report() {
     type: "pie",
     width: 500,
     height: 500,
-    series: [chart?.totalAccept, chart?.totalReject, chart?.totalPending, chart?.totalNego],
+    series: [chart?.totalPaid, chart?.totalReject, chart?.totalPending, chart?.totalNego],
     options: {
       chart: {
         toolbar: {
@@ -40,7 +42,7 @@ export default function Report() {
       legend: {
         show: true,
       },
-      labels: [`Total Accept : ${chart?.totalAccept}`, `Total Reject : ${chart?.totalReject}`, `Total Pending : ${chart?.totalPending}`, `Total Nego : ${chart?.totalNego}`],
+      labels: [`Total Paid : ${chart?.totalPaid}`, `Total Reject : ${chart?.totalReject}`, `Total Pending : ${chart?.totalPending}`, `Total Negotiate : ${chart?.totalNego}`],
     },
   };
 
