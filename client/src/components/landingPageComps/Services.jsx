@@ -13,7 +13,7 @@ const ServicesData = [
   },
   {
     id: 2,
-    title: "Madevac : Medical evacuation service",
+    title: "Medevac : Medical evacuation service",
     link: "#",
     icon: <PiAirplaneTiltBold />,
     delay: 0.3,

@@ -1209,7 +1209,7 @@ const Form = () => {
               <div className="service-description">
                 - VIP: Premium service with extra comfort.
                 <br />
-                - Madevac: Medical evacuation service.
+                - Medevac: Medical evacuation service.
                 <br />- Citytour: Guided city tours.
               </div>
             </div>
