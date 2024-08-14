@@ -22,6 +22,7 @@ async function findAllOrder(offset, filter, sort) {
   let sortObj = {};
   if (filter) filterObj = filter;
   if (sort) sortObj = sort;
+  console.log(sort, "sort");
   const orderTable = await OrderTable();
   const cursor = orderTable.find(filterObj).sort(sortObj);
   const count = await cursor.toArray();
@@ -154,10 +155,8 @@ async function findAirportsById(id) {
 
 // Function untuk Get Airport by iataCode
 async function findAirportByIataCode(iataCode) {
-  const airport = await (
-    await AirportTable()
-  ).findOne({ iataCode })
-  return airport
+  const airport = await (await AirportTable()).findOne({ iataCode });
+  return airport;
 }
 
 // Function untuk Get Data Airport by Query
@@ -272,5 +271,5 @@ module.exports = {
   findOrderCount,
   findAirportByIataCode,
   updateNegotiation,
-  updatePaid
+  updatePaid,
 };

@@ -7,7 +7,8 @@ import {
   MUTATION_NEGOTIATION_ORDER,
   QUERY_ORDER_BY_ID,
   UPDATE_ORDER_DATA,
-  QUERY_GET_ORDERS
+  QUERY_GET_ORDERS,
+  MUTATION_REJECT_ORDER,
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
@@ -27,6 +28,9 @@ export function UpdateOrder() {
   const nav = useNavigate();
   const [updateOrderData, { loading: updateLoading, client }] = useMutation(
     MUTATION_NEGOTIATION_ORDER
+  );
+  const [rejectNegoData, { loading: rejectLoading }] = useMutation(
+    MUTATION_REJECT_ORDER
   );
 
   const handlePriceChange = (e) => {
@@ -57,6 +61,31 @@ export function UpdateOrder() {
     } catch (error) {
       console.error(error);
       alert("Error updating order: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      setIsLoading(true);
+      if (!order) {
+        throw new Error("Order data is not available");
+      }
+      await rejectNegoData({
+        variables: {
+          id: orderId,
+          price: parseInt(manualPrice || order.offers[offer].price),
+          aircraft: order.offers[offer].assetName,
+          status: "Rejected",
+          reason: "rejected after negotiation due to no update from user",
+        },
+      });
+      // alert("Order rejected successfully!");
+      nav("/dashboard");
+    } catch (error) {
+      console.error(error);
+      alert("Error rejecting order: " + error.message);
     } finally {
       setIsLoading(false);
     }

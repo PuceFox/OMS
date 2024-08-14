@@ -50,12 +50,14 @@ export const QUERY_GET_ORDERS = gql`
     $filterStatus: String
     $filterService: String
     $sortByName: Int
+    $sortByDate: Int
   ) {
     getOrder(
       page: $page
       filterStatus: $filterStatus
       filterService: $filterService
       sortByName: $sortByName
+      sortByDate: $sortByDate
     ) {
       orders {
         _id
@@ -234,6 +236,34 @@ export const MUTATION_SEND_NEGOTIATION_EMAIL = gql`
 export const MUTATION_NEGOTIATION_ORDER = gql`
 mutation UpdateNego($updateNegoId: ID, $price: Int, $aircraft: String, $status: String) {
   updateNego(id: $updateNegoId, price: $price, aircraft: $aircraft, status: $status) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+    reason
+    offers {
+      serviceType
+      assetName
+      speed
+      flightTimeInMinutes
+      price
+    }
+  }
+}
+`;
+
+export const MUTATION_REJECT_ORDER = gql`
+  mutation RejectNego($rejectNegoId: ID, $price: Int, $aircraft: String, $status: String, $reason: String) {
+  rejectNego(id: $rejectNegoId, price: $price, aircraft: $aircraft, status: $status, reason: $reason) {
     _id
     fullname
     email
