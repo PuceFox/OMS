@@ -90,6 +90,7 @@ async function findPecentage() {
   const totalOrder =
     orderReject.length +
     orderAccept.length +
+    orderPaid.length +
     orderPending.length +
     orderNegotiate.length;
 
