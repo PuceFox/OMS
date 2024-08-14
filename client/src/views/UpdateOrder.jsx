@@ -52,8 +52,7 @@ export function UpdateOrder() {
           status: "Nego Sent",
           reason: "",
         },
-        awaitRefetchQueries: [QUERY_GET_ORDERS]
-        
+        awaitRefetchQueries: [QUERY_GET_ORDERS],
       });
       client.resetStore();
       // alert("Order updated successfully!");
@@ -66,30 +65,30 @@ export function UpdateOrder() {
     }
   };
 
-  const handleReject = async () => {
-    try {
-      setIsLoading(true);
-      if (!order) {
-        throw new Error("Order data is not available");
-      }
-      await rejectNegoData({
-        variables: {
-          id: orderId,
-          price: parseInt(manualPrice || order.offers[offer].price),
-          aircraft: order.offers[offer].assetName,
-          status: "Rejected",
-          reason: "rejected after negotiation due to no update from user",
-        },
-      });
-      // alert("Order rejected successfully!");
-      nav("/dashboard");
-    } catch (error) {
-      console.error(error);
-      alert("Error rejecting order: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleReject = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     if (!order) {
+  //       throw new Error("Order data is not available");
+  //     }
+  //     await rejectNegoData({
+  //       variables: {
+  //         id: orderId,
+  //         price: parseInt(manualPrice || order.offers[offer].price),
+  //         aircraft: order.offers[offer].assetName,
+  //         status: "Rejected",
+  //         reason: "rejected after negotiation due to no update from user",
+  //       },
+  //     });
+  //     // alert("Order rejected successfully!");
+  //     nav("/dashboard");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Error rejecting order: " + error.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
@@ -158,14 +157,16 @@ export function UpdateOrder() {
             </div>
           </div>
         </div>
-        <div className="p-6 flex justify-center"> {/* Center the button */}
-      <Button
-        className="bg-indigo-700 hover:bg-blue-600 text-white"
-        onClick={handleSave}
-      >
-        Save
-      </Button>
-    </div>
+        <div className="p-6 flex justify-center">
+          {" "}
+          {/* Center the button */}
+          <Button
+            className="bg-indigo-700 hover:bg-blue-600 text-white"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </div>
       </div>
     </div>
   );

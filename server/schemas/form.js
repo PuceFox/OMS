@@ -604,12 +604,12 @@ const resolvers = {
             <p><strong>Invoice for:</strong> ${fullname}</p>
             <p><strong>Service:</strong> ${service} Flight</p>
             <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt)
-              .toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })
-              .replace(/\//g, "-")}</p>
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            .replace(/\//g, "-")}</p>
             <p><strong>Invoice Number:</strong> ${order._id}</p>
             <p><strong>Payment Status:</strong> ${order.status}</p>
         </div>
@@ -621,9 +621,9 @@ const resolvers = {
         <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
         <p><strong>Total Passanger:</strong> ${order.pax}</p>
         <p><strong>Total Price:</strong> ${new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(order.price)}</p>
+              style: "currency",
+              currency: "USD",
+            }).format(order.price)}</p>
 
         <p>Thank you for choosing Orderly Private Jet Charter Services. We look forward to providing you with an exceptional travel experience.</p>
     </div>
@@ -750,9 +750,9 @@ const resolvers = {
       <h3>Financial Terms:</h3>
       <ul>
           <li><strong>Total Cost:</strong> ${new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-          }).format(price)}</li>
+              style: "currency",
+              currency: "USD",
+            }).format(price)}</li>
       </ul>
  
   
@@ -822,11 +822,19 @@ const resolvers = {
           name: `${order?.service} - ${aircraft}`,
         });
 
-        const stripePrice = await stripe.prices.create({
-          product: product.id,
-          unit_amount: Number(price) * 100,
-          currency: "usd",
-        });
+        //     await orders.updateOne(
+        //       {
+        //         _id: new ObjectId(id)
+        //       },
+        //       {
+        //         $set: {
+        //           price, // uncommented
+        //           aircraft,
+        //           status,
+        //           reason
+        //         }
+        //       }
+        //     );
 
         await orders.updateOne(
           {

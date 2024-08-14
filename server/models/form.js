@@ -84,6 +84,7 @@ async function findDataAI() {
 async function findPecentage() {
   const orderReject = await findOrderByStatus("Rejected");
   const orderAccept = await findOrderByStatus("Accepted");
+  const orderPaid = await findOrderByStatus("Paid");
   const orderPending = await findOrderByStatus("Pending");
   const orderNegotiate = await findOrderByStatus("Negotiation");
   const totalOrder =
@@ -95,6 +96,7 @@ async function findPecentage() {
   return {
     totalReject: orderReject.length,
     totalAccept: orderAccept.length,
+    totalPaid: orderPaid.length,
     totalPending: orderPending.length,
     totalNego: orderNegotiate.length,
     totalRequest: totalOrder,
