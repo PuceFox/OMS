@@ -105,7 +105,7 @@ const typeDefs = `#graphql
     getService: [Service]
     getServiceById(id: ID): Service
     getServiceTypeByQuery(query: String): [Service]
-    getOrder(page: Int!, filterStatus: String, filterService: String, sortByName: Int): OrderResponse
+    getOrder(page: Int!, filterStatus: String, filterService: String, sortByName: Int, sortByDate: Int): OrderResponse
     getOrderById(id: ID): Order
     getOrderByStatus(status: String): [Order]
     getOrderChart: DataChart
@@ -130,11 +130,14 @@ const resolvers = {
   Query: {
     // Function untuk mendapatkan List semua Order
     getOrder: async (_parent, args, contextValue) => {
-      const { page, filterStatus, filterService, sortByName } = args;
+      const { page, filterStatus, filterService, sortByName, sortByDate } =
+        args;
       const offset = (page - 1) * 10;
       const userLogin = await contextValue.authentication();
       let sort = false;
-      if (sortByName !== 0) sort = { fullname: sortByName };
+      if (sortByName || sortByDate) sort = {};
+      if (sortByName) sort.fullname = sortByName;
+      if (sortByDate) sort.createdAt = sortByDate;
       let filter = false;
       if (filterStatus || filterService) {
         filter = {};
@@ -221,7 +224,6 @@ const resolvers = {
 
       return order;
     },
-
   },
 
   Mutation: {
@@ -583,12 +585,12 @@ const resolvers = {
             <p><strong>Invoice for:</strong> ${fullname}</p>
             <p><strong>Service:</strong> ${service} Flight</p>
             <p><strong>Invoice Date:</strong> ${new Date(order.updatedAt)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })
-            .replace(/\//g, "-")}</p>
+              .toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+              .replace(/\//g, "-")}</p>
             <p><strong>Invoice Number:</strong> ${order._id}</p>
             <p><strong>Payment Status:</strong> ${order.status}</p>
         </div>
@@ -600,9 +602,9 @@ const resolvers = {
         <p><strong>Passenger's Name:</strong> ${order.fullname}</p>
         <p><strong>Total Passanger:</strong> ${order.pax}</p>
         <p><strong>Total Price:</strong> ${new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(order.price)}</p>
+          style: "currency",
+          currency: "USD",
+        }).format(order.price)}</p>
 
         <p>Thank you for choosing Orderly Private Jet Charter Services. We look forward to providing you with an exceptional travel experience.</p>
     </div>
@@ -618,7 +620,7 @@ const resolvers = {
         `;
         await sendMail(emailContent, email, "Invoice");
         console.log("Invoice email send(?)");
-        const updateOrder = await updatePaid(id)
+        const updateOrder = await updatePaid(id);
 
         return updateOrder;
       } catch (error) {
@@ -664,33 +666,33 @@ const resolvers = {
       try {
         const { id, price, aircraft } = args;
 
-        const order = await findOrderById(id)
-        const orders = await OrderTable()
-        const { fullname, email } = order
+        const order = await findOrderById(id);
+        const orders = await OrderTable();
+        const { fullname, email } = order;
         const origin = await findAirportByIataCode(order.origin);
         const destination = await findAirportByIataCode(order.destination);
         const product = await stripe.products.create({
-          name: `${order.service} - ${aircraft}`
-        })
+          name: `${order.service} - ${aircraft}`,
+        });
 
         const stripePrice = await stripe.prices.create({
           product: product.id,
           unit_amount: Number(price) * 100,
           currency: "usd",
-        })
+        });
 
         await orders.updateOne(
           {
-            _id: new ObjectId(id)
+            _id: new ObjectId(id),
           },
           {
             $set: {
               price,
               aircraft,
-              priceId: stripePrice.id
-            }
+              priceId: stripePrice.id,
+            },
           }
-        )
+        );
 
         let emailContent = `
         <!DOCTYPE html>
@@ -769,16 +771,16 @@ const resolvers = {
     </a>
   </body>
   </html>
-        `
-        await sendMail(emailContent, email, "Negotiation Offer")
+        `;
+        await sendMail(emailContent, email, "Negotiation Offer");
         console.log("Negotiation Offer Send(?)");
 
-        return order
+        return order;
       } catch (error) {
         console.log(error);
-        throw error
+        throw error;
       }
-    }
+    },
   },
 };
 
