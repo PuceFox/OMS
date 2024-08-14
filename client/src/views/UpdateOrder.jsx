@@ -7,13 +7,27 @@ import logo from "../assets/logo.png";
 import {
   MUTATION_NEGOTIATION_ORDER,
   QUERY_ORDER_BY_ID,
-  UPDATE_ORDER_DATA,
   QUERY_GET_ORDERS,
   MUTATION_REJECT_ORDER,
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
 import Loading from "../components/Loading";
+
+const toastStyles = {
+  error: {
+    background: "linear-gradient(to right, #FF5F6D, #FFC371)",
+  },
+};
+
+const showToast = (type, message) => {
+  Toastify({
+    text: message,
+    backgroundColor: toastStyles[type].background,
+    className: type === "success" ? "toastify-success" : "toastify-error",
+    duration: 3000,
+  }).showToast();
+};
 
 const Modal = ({ message, onClose }) => {
   return (
@@ -31,21 +45,6 @@ const Modal = ({ message, onClose }) => {
   );
 };
 
-const toastStyles = {
-  error: {
-    background: "linear-gradient(to right, #FF5F6D, #FFC371)",
-  },
-};
-
-const showToast = (type, message) => {
-  Toastify({
-    text: message,
-    backgroundColor: toastStyles[type].background,
-    className: type === "success" ? "toastify-success" : "toastify-error",
-    duration: 3000,
-  }).showToast();
-};
-
 export function UpdateOrder() {
   const { orderId } = useParams();
   const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
@@ -59,18 +58,8 @@ export function UpdateOrder() {
 
   const order = data?.getOrderById;
   const nav = useNavigate();
-<<<<<<< HEAD
-
-  const [updateOrderData] = useMutation(MUTATION_NEGOTIATION_ORDER);
+  const [updateOrderData, { client }] = useMutation(MUTATION_NEGOTIATION_ORDER);
   const [rejectNegoData] = useMutation(MUTATION_REJECT_ORDER);
-=======
-  const [updateOrderData, { loading: updateLoading, client }] = useMutation(
-    MUTATION_NEGOTIATION_ORDER
-  );
-  const [rejectNegoData, { loading: rejectLoading }] = useMutation(
-    MUTATION_REJECT_ORDER
-  );
->>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
 
   const handlePriceChange = (e) => {
     setManualPrice(e.target.value);
@@ -97,16 +86,11 @@ export function UpdateOrder() {
           status: "Nego Sent",
           reason: "",
         },
-        awaitRefetchQueries: [QUERY_GET_ORDERS]
-        
+        awaitRefetchQueries: [QUERY_GET_ORDERS],
       });
-<<<<<<< HEAD
+      console.log("Order updated successfully");
       setShowSaveModal(true);
-=======
       client.resetStore();
-      // alert("Order updated successfully!");
-      nav("/dashboard");
->>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
     } catch (error) {
       console.error(error);
       showToast("error", "Error updating order: " + error.message);
@@ -115,32 +99,8 @@ export function UpdateOrder() {
     }
   };
 
-  const handleReject = async () => {
-    if (!validateInput()) return;
-    try {
-      setIsLoading(true);
-      if (!order) throw new Error("Order data is not available");
-      await rejectNegoData({
-        variables: {
-          id: orderId,
-          price: parseInt(manualPrice || order.offers[offer].price),
-          aircraft: order.offers[offer].assetName,
-          status: "Rejected",
-          reason: "rejected after negotiation due to no update from user",
-        },
-      });
-      setShowRejectModal(true);
-    } catch (error) {
-      console.error(error);
-      showToast("error", "Error rejecting order: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
-      {/* Loading Overlay */}
       {isLoading && (
         <div
           className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50"
@@ -222,15 +182,7 @@ export function UpdateOrder() {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
-        <div className="p-6 flex justify-between w-full max-w-xs m-auto">
-          <Button
-            className="bg-red-500 hover:bg-red-600 text-white"
-            onClick={handleReject}
-            disabled={isLoading}
-          >
-            Reject
-          </Button>
+        <div className="p-6 flex justify-center">
           <Button
             className="bg-indigo-700 hover:bg-blue-600 text-white"
             onClick={handleSave}
@@ -239,26 +191,7 @@ export function UpdateOrder() {
             Save
           </Button>
         </div>
-=======
-        <div className="p-6 flex justify-center"> {/* Center the button */}
-      <Button
-        className="bg-indigo-700 hover:bg-blue-600 text-white"
-        onClick={handleSave}
-      >
-        Save
-      </Button>
-    </div>
->>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
       </div>
-      {showRejectModal && (
-        <Modal
-          message="Order has been rejected."
-          onClose={() => {
-            setShowRejectModal(false);
-            nav("/dashboard");
-          }}
-        />
-      )}
       {showSaveModal && (
         <Modal
           message="Order has been saved."

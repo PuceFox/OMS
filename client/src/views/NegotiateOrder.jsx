@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import logo from "../assets/logo.png";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
@@ -12,12 +12,28 @@ import { formatTime } from "../utils/formatTime";
 import { Button } from "@material-tailwind/react";
 import Loading from "../components/Loading";
 
+const Modal = ({ message, onClose }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col items-center">
+        <h2 className="text-lg font-semibold mb-4">{message}</h2>
+        <Button
+          className="bg-purple-500 hover:bg-blue-600 text-white"
+          onClick={onClose}
+        >
+          Close
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export function NegotiateOrder() {
   const { orderId } = useParams();
   const [queries] = useSearchParams();
-
   const [offer, setOffer] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const price = queries.get("price");
@@ -50,14 +66,14 @@ export function NegotiateOrder() {
         },
       });
 
-      // Add this line to send the negotiation email
+      // Add this line to send the negot
       await sendNegotiationEmail({
         variables: {
           negotiationMailId: orderId,
         },
       });
 
-      navigate("/");
+      setShowModal(true);
     } catch (error) {
       console.error("Error updating order and sending email:", error);
     } finally {
@@ -94,9 +110,11 @@ export function NegotiateOrder() {
                 value={offer}
                 onChange={(e) => setOffer(e.target.value)}
               >
-                {order?.offers.map((offer, i) => {
-                  return <option value={i}>{offer.assetName}</option>;
-                })}
+                {order?.offers.map((offer, i) => (
+                  <option key={i} value={i}>
+                    {offer.assetName}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -129,7 +147,7 @@ export function NegotiateOrder() {
             </div>
           </div>
         </div>
-        <div className="p-6 m-auto  w-fit">
+        <div className="p-6 m-auto w-fit">
           {isLoading ? (
             <Loading />
           ) : (
@@ -142,6 +160,15 @@ export function NegotiateOrder() {
           )}
         </div>
       </div>
+      {showModal && (
+        <Modal
+          message="Negotiation Submitted!"
+          onClose={() => {
+            setShowModal(false);
+            navigate("/");
+          }}
+        />
+      )}
     </div>
   );
 }
