@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+const PORT = process.env.PORT || 4000;
 const cors = require("cors");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
@@ -40,7 +41,9 @@ const server = new ApolloServer({
   app.post("/create-checkout-session/:orderId", Controller.checkout);
   app.get("/session-status", Controller.status);
 
-  app.listen({ port: 4000 }, () =>
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  app.listen({ port: PORT }, () =>
+    console.log(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    )
   );
 })();
