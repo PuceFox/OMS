@@ -45,10 +45,10 @@ export function RejectOrder() {
   const order = data?.getOrderById;
 
   useEffect(() => {
-    if (order && order.status !== "Pending") {
+    if (order && order.status !== "Pending" && order.status !== "Negotiation") {
       nav("/form");
     }
-  }, [order, nav]);
+  }, [order, nav]);  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
