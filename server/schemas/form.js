@@ -123,6 +123,7 @@ const typeDefs = `#graphql
     negotiationMail(id: ID): Order
     updatePayment(id: ID): Order
     updateNego(id: ID, price: Int, aircraft: String): Order
+    rejectNego(id: ID, price: Int, aircraft: String, status: String, reason: String): Order
   }
 `;
 
@@ -292,6 +293,11 @@ const resolvers = {
           reason: "",
         });
 
+        const newOrigin = await findAirportByIataCode(orderData.origin);
+        const newDestination = await findAirportByIataCode(
+          orderData.destination
+        );
+
         let cards = "";
 
         offerData.forEach((e) => {
@@ -312,6 +318,19 @@ const resolvers = {
           flexibility that our service is known for. To ensure your experience is
           perfectly tailored to your preferences, we provide a range of charter
           options for ${service} flight.</p>
+
+        <h3>Order Details:</h3>
+        <ul>
+          <li><strong>Ordered Date:</strong> ${new Date(orderData.updatedAt)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            .replace(/\//g, "-")}</li>
+          <li><strong>Departure Location:</strong> ${newOrigin.city}</li>
+          <li><strong>Arrival Location:</strong> ${newDestination.city}</li>
+        </ul>
 
         <p>Please review the options below
           and select the one that you find most suitable:
@@ -647,6 +666,9 @@ const resolvers = {
           <p>If you have any immediate questions or concerns, please feel free to reach out to us. We are here to assist you at any time.</p>
     
           <p>Once again, thank you for choosing Orderly. We look forward to finalizing the details and providing you with an exceptional private jet experience.</p>
+
+          <p>Best regards,<br>
+          <strong>Orderly Private Jet Charter Services</strong></p>
         `;
 
         await sendMail(emailContent, email, "Negotiation Confirmation");
@@ -726,7 +748,10 @@ const resolvers = {
   
       <h3>Financial Terms:</h3>
       <ul>
-          <li><strong>Total Cost:</strong> ${price}</li>
+          <li><strong>Total Cost:</strong> ${new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(price)}</li>
       </ul>
  
   
@@ -735,7 +760,7 @@ const resolvers = {
       <p>Looking forward to your confirmation.</p>
   
       <p>Best regards,</p>
-      <strong>Orderly Private Jet Charter Services</strong></p
+      <strong>Orderly Private Jet Charter Services</strong></p><br/>
       
       <a href="${CLIENT_URL}/payment/${id.toString()}">
         <button
@@ -774,6 +799,48 @@ const resolvers = {
         `;
         await sendMail(emailContent, email, "Negotiation Offer");
         console.log("Negotiation Offer Send(?)");
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
+    rejectNego: async (_parent, args) => {
+      console.log(args, `data args di schema rejectNego`);
+
+      try {
+        const { id, price, aircraft, status, reason } = args;
+
+        const order = await findOrderById(id);
+        const orders = await OrderTable();
+
+        // You need to uncomment and fix the stripe product and price creation
+        const product = await stripe.products.create({
+          name: `${order?.service} - ${aircraft}`,
+        });
+
+        const stripePrice = await stripe.prices.create({
+          product: product.id,
+          unit_amount: Number(price) * 100,
+          currency: "usd",
+        });
+
+        await orders.updateOne(
+          {
+            _id: new ObjectId(id),
+          },
+          {
+            $set: {
+              price, // uncommented
+              aircraft,
+              priceId: stripePrice.id,
+              status,
+              reason,
+            },
+          }
+        );
 
         return order;
       } catch (error) {
