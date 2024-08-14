@@ -6,7 +6,7 @@ import { useState } from "react";
 import {
   MUTATION_NEGOTIATION_ORDER,
   QUERY_ORDER_BY_ID,
-  UPDATE_ORDER_DATA,
+  MUTATION_REJECT_ORDER,
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
@@ -27,6 +27,9 @@ export function UpdateOrder() {
   const [updateOrderData, { loading: updateLoading }] = useMutation(
     MUTATION_NEGOTIATION_ORDER
   );
+  const [rejectNegoData, { loading: rejectLoading }] = useMutation(
+    MUTATION_REJECT_ORDER
+  );
 
   const handlePriceChange = (e) => {
     setManualPrice(e.target.value);
@@ -44,7 +47,7 @@ export function UpdateOrder() {
           updateNegoId: orderId,
           price: parseInt(manualPrice || order.offers[offer].price),
           aircraft: order.offers[offer].assetName,
-          status: "Negotiate",
+          status: "Negotiation",
           reason: "",
         },
       });
@@ -53,6 +56,31 @@ export function UpdateOrder() {
     } catch (error) {
       console.error(error);
       alert("Error updating order: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      setIsLoading(true);
+      if (!order) {
+        throw new Error("Order data is not available");
+      }
+      await rejectNegoData({
+        variables: {
+          id: orderId,
+          price: parseInt(manualPrice || order.offers[offer].price),
+          aircraft: order.offers[offer].assetName,
+          status: "Rejected",
+          reason: "rejected after negotiation due to no update from user",
+        },
+      });
+      // alert("Order rejected successfully!");
+      nav("/dashboard");
+    } catch (error) {
+      console.error(error);
+      alert("Error rejecting order: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +156,7 @@ export function UpdateOrder() {
         <div className="p-6 flex justify-between w-full max-w-xs m-auto">
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
-            onClick={() => alert("Reject clicked")}
+            onClick={handleReject}
           >
             Reject
           </Button>

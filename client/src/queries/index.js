@@ -258,3 +258,31 @@ export const MUTATION_NEGOTIATION_ORDER = gql`
   }
 }
 `;
+
+export const MUTATION_REJECT_ORDER = gql`
+  mutation RejectNego($rejectNegoId: ID, $price: Int, $aircraft: String, $status: String, $reason: String) {
+  rejectNego(id: $rejectNegoId, price: $price, aircraft: $aircraft, status: $status, reason: $reason) {
+    _id
+    fullname
+    email
+    phoneNumber
+    origin
+    destination
+    service
+    pax
+    status
+    price
+    aircraft
+    createdAt
+    updatedAt
+    reason
+    offers {
+      serviceType
+      assetName
+      speed
+      flightTimeInMinutes
+      price
+    }
+  }
+}
+`;

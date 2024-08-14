@@ -123,6 +123,7 @@ const typeDefs = `#graphql
     negotiationMail(id: ID): Order
     updatePayment(id: ID): Order
     updateNego(id: ID, price: Int, aircraft: String): Order
+    rejectNego(id: ID, price: Int, aircraft: String, status: String, reason: String): Order
   }
 `;
 
@@ -799,6 +800,48 @@ const resolvers = {
       } catch (error) {
         console.log(error);
         throw error
+      }
+    },
+
+    rejectNego: async (_parent, args) => {
+      console.log(args, `data args di schema rejectNego`);
+
+      try {
+        const { id, price, aircraft, status, reason } = args;
+
+        const order = await findOrderById(id);
+        const orders = await OrderTable();
+
+        // You need to uncomment and fix the stripe product and price creation
+        const product = await stripe.products.create({
+          name: `${order?.service} - ${aircraft}`
+        });
+
+        const stripePrice = await stripe.prices.create({
+          product: product.id,
+          unit_amount: Number(price) * 100,
+          currency: "usd",
+        });
+
+        await orders.updateOne(
+          {
+            _id: new ObjectId(id)
+          },
+          {
+            $set: {
+              price, // uncommented
+              aircraft,
+              priceId: stripePrice.id,
+              status,
+              reason
+            }
+          }
+        );
+
+        return order;
+      } catch (error) {
+        console.log(error);
+        throw error;
       }
     }
   },
