@@ -1,2 +1,2 @@
-export const EXPRESS_API_URL = "http://localhost:4000/graphql";
-export const REST_API_URL= "http://localhost:4000"
+export const EXPRESS_API_URL = "https://server.orderlyapp.site/graphql";
+export const REST_API_URL = "https://server.orderlyapp.site";
