@@ -7,6 +7,8 @@ import logo from "../assets/logo.png";
 import {
   MUTATION_NEGOTIATION_ORDER,
   QUERY_ORDER_BY_ID,
+  UPDATE_ORDER_DATA,
+  QUERY_GET_ORDERS,
   MUTATION_REJECT_ORDER,
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
@@ -57,9 +59,18 @@ export function UpdateOrder() {
 
   const order = data?.getOrderById;
   const nav = useNavigate();
+<<<<<<< HEAD
 
   const [updateOrderData] = useMutation(MUTATION_NEGOTIATION_ORDER);
   const [rejectNegoData] = useMutation(MUTATION_REJECT_ORDER);
+=======
+  const [updateOrderData, { loading: updateLoading, client }] = useMutation(
+    MUTATION_NEGOTIATION_ORDER
+  );
+  const [rejectNegoData, { loading: rejectLoading }] = useMutation(
+    MUTATION_REJECT_ORDER
+  );
+>>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
 
   const handlePriceChange = (e) => {
     setManualPrice(e.target.value);
@@ -83,11 +94,19 @@ export function UpdateOrder() {
           updateNegoId: orderId,
           price: parseInt(manualPrice || order.offers[offer].price),
           aircraft: order.offers[offer].assetName,
-          status: "Negotiation",
+          status: "Nego Sent",
           reason: "",
         },
+        awaitRefetchQueries: [QUERY_GET_ORDERS]
+        
       });
+<<<<<<< HEAD
       setShowSaveModal(true);
+=======
+      client.resetStore();
+      // alert("Order updated successfully!");
+      nav("/dashboard");
+>>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
     } catch (error) {
       console.error(error);
       showToast("error", "Error updating order: " + error.message);
@@ -203,6 +222,7 @@ export function UpdateOrder() {
             </div>
           </div>
         </div>
+<<<<<<< HEAD
         <div className="p-6 flex justify-between w-full max-w-xs m-auto">
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
@@ -219,6 +239,16 @@ export function UpdateOrder() {
             Save
           </Button>
         </div>
+=======
+        <div className="p-6 flex justify-center"> {/* Center the button */}
+      <Button
+        className="bg-indigo-700 hover:bg-blue-600 text-white"
+        onClick={handleSave}
+      >
+        Save
+      </Button>
+    </div>
+>>>>>>> 5234e2529f306715b6b68cb2e59fe52a89c3c3a8
       </div>
       {showRejectModal && (
         <Modal

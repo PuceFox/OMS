@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Card,
   Typography,
@@ -6,7 +6,12 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
-import { MUTATION_FOLLOW_UP, QUERY_GET_ORDERS } from "../queries";
+import {
+  MUTATION_FOLLOW_UP,
+  QUERY_GET_ORDERS,
+  QUERY_ORDER_BY_ID,
+  UPDATE_ORDER_DATA,
+} from "../queries";
 import formatPrice from "../utils/formatDollar";
 import Loading from "../components/Loading";
 import Toastify from "toastify-js";
@@ -36,12 +41,25 @@ export default function Dashboard() {
     fetchOrders,
     { loading: tableLoading, error: tableError, data: tableData },
   ] = useLazyQuery(QUERY_GET_ORDERS);
+
   const [followUp] = useMutation(MUTATION_FOLLOW_UP, {
     onError: (error) => {
       console.error("Mutation Error:", error);
     },
   });
 
+  
+  const [
+    getOrderById,
+    { loading: orderIdLoading, error: orderIdError, data: orderIdData },
+  ] = useLazyQuery(QUERY_ORDER_BY_ID);
+  
+  const [rejectNego] = useMutation(UPDATE_ORDER_DATA, {
+    onError: (error) => {
+      console.error("Mutation Error:", error);
+    },
+    refetchQueries: [QUERY_GET_ORDERS]
+  });
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
@@ -74,7 +92,43 @@ export default function Dashboard() {
       console.log("FollowUp Error:", error);
     }
   };
-
+  const handleNego = async (id) => {
+    try {
+      await getOrderById({
+        variables: {
+          getOrderByIdId: id,
+        },
+        onCompleted: (data) => {
+          rejectNego({
+            variables: {
+              updateOrderDataId: id,
+              price: data?.getOrderById?.price,
+              aircraft: data?.getOrderById?.aircraft,
+              status: "Rejected",
+              reason: "Rejected after negotiation due to no update from user",
+            },
+            onCompleted: (data) => {
+              Toastify({
+                text: "Negotiation Order Rejected",
+                duration: 3000,
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                  background: "linear-gradient(to right, #ff0000, #cc0000)",
+                },
+                onClick: function () {},
+              }).showToast();
+            }
+          });   
+        }
+      });
+    } catch (error) {
+      console.log("Nego Reject Error:", error);
+    }
+  };
   useEffect(() => {
     console.log("USE EFFECT TRIGGERED");
     fetchOrders({
@@ -86,11 +140,11 @@ export default function Dashboard() {
         sortByDate: dateSort,
       },
     });
-  }, [page, statusFilter, nameSort, dateSort]);
+  }, [page, statusFilter, nameSort, dateSort, serviceFilter]);
 
   const tableRows = tableData?.getOrder.orders;
-  console.log(tableRows?.length, "DATA");
-  console.log(page, "PAGE");
+  // console.log(tableRows?.length, "DATA");
+  // console.log(page, "PAGE");
   if (tableData) totalPage = tableData?.getOrder.totalPage;
   if (tableError) return <p>Error: {tableError.message}</p>;
 
@@ -109,7 +163,9 @@ export default function Dashboard() {
             >
               <Option value="">All</Option>
               <Option value="Pending">Pending</Option>
-              <Option value="Accepted">Accepted</Option>
+              <Option value="Paid">Paid</Option>
+              <Option value="Nego Sent">Nego Sent</Option>
+              <Option value="Negotiation">Negotiation</Option>
               <Option value="Rejected">Rejected</Option>
             </Select>
             <Select
@@ -373,7 +429,8 @@ export default function Dashboard() {
                       {status !== "Accepted" &&
                         status !== "Rejected" &&
                         status !== "Paid" &&
-                        status !== "Negotiation" && (
+                        status !== "Negotiation" &&
+                        status !== "Nego Sent" && (
                           <td className={classes}>
                             <Button
                               as="a"
@@ -387,6 +444,20 @@ export default function Dashboard() {
                             </Button>
                           </td>
                         )}
+                      {status === "Nego Sent" && (
+                        <td className={classes}>
+                          <Button
+                            as="a"
+                            href="#"
+                            size="sm"
+                            color="red"
+                            className="font-bold px-7"
+                            onClick={() => handleNego(_id)}
+                          >
+                            Reject
+                          </Button>
+                        </td>
+                      )}
                     </tr>
                   );
                 }

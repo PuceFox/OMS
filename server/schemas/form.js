@@ -122,7 +122,7 @@ const typeDefs = `#graphql
     generateInvoice(id: ID): Order
     negotiationMail(id: ID): Order
     updatePayment(id: ID): Order
-    updateNego(id: ID, price: Int, aircraft: String): Order
+    updateNego(id: ID, price: Int, aircraft: String, status: String): Order
     rejectNego(id: ID, price: Int, aircraft: String, status: String, reason: String): Order
   }
 `;
@@ -686,7 +686,7 @@ const resolvers = {
 
     updateNego: async (_parent, args) => {
       try {
-        const { id, price, aircraft } = args;
+        const { id, price, aircraft, status } = args;
 
         const order = await findOrderById(id);
         const orders = await OrderTable();
@@ -712,7 +712,8 @@ const resolvers = {
               price,
               aircraft,
               priceId: stripePrice.id,
-            },
+              status
+            }
           }
         );
 
