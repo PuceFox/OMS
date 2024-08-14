@@ -1,8 +1,9 @@
+import React, { useState } from "react";
 import { Button } from "@material-tailwind/react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
+import Toastify from "toastify-js";
 import logo from "../assets/logo.png";
-import { useState } from "react";
 import {
   MUTATION_NEGOTIATION_ORDER,
   QUERY_ORDER_BY_ID,
@@ -10,38 +11,73 @@ import {
 } from "../queries";
 import formatPrice from "../utils/formatDollar";
 import { formatTime } from "../utils/formatTime";
+import Loading from "../components/Loading";
+
+const Modal = ({ message, onClose }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col items-center">
+        <h2 className="text-lg font-semibold mb-4">{message}</h2>
+        <Button
+          className="bg-purple-500 hover:bg-blue-600 text-white"
+          onClick={onClose}
+        >
+          Close
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const toastStyles = {
+  error: {
+    background: "linear-gradient(to right, #FF5F6D, #FFC371)",
+  },
+};
+
+const showToast = (type, message) => {
+  Toastify({
+    text: message,
+    backgroundColor: toastStyles[type].background,
+    className: type === "success" ? "toastify-success" : "toastify-error",
+    duration: 3000,
+  }).showToast();
+};
 
 export function UpdateOrder() {
   const { orderId } = useParams();
   const { loading, error, data } = useQuery(QUERY_ORDER_BY_ID, {
-    variables: {
-      getOrderByIdId: orderId,
-    },
+    variables: { getOrderByIdId: orderId },
   });
   const [offer, setOffer] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [manualPrice, setManualPrice] = useState(""); // added state for manual price
-  const order = data?.getOrderById;
+  const [manualPrice, setManualPrice] = useState("");
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
+  const order = data?.getOrderById;
   const nav = useNavigate();
-  const [updateOrderData, { loading: updateLoading }] = useMutation(
-    MUTATION_NEGOTIATION_ORDER
-  );
-  const [rejectNegoData, { loading: rejectLoading }] = useMutation(
-    MUTATION_REJECT_ORDER
-  );
+
+  const [updateOrderData] = useMutation(MUTATION_NEGOTIATION_ORDER);
+  const [rejectNegoData] = useMutation(MUTATION_REJECT_ORDER);
 
   const handlePriceChange = (e) => {
     setManualPrice(e.target.value);
   };
 
+  const validateInput = () => {
+    if (isNaN(manualPrice) || manualPrice <= 0) {
+      showToast("error", "Please enter a valid price.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = async () => {
-    if (!manualPrice) return; // don't update if no manual price is entered
+    if (!validateInput()) return;
     try {
       setIsLoading(true);
-      if (!order) {
-        throw new Error("Order data is not available");
-      }
+      if (!order) throw new Error("Order data is not available");
       await updateOrderData({
         variables: {
           updateNegoId: orderId,
@@ -51,22 +87,20 @@ export function UpdateOrder() {
           reason: "",
         },
       });
-      // alert("Order updated successfully!");
-      nav("/dashboard");
+      setShowSaveModal(true);
     } catch (error) {
       console.error(error);
-      alert("Error updating order: " + error.message);
+      showToast("error", "Error updating order: " + error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleReject = async () => {
+    if (!validateInput()) return;
     try {
       setIsLoading(true);
-      if (!order) {
-        throw new Error("Order data is not available");
-      }
+      if (!order) throw new Error("Order data is not available");
       await rejectNegoData({
         variables: {
           id: orderId,
@@ -76,22 +110,34 @@ export function UpdateOrder() {
           reason: "rejected after negotiation due to no update from user",
         },
       });
-      // alert("Order rejected successfully!");
-      nav("/dashboard");
+      setShowRejectModal(true);
     } catch (error) {
       console.error(error);
-      alert("Error rejecting order: " + error.message);
+      showToast("error", "Error rejecting order: " + error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
-      <div className="flex justify-center w-full">
-        <img src={logo} alt="Logo" className="w-4/12 mb-16 mr-16" />
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-200 p-4">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50"
+          style={{ display: isLoading ? "flex" : "none" }}
+        >
+          <Loading />
+        </div>
+      )}
+      <div className="flex justify-center w-full mb-16">
+        <img src={logo} alt="Logo" className="w-4/12" />
       </div>
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden">
+      <div
+        className={`w-full max-w-3xl bg-white rounded-lg shadow-md overflow-hidden ${
+          isLoading ? "opacity-50 pointer-events-none" : ""
+        }`}
+      >
         <div className="bg-purple-800 p-6">
           <h1 className="text-3xl font-bold text-white text-center">
             Update Service Order
@@ -114,10 +160,13 @@ export function UpdateOrder() {
                 id=""
                 value={offer}
                 onChange={(e) => setOffer(e.target.value)}
+                disabled={isLoading}
               >
-                {order?.offers.map((offer, i) => {
-                  return <option value={i}>{offer.assetName}</option>;
-                })}
+                {order?.offers.map((offer, i) => (
+                  <option key={i} value={i}>
+                    {offer.assetName}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -141,6 +190,7 @@ export function UpdateOrder() {
                 value={manualPrice || formatPrice(order?.offers[offer].price)}
                 onChange={handlePriceChange}
                 className="border border-gray-300 rounded-md p-2 w-full"
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -157,17 +207,37 @@ export function UpdateOrder() {
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
             onClick={handleReject}
+            disabled={isLoading}
           >
             Reject
           </Button>
           <Button
             className="bg-indigo-700 hover:bg-blue-600 text-white"
             onClick={handleSave}
+            disabled={isLoading}
           >
             Save
           </Button>
         </div>
       </div>
+      {showRejectModal && (
+        <Modal
+          message="Order has been rejected."
+          onClose={() => {
+            setShowRejectModal(false);
+            nav("/dashboard");
+          }}
+        />
+      )}
+      {showSaveModal && (
+        <Modal
+          message="Order has been saved."
+          onClose={() => {
+            setShowSaveModal(false);
+            nav("/dashboard");
+          }}
+        />
+      )}
     </div>
   );
 }
