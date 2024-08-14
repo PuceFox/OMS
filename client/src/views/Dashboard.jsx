@@ -365,7 +365,6 @@ export default function Dashboard() {
                               size="sm"
                               color="blue"
                               className="font-bold"
-                              onClick={() => handleFollowUp(_id)}
                             >
                               Update
                             </Button>

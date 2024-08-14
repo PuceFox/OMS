@@ -44,7 +44,7 @@ export function NegotiateOrder() {
           updateOrderDataId: orderId,
           price: parseInt(price),
           aircraft: order.offers[offer].assetName,
-          status: "Negotiate",
+          status: "Negotiation",
           reason: "",
         },
       });
