@@ -45,7 +45,7 @@ export function RejectOrder() {
   const order = data?.getOrderById;
 
   useEffect(() => {
-    if (order && order.status !== "Pending" && order.status !== "Negotiation") {
+    if (order && order.status !== "Pending" && order.status !== "Negotiation" && order.status !== "Nego Sent") {
       nav("/form");
     }
   }, [order, nav]);  
