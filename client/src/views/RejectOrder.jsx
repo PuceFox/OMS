@@ -21,7 +21,7 @@ export function RejectOrder() {
       await updateReject({
         variables: {
           updateOrderDataId: orderId,
-          price: "cancel",
+          price: 0,
           aircraft: "No Flights",
           status: "Rejected",
           reason: reason,
